@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">MyAssistant</string>
+    <!--讯飞语音app id-->
+    <string name="app_id">553607f4</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <!--waitTing page-->
+    <string name="wait_please">请稍等，我准备下...</string>
+
+    <!--main page-->
+    <string name="close">关闭</string>
+    <string name="send">发送</string>
+    <string name="press_and_say">按住 说话</string>
+    <string name="loosen_to_end">松开 结束</string>
+
+    <string name="read_short_message">我帮您读短信吧～</string>
+</resources>
