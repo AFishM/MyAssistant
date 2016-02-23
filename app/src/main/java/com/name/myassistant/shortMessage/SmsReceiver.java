@@ -6,11 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 
+import com.name.myassistant.AppConfig;
 import com.name.myassistant.MainActivity;
 import com.name.myassistant.util.LogUtil;
 
 /**
- * Created by xu on 16-2-19.
+ * 短信广播接收
  */
 
 public class SmsReceiver extends BroadcastReceiver {
@@ -29,10 +30,12 @@ public class SmsReceiver extends BroadcastReceiver {
                         + "   body:" + msg.getDisplayMessageBody() + "  time:"
                         + msg.getTimestampMillis());
             }
-            Intent intent1=new Intent(context, MainActivity.class);
-            intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent1.putExtra("info",info);
-            context.startActivity(intent1);
+            if(AppConfig.READ_SHORT_MESSAGE_PERMISSION){
+                Intent intent1=new Intent(context, MainActivity.class);
+                intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent1.putExtra("info",info);
+                context.startActivity(intent1);
+            }
         }
     }
 }

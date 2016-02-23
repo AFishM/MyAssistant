@@ -3,6 +3,7 @@ package com.name.myassistant;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -23,6 +24,8 @@ public class WaitingActivity extends Activity {
     class initTask extends AsyncTask<Context,Void,Void> {
         @Override
         protected Void doInBackground(Context... params) {
+            SharedPreferences sharedPreferences=getSharedPreferences("myAssistant",MODE_PRIVATE);
+            AppConfig.READ_SHORT_MESSAGE_PERMISSION=sharedPreferences.getBoolean("readShortMessagePermission", true);
             Qa.initData(params[0]);
             return null;
         }
