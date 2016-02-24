@@ -1,14 +1,20 @@
 package com.name.myassistant;
 
+import android.app.AlarmManager;
+import android.app.TimePickerDialog;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.TimePicker;
 
 import com.name.myassistant.util.LogUtil;
 
 public class RobotSettingActivity extends AppCompatActivity{
+    private AlarmReceiver alarmReceiver;
+    int hourOfDay;
+    int minute;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +38,21 @@ public class RobotSettingActivity extends AppCompatActivity{
         reportWeatherOnTimeCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                alarmReceiver=new AlarmReceiver();
+                hourOfDay=9;
+                minute=30;
                 if(isChecked){
                     // TODO: 16-2-23 弹出时间选择滚轮给用户设置时间
+                    TimePickerDialog dialog=new TimePickerDialog(RobotSettingActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                            LogUtil.d("xzx","hourOfDay=> "+hourOfDay+" minute=> "+minute);
+                            alarmReceiver.setAlarm(RobotSettingActivity.this,hourOfDay,minute);
+                        }
+                    },hourOfDay,minute,true);
+                    dialog.show();
+                }else{
+                    alarmReceiver.cancelAlarm(RobotSettingActivity.this);
                 }
             }
         });

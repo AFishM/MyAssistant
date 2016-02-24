@@ -204,6 +204,7 @@ public class MainActivity extends Activity implements View.OnClickListener,View.
             chatContentListViewAdapter.notifyDataSetChanged();
             mTts.startSpeaking(info, mSynListener);
         }
+        userInputEditText.setText("广外校长是谁");
     }
 
 
