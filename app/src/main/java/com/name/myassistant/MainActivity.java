@@ -13,6 +13,8 @@ import android.os.PowerManager;
 import android.support.v4.view.MotionEventCompat;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +63,8 @@ public class MainActivity extends Activity implements View.OnClickListener,View.
     SpeechSynthesizer mTts;
 
     String recognizerStr;
+
+    PowerManager.WakeLock wl;
 
     //听写监听器
     private RecognizerListener mRecoListener = new RecognizerListener(){
@@ -207,7 +211,14 @@ public class MainActivity extends Activity implements View.OnClickListener,View.
         userInputEditText.setText("广外校长是谁");
     }
 
+    @Override
+    protected void onPause() {
+        //释放
+        if(wl!=null){
 
+        }
+        super.onPause();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -225,6 +236,22 @@ public class MainActivity extends Activity implements View.OnClickListener,View.
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_main,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId()==R.id.action_settings){
+            Intent intent=new Intent(MainActivity.this,RobotSettingActivity.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -276,17 +303,20 @@ public class MainActivity extends Activity implements View.OnClickListener,View.
     }
 
     void wakeUpAndUnlock(){
+        LogUtil.d("xzx","wakeUpAndUnlock");
         KeyguardManager km= (KeyguardManager) MainActivity.this.getSystemService(Context.KEYGUARD_SERVICE);
         KeyguardManager.KeyguardLock kl = km.newKeyguardLock("unLock");
         //解锁
         kl.disableKeyguard();
         //获取电源管理器对象
         PowerManager pm=(PowerManager) MainActivity.this.getSystemService(Context.POWER_SERVICE);
+        if(pm.isScreenOn()){
+            return;
+        }
         //获取PowerManager.WakeLock对象,后面的参数|表示同时传入两个值,最后的是LogCat里用的Tag
-        PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK,"bright");
+        wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK,"bright");
         //点亮屏幕
         wl.acquire();
-        //释放
         wl.release();
     }
 

@@ -1,6 +1,5 @@
 package com.name.myassistant;
 
-import android.app.AlarmManager;
 import android.app.TimePickerDialog;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
@@ -25,13 +24,15 @@ public class RobotSettingActivity extends AppCompatActivity{
         
         readShortMessageCheckBox.setChecked(AppConfig.READ_SHORT_MESSAGE_PERMISSION);
         reportWeatherOnTimeCheckBox.setChecked(AppConfig.REPORT_WEATHER_ON_TIME);
+
+        final SharedPreferences sharedPreferences = getSharedPreferences("myassistant", MODE_PRIVATE);
         
         readShortMessageCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 LogUtil.d("xzx", "readShortMessage=> " + isChecked);
                 AppConfig.READ_SHORT_MESSAGE_PERMISSION = isChecked;
-                SharedPreferences sharedPreferences = getSharedPreferences("myAssistant", MODE_PRIVATE);
+
                 sharedPreferences.edit().putBoolean("readShortMessagePermission", isChecked).apply();
             }
         });
@@ -39,19 +40,27 @@ public class RobotSettingActivity extends AppCompatActivity{
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 alarmReceiver=new AlarmReceiver();
-                hourOfDay=9;
-                minute=30;
+
+                hourOfDay=sharedPreferences.getInt("hourOfDay",0);
+                minute=sharedPreferences.getInt("minute",0);
+
                 if(isChecked){
-                    // TODO: 16-2-23 弹出时间选择滚轮给用户设置时间
                     TimePickerDialog dialog=new TimePickerDialog(RobotSettingActivity.this, new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                            LogUtil.d("xzx","hourOfDay=> "+hourOfDay+" minute=> "+minute);
-                            alarmReceiver.setAlarm(RobotSettingActivity.this,hourOfDay,minute);
+                            LogUtil.d("xzx", "hourOfDay=> " + hourOfDay + " minute=> " + minute);
+                            alarmReceiver.setAlarm(RobotSettingActivity.this, hourOfDay, minute);
+
+                            SharedPreferences.Editor editor=sharedPreferences.edit();
+                            editor.putInt("hourOfDay", hourOfDay);
+                            editor.putInt("minute",minute);
+                            editor.putBoolean("reportWeatherOnTime",true);
+                            editor.apply();
                         }
                     },hourOfDay,minute,true);
                     dialog.show();
                 }else{
+                    sharedPreferences.edit().putBoolean("reportWeatherOnTime",false).apply();
                     alarmReceiver.cancelAlarm(RobotSettingActivity.this);
                 }
             }

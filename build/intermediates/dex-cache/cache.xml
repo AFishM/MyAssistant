@@ -2,46 +2,53 @@
 <items version="2" >
 
     <item
-        jar="/home/xu/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/23.1.0/support-annotations-23.1.0.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="92e3fc113ec3ee36b64603a38857b95700025633">
-        <dex dex="/home/xu/bishe/MyAssistant/app/build/intermediates/pre-dexed/debug/support-annotations-23.1.0-d303d640738575390e229ebfcb3bbf08d6228503.jar" />
-    </item>
-    <item
-        jar="/home/xu/bishe/MyAssistant/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.0/jars/libs/internal_impl-23.1.0.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="8716243bf04bae8d6c9ca94d27b9a9be7236f0a3">
-        <dex dex="/home/xu/bishe/MyAssistant/app/build/intermediates/pre-dexed/debug/internal_impl-23.1.0-2c4991368630153f8f77a21b8686dc1b9eb7fe5d.jar" />
-    </item>
-    <item
         jar="/home/xu/.gradle/caches/modules-2/files-2.1/com.github.bumptech.glide/glide/3.6.1/86b122e640af09b0723e1fa44083c354ba6d9089/glide-3.6.1.jar"
         jumboMode="false"
-        revision="23.0.1"
+        revision="23.0.2"
         sha1="86b122e640af09b0723e1fa44083c354ba6d9089">
         <dex dex="/home/xu/bishe/MyAssistant/app/build/intermediates/pre-dexed/debug/glide-3.6.1-39d23da20e6d85b9ff7582a73541d39202c955a6.jar" />
     </item>
     <item
+        jar="/home/xu/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/23.1.1/support-annotations-23.1.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="8d680ba5a623724d1fb0e81c36a790f023a6cede">
+        <dex dex="/home/xu/bishe/MyAssistant/app/build/intermediates/pre-dexed/debug/support-annotations-23.1.1-12895a688d6b1dab429e626d441697994d761086.jar" />
+    </item>
+    <item
+        jar="/home/xu/bishe/MyAssistant/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.1/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="6cbc7773921fcfedbe55657578f0cbfe614778dc">
+        <dex dex="/home/xu/bishe/MyAssistant/app/build/intermediates/pre-dexed/debug/classes-3eda93c431e56d6d6076f775bc5d05ce7fecc018.jar" />
+    </item>
+    <item
+        jar="/home/xu/bishe/MyAssistant/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.1.1/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="5c5699834e9722f1c288fea2de82725d078ba127">
+        <dex dex="/home/xu/bishe/MyAssistant/app/build/intermediates/pre-dexed/debug/classes-cdaacfb8eb4d2d5bea907b7bfaf75f8a4f8a4f8a.jar" />
+    </item>
+    <item
+        jar="/home/xu/bishe/MyAssistant/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.1/jars/libs/internal_impl-23.1.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="a4de9c81ae239414e1ed0f86441b02abaf29bca9">
+        <dex dex="/home/xu/bishe/MyAssistant/app/build/intermediates/pre-dexed/debug/internal_impl-23.1.1-481367474897ebaee14d3724657a6deaed689ce9.jar" />
+    </item>
+    <item
         jar="/home/xu/bishe/MyAssistant/app/libs/Msc.jar"
         jumboMode="false"
-        revision="23.0.1"
+        revision="23.0.2"
         sha1="bad3f17744b208362aa7e20242a6261cf2d21977">
         <dex dex="/home/xu/bishe/MyAssistant/app/build/intermediates/pre-dexed/debug/Msc-d10a82851d0b796d1742cf68ef5a61dcefee5242.jar" />
     </item>
     <item
-        jar="/home/xu/bishe/MyAssistant/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.1.0/jars/classes.jar"
+        jar="/home/xu/bishe/MyAssistant/app/libs/AMap_Location_v2.3.0_20160112.jar"
         jumboMode="false"
-        revision="23.0.1"
-        sha1="57ae0d750ff83f0c738d21720224ac7ea866a094">
-        <dex dex="/home/xu/bishe/MyAssistant/app/build/intermediates/pre-dexed/debug/classes-19fe590702d67d4b6afe68e53d9264b63f110d4a.jar" />
-    </item>
-    <item
-        jar="/home/xu/bishe/MyAssistant/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.0/jars/classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="ddde541c289c8b816a8f8fd6c325d80788c522a6">
-        <dex dex="/home/xu/bishe/MyAssistant/app/build/intermediates/pre-dexed/debug/classes-58c249ab5c811c628be61101554ad067205c4fba.jar" />
+        revision="23.0.2"
+        sha1="bfe17aa93c71a6973a53fcbaf7bfe2f3a1859dcf">
+        <dex dex="/home/xu/bishe/MyAssistant/app/build/intermediates/pre-dexed/debug/AMap_Location_v2.3.0_20160112-483ea5d9c9d66c3fbd0671d3a4d1dbb0511ad5ad.jar" />
     </item>
 
 </items>

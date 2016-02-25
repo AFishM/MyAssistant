@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
     <!-- 亮屏的权限 -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <!--接收设备启动的广播-->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <!-- 连接网络权限,用于执行云端语音能力 -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -29,11 +31,21 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS"/>
     <uses-permission android:name="android.permission.READ_SMS"/>
 
+    <!--用于进行网络定位-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!--用于访问GPS定位-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!--这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+
+        <meta-data android:name="com.amap.api.v2.apikey" android:value="@string/amap_app_id"/>
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" />
@@ -45,7 +57,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".RobotSettingActivity"/>
-        <receiver android:name="com.name.myassistant.shortMessage.SmsReceiver">
+        <receiver android:name=".shortMessage.SmsReceiver">
             <intent-filter android:priority="999">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
             </intent-filter>
@@ -59,6 +71,9 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+
+        <!--高德定位服务-->
+        <service android:name="com.amap.api.location.APSService"/>
     </application>
 
 </manifest>

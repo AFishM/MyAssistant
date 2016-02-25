@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
+import com.name.myassistant.util.LogUtil;
+
 import java.util.Calendar;
 
 /**
@@ -21,6 +23,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        LogUtil.d("xzx","AlarmReceiver onReceive");
         Intent intent1=new Intent(context, MainActivity.class);
         intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent1.putExtra("info","闹钟响了");
@@ -34,6 +37,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
      * @param context
      */
     public void setAlarm(Context context,int hourOfDay,int minute) {
+        LogUtil.d("xzx","setAlarm");
         alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlarmReceiver.class);
         alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
@@ -60,6 +64,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
      */
     // BEGIN_INCLUDE(cancel_alarm)
     public void cancelAlarm(Context context) {
+        LogUtil.d("xzx","cancelAlarm");
         // If the alarm has been set, cancel it.
         if (alarmMgr!= null) {
             alarmMgr.cancel(alarmIntent);

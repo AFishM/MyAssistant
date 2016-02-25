@@ -24,8 +24,9 @@ public class WaitingActivity extends Activity {
     class initTask extends AsyncTask<Context,Void,Void> {
         @Override
         protected Void doInBackground(Context... params) {
-            SharedPreferences sharedPreferences=getSharedPreferences("myAssistant",MODE_PRIVATE);
-            AppConfig.READ_SHORT_MESSAGE_PERMISSION=sharedPreferences.getBoolean("readShortMessagePermission", true);
+            SharedPreferences sharedPreferences=getSharedPreferences("myassistant",MODE_PRIVATE);
+            AppConfig.READ_SHORT_MESSAGE_PERMISSION=sharedPreferences.getBoolean("readShortMessagePermission", false);
+            AppConfig.REPORT_WEATHER_ON_TIME=sharedPreferences.getBoolean("reportWeatherOnTime",false);
             Qa.initData(params[0]);
             return null;
         }
