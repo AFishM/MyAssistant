@@ -1,29 +1,41 @@
 package com.name.myassistant;
 
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.TimePicker;
+import android.widget.TextView;
 
 import com.name.myassistant.util.LogUtil;
 
-public class RobotSettingActivity extends AppCompatActivity{
-    private AlarmReceiver alarmReceiver;
-    int hourOfDay;
-    int minute;
+public class RobotSettingActivity extends AppCompatActivity implements View.OnClickListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_robot_setting);
+        setTitle("");
+
+        Toolbar toolbar=(Toolbar)findViewById(R.id.robot_setting_toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         CheckBox readShortMessageCheckBox=(CheckBox)findViewById(R.id.read_short_message_check);
-        CheckBox reportWeatherOnTimeCheckBox=(CheckBox)findViewById(R.id.report_weather_on_time);
+        TextView alarmSettingTextView=(TextView)findViewById(R.id.alarm_setting);
         
         readShortMessageCheckBox.setChecked(AppConfig.READ_SHORT_MESSAGE_PERMISSION);
-        reportWeatherOnTimeCheckBox.setChecked(AppConfig.REPORT_WEATHER_ON_TIME);
+        alarmSettingTextView.setOnClickListener(this);
 
         final SharedPreferences sharedPreferences = getSharedPreferences("myassistant", MODE_PRIVATE);
         
@@ -36,34 +48,17 @@ public class RobotSettingActivity extends AppCompatActivity{
                 sharedPreferences.edit().putBoolean("readShortMessagePermission", isChecked).apply();
             }
         });
-        reportWeatherOnTimeCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                alarmReceiver=new AlarmReceiver();
+    }
 
-                hourOfDay=sharedPreferences.getInt("hourOfDay",0);
-                minute=sharedPreferences.getInt("minute",0);
-
-                if(isChecked){
-                    TimePickerDialog dialog=new TimePickerDialog(RobotSettingActivity.this, new TimePickerDialog.OnTimeSetListener() {
-                        @Override
-                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                            LogUtil.d("xzx", "hourOfDay=> " + hourOfDay + " minute=> " + minute);
-                            alarmReceiver.setAlarm(RobotSettingActivity.this, hourOfDay, minute);
-
-                            SharedPreferences.Editor editor=sharedPreferences.edit();
-                            editor.putInt("hourOfDay", hourOfDay);
-                            editor.putInt("minute",minute);
-                            editor.putBoolean("reportWeatherOnTime",true);
-                            editor.apply();
-                        }
-                    },hourOfDay,minute,true);
-                    dialog.show();
-                }else{
-                    sharedPreferences.edit().putBoolean("reportWeatherOnTime",false).apply();
-                    alarmReceiver.cancelAlarm(RobotSettingActivity.this);
-                }
-            }
-        });
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.alarm_setting:
+                Intent intent=new Intent(RobotSettingActivity.this,AlarmSettingActivity.class);
+                startActivity(intent);
+                break;
+            default:
+                break;
+        }
     }
 }

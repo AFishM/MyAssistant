@@ -14,7 +14,6 @@ public class WaitingActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("");
         setContentView(R.layout.activity_waiting);
         new initTask().execute(this);
     }

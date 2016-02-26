@@ -1,6 +1,5 @@
 package com.name.myassistant;
 
-import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -12,12 +11,14 @@ import android.os.AsyncTask;
 import android.os.PowerManager;
 import android.support.v4.view.MotionEventCompat;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -46,7 +47,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends Activity implements View.OnClickListener,View.OnLongClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener,View.OnLongClickListener{
 
     ImageView inputSwitchImageView;
     TextView pressToSayTextView;
@@ -140,7 +141,7 @@ public class MainActivity extends Activity implements View.OnClickListener,View.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar=(Toolbar)findViewById(R.id.main_toolbar);
-        toolbar.setTitle(R.string.app_name);
+        setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
         ListView chatContentListView=(ListView)findViewById(R.id.chat_content);
         inputSwitchImageView=(ImageView)findViewById(R.id.input_switch);
