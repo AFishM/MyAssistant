@@ -7,14 +7,47 @@
     android:orientation="vertical"
     tools:context="com.name.myassistant.AlarmSettingActivity">
     <android.support.v7.widget.Toolbar
+        android:id="@+id/alarm_setting_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/black"
+        android:background="@color/white"
         app:navigationIcon="@drawable/back_32"
         app:title="@string/alarm"
-        app:titleTextColor="@color/white"/>
-    <ListView
-        android:id="@+id/alarm"
+        app:titleTextColor="@color/black"/>
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="1dp"
+        android:background="@color/gray"/>
+    <RelativeLayout
+        android:id="@+id/alarm_setting_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ListView
+            android:id="@+id/alarm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:id="@+id/address_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="36dp"
+            android:visibility="gone">
+            <ListView
+                android:id="@+id/province"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"/>
+            <ListView
+                android:id="@+id/city"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent" />
+            <ListView
+                android:id="@+id/county"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+    </RelativeLayout>
+
 </LinearLayout>

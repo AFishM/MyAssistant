@@ -17,6 +17,10 @@
     <string name="alarm_setting">闹钟设置</string>
 
     <string name="alarm">闹钟</string>
+    <string name="colon">:</string>
 
     <string name="report_weather_on_time">定时为您播报明日天气情况？</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
