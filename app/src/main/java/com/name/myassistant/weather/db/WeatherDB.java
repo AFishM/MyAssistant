@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.name.myassistant.m.Alarm;
 import com.name.myassistant.weather.model.City;
 import com.name.myassistant.weather.model.County;
 import com.name.myassistant.weather.model.Province;
@@ -141,4 +142,44 @@ public class WeatherDB {
         return list;
     }
 
+    /**
+     * 将alarm实例存储到数据库。
+     */
+    public void saveAlarm(Alarm alarm) {
+        if (alarm != null) {
+            ContentValues values = new ContentValues();
+            values.put("id", alarm.getId());
+            values.put("hour", alarm.getHour());
+            values.put("minute", alarm.getMinute());
+            values.put("isOpen", alarm.isOpen());
+            values.put("note", alarm.getNote());
+            values.put("weatherAddress", alarm.getWeatherAddress());
+            db.insert("Alarm", null, values);
+        }
+    }
+    /**
+     * 从数据库读取某城市下所有的县信息。
+     */
+    public List<Alarm> loadAlarm(int alarmId) {
+        List<Alarm> list = new ArrayList<>();
+        Cursor cursor = db.query("Alarm", null, "id = ?",
+                new String[] { String.valueOf(alarmId) }, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Alarm alarm = new Alarm();
+                alarm.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                alarm.setHour(cursor.getInt(cursor.getColumnIndex("hour")));
+                alarm.setMinute(cursor.getInt(cursor.getColumnIndex("minute")));
+//                alarm.setIsOpen(cursor.get);
+//                county.setId(cursor.getInt(cursor.getColumnIndex("id")));
+//                county.setCountyName(cursor.getString(cursor
+//                        .getColumnIndex("county_name")));
+//                county.setCountyCode(cursor.getString(cursor
+//                        .getColumnIndex("county_code")));
+//                county.setCityId(cityId);
+                list.add(alarm);
+            } while (cursor.moveToNext());
+        }
+        return list;
+    }
 }

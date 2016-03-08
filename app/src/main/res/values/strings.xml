@@ -18,9 +18,11 @@
 
     <string name="alarm">闹钟</string>
     <string name="colon">:</string>
-
+    <string name="note_hint">设置消息提醒</string>
     <string name="report_weather_on_time">定时为您播报明日天气情况？</string>
+    <string name="confirm">确定</string>
 
+    <string name="no_alarm">您没有设置任何闹钟</string>
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

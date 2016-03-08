@@ -1,6 +1,5 @@
 package com.name.myassistant;
 
-import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.name.myassistant.alarm.AlarmSettingActivity;
 import com.name.myassistant.util.LogUtil;
 
 public class RobotSettingActivity extends AppCompatActivity implements View.OnClickListener{

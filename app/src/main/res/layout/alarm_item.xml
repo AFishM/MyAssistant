@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-<<<<<<< HEAD
     android:layout_height="match_parent"
     android:gravity="center_vertical"
     android:padding="8dp">
-=======
-    android:layout_height="match_parent">
->>>>>>> f7d3d60c165ac1882bfb2e30b37214a74700415e
     <TextView
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-<<<<<<< HEAD
         android:includeFontPadding="false"
         android:textColor="@color/black"
         android:textSize="24sp"
@@ -50,8 +45,4 @@
         android:paddingRight="8dp"
         android:includeFontPadding="false"
         android:text="开关"/>
-=======
-        android:textSize="24sp"
-        android:textColor="@color/black"/>
->>>>>>> f7d3d60c165ac1882bfb2e30b37214a74700415e
 </LinearLayout>

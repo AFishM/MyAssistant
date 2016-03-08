@@ -64,7 +64,7 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".AlarmReceiver" />
+        <receiver android:name=".alarm.AlarmReceiver" />
         <receiver
             android:name=".BootReceiver"
             android:enabled="false">
@@ -76,7 +76,7 @@
         <!-- 高德定位服务 -->
         <service android:name="com.amap.api.location.APSService" />
 
-        <activity android:name=".AlarmSettingActivity"></activity>
+        <activity android:name=".alarm.AlarmSettingActivity"></activity>
     </application>
 
 </manifest>

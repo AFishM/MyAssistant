@@ -31,6 +31,16 @@ public class WeatherOpenHelper extends SQLiteOpenHelper {
             + "county_name text, "
             + "county_code text, "
             + "city_id integer)";
+    /**
+     * alarm表建表语句
+     */
+    public static final String CREATE_ALARM = "create table Alarm ("
+            + "id integer primary key autoincrement, "
+            + "hour integer, "
+            + "minute integer, "
+            + "isOpen boolean, "
+            + "note text, "
+            + "weatherAddress text)";
     public WeatherOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory
             factory, int version) {
         super(context, name, factory, version);
@@ -40,6 +50,7 @@ public class WeatherOpenHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_PROVINCE); // 创建Province表
         db.execSQL(CREATE_CITY); // 创建City表
         db.execSQL(CREATE_COUNTY); // 创建County表
+        db.execSQL(CREATE_ALARM);//创建alarm表
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)

@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.name.myassistant.alarm.AlarmReceiver;
 import com.name.myassistant.util.LogUtil;
 
 /**
@@ -22,6 +25,7 @@ public class BootReceiver extends BroadcastReceiver {
             int hourOfDay=sharedPreferences.getInt("hourOfDay", 0);
             int minute=sharedPreferences.getInt("minute",0);
             alarm.setAlarm(context,hourOfDay,minute);
+            Gson gson=new Gson();
         }
     }
 }
