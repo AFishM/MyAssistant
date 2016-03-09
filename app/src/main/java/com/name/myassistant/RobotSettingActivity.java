@@ -34,7 +34,7 @@ public class RobotSettingActivity extends AppCompatActivity implements View.OnCl
         CheckBox readShortMessageCheckBox=(CheckBox)findViewById(R.id.read_short_message_check);
         TextView alarmSettingTextView=(TextView)findViewById(R.id.alarm_setting);
         
-        readShortMessageCheckBox.setChecked(AppConfig.READ_SHORT_MESSAGE_PERMISSION);
+        readShortMessageCheckBox.setChecked(GlobalVariable.getInstance().isREAD_SHORT_MESSAGE_PERMISSION());
         alarmSettingTextView.setOnClickListener(this);
 
         final SharedPreferences sharedPreferences = getSharedPreferences("myassistant", MODE_PRIVATE);
@@ -43,7 +43,7 @@ public class RobotSettingActivity extends AppCompatActivity implements View.OnCl
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 LogUtil.d("xzx", "readShortMessage=> " + isChecked);
-                AppConfig.READ_SHORT_MESSAGE_PERMISSION = isChecked;
+                GlobalVariable.getInstance().setREAD_SHORT_MESSAGE_PERMISSION(RobotSettingActivity.this,isChecked);;
 
                 sharedPreferences.edit().putBoolean("readShortMessagePermission", isChecked).apply();
             }

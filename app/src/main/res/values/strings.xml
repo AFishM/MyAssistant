@@ -17,7 +17,9 @@
     <string name="alarm_setting">闹钟设置</string>
 
     <string name="alarm">闹钟</string>
+    <string name="zero_eight">08</string>
     <string name="colon">:</string>
+    <string name="zero_zero">00</string>
     <string name="note_hint">设置消息提醒</string>
     <string name="report_weather_on_time">定时为您播报明日天气情况？</string>
     <string name="confirm">确定</string>

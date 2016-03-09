@@ -1,70 +1,63 @@
 package com.name.myassistant.m;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+
+import com.name.myassistant.alarm.AlarmReceiver;
+
+import java.util.Calendar;
+
 /**
- * Created by xu on 16-3-3.
+ * 闹钟实体类
  */
 public class Alarm {
-    int id;
-    int hour;
-    int minute;
-    boolean isOpen;
-    String note;
-    int addressId;
-    String weatherAddress;
+    public int id;
+    public String hour;
+    public String minute;
+    public String note;
+    public String weatherAddress;
+    public boolean open;
 
-    public int getId() {
-        return id;
-    }
+    private AlarmManager alarmManager;
+    private PendingIntent alarmIntent;
 
-    public void setId(int id) {
+    public Alarm(Context context,int id, String hour, String minute, String note, String weatherAddress) {
         this.id = id;
-    }
-
-    public int getHour() {
-        return hour;
-    }
-
-    public void setHour(int hour) {
         this.hour = hour;
-    }
-
-    public int getMinute() {
-        return minute;
-    }
-
-    public void setMinute(int minute) {
         this.minute = minute;
-    }
-
-    public boolean isOpen() {
-        return isOpen;
-    }
-
-    public void setIsOpen(boolean isOpen) {
-        this.isOpen = isOpen;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
         this.note = note;
-    }
-
-    public int getAddressId() {
-        return addressId;
-    }
-
-    public void setAddressId(int addressId) {
-        this.addressId = addressId;
-    }
-
-    public String getWeatherAddress() {
-        return weatherAddress;
-    }
-
-    public void setWeatherAddress(String weatherAddress) {
         this.weatherAddress = weatherAddress;
+        this.open = true;
+
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        intent.putExtra("info",note);
+
+        // The pending intent that is triggered when the alarm fires.
+        alarmIntent= PendingIntent.getBroadcast(context, id, intent, 0);
+
+        setOpen(context,true);
+    }
+
+    public void setOpen(Context context,boolean open){
+        if(this.open==open){
+            return;
+        }
+        this.open=open;
+        if(open){
+            alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(hour));
+            calendar.set(Calendar.MINUTE, Integer.valueOf(minute));
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+                    calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);
+            return;
+        }
+        if(alarmManager!=null){
+            alarmManager.cancel(alarmIntent);
+        }
     }
 }

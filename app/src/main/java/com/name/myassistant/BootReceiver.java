@@ -8,24 +8,30 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.name.myassistant.alarm.AlarmReceiver;
+import com.name.myassistant.m.Alarm;
 import com.name.myassistant.util.LogUtil;
+
+import java.util.List;
 
 /**
  * Created by xu on 16-2-24.
  */
 public class BootReceiver extends BroadcastReceiver {
-    AlarmReceiver alarm = new AlarmReceiver();
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        LogUtil.d("xzx","BOOT_COMPLETED");
+        LogUtil.d("xzx","BOOT_COMPLETED,intent.getAction()=> " +intent.getAction());
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED"))
         {
-            LogUtil.d("xzx","BOOT_COMPLETED");
-            SharedPreferences sharedPreferences=context.getSharedPreferences("myassistant",Context.MODE_PRIVATE);
-            int hourOfDay=sharedPreferences.getInt("hourOfDay", 0);
-            int minute=sharedPreferences.getInt("minute",0);
-            alarm.setAlarm(context,hourOfDay,minute);
-            Gson gson=new Gson();
+            LogUtil.d("xzx");
+            List<Alarm> alarmList=GlobalVariable.getInstance().getAlarmList();
+            for(int i=0;i<alarmList.size();i++){
+                Alarm alarm=alarmList.get(i);
+                if(alarm.open){
+                    alarm.setOpen(context,true);
+                }
+            }
+            LogUtil.d("xzx");
         }
     }
 }

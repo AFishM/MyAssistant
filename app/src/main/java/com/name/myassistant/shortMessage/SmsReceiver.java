@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 
 import com.name.myassistant.AppConfig;
+import com.name.myassistant.GlobalVariable;
 import com.name.myassistant.MainActivity;
 import com.name.myassistant.util.LogUtil;
 
@@ -30,7 +31,7 @@ public class SmsReceiver extends BroadcastReceiver {
                         + "   body:" + msg.getDisplayMessageBody() + "  time:"
                         + msg.getTimestampMillis());
             }
-            if(AppConfig.READ_SHORT_MESSAGE_PERMISSION){
+            if(GlobalVariable.getInstance().isREAD_SHORT_MESSAGE_PERMISSION()){
                 Intent intent1=new Intent(context, MainActivity.class);
                 intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent1.putExtra("info",info);

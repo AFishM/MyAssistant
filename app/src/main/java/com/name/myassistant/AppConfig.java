@@ -5,6 +5,4 @@ package com.name.myassistant;
  */
 public class AppConfig {
     public static boolean DEBUG=true;
-    public static boolean READ_SHORT_MESSAGE_PERMISSION;
-    public static boolean REPORT_WEATHER_ON_TIME;
 }

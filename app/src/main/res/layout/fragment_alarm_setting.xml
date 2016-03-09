@@ -25,11 +25,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:textSize="64sp"
-            android:text="09"/>
+            android:textSize="64sp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:textSize="64sp"
             android:text="@string/colon"/>
         <TextView
@@ -37,8 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:textSize="64sp"
-            android:text="24"/>
+            android:textSize="64sp"/>
     </LinearLayout>
 
     <EditText
@@ -47,6 +46,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/note_hint"/>
     <CheckBox
+        android:id="@+id/weather_report_check"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/report_weather_on_time"/>
