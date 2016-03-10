@@ -43,6 +43,5 @@
         android:paddingBottom="4dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:includeFontPadding="false"
-        android:text="开关"/>
+        android:includeFontPadding="false"/>
 </LinearLayout>

@@ -4,11 +4,10 @@
     android:layout_height="match_parent"
     tools:context="com.name.myassistant.alarm.AlarmListFragment">
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/alarm_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/no_alarm_note"

@@ -16,6 +16,8 @@
     <string name="read_short_message">有新短信时我帮您读出来？</string>
     <string name="alarm_setting">闹钟设置</string>
 
+    <string name="on">开</string>
+    <string name="off">关</string>
     <string name="alarm">闹钟</string>
     <string name="zero_eight">08</string>
     <string name="colon">:</string>

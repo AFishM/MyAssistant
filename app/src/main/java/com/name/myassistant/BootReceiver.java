@@ -24,6 +24,7 @@ public class BootReceiver extends BroadcastReceiver {
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED"))
         {
             LogUtil.d("xzx");
+            GlobalVariable.getInstance().recoverData(context);
             List<Alarm> alarmList=GlobalVariable.getInstance().getAlarmList();
             for(int i=0;i<alarmList.size();i++){
                 Alarm alarm=alarmList.get(i);

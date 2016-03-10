@@ -32,13 +32,19 @@ public class AlarmSettingActivity extends AppCompatActivity {
         fragmentLayoutId=R.id.alarm_setting_layout;
         fragmentManager=getFragmentManager();
         FragmentTransaction transaction=fragmentManager.beginTransaction();
-        transaction.add(fragmentLayoutId,new AlarmListFragment());
-        transaction.add(new AlarmListFragment(),null);
+        transaction.add(fragmentLayoutId,new AlarmListFragment(),AlarmListFragment.class.toString());
+        transaction.addToBackStack(AlarmListFragment.class.toString());
         transaction.commit();
     }
 
     @Override
     public void onBackPressed() {
+        LogUtil.d("xzx");
+        if(fragmentManager.getBackStackEntryCount()>1){
+            LogUtil.d("xzx");
+            fragmentManager.popBackStack();
+            return;
+        }
         super.onBackPressed();
     }
 
@@ -54,7 +60,8 @@ public class AlarmSettingActivity extends AppCompatActivity {
         if(item.getItemId()==R.id.plus_address){
             LogUtil.d("xzx");
             FragmentTransaction transaction=fragmentManager.beginTransaction();
-            transaction.add(fragmentLayoutId,new AlarmSettingFragment());
+            transaction.add(fragmentLayoutId,new AlarmSettingFragment(),AlarmSettingFragment.class.toString());
+            transaction.addToBackStack(AlarmSettingFragment.class.toString());
             transaction.commit();
         }
         return super.onOptionsItemSelected(item);

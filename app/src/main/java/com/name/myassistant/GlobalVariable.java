@@ -41,6 +41,7 @@ public class GlobalVariable {
     public void save(Context context){
         Gson gson=new Gson();
         String data=gson.toJson(ourInstance);
+        LogUtil.d("xzx","data=> "+data);
 
         SharedPreferences sharedPreferences=context.getSharedPreferences("myassistant", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor=sharedPreferences.edit();
@@ -55,6 +56,7 @@ public class GlobalVariable {
         }
         Gson gson=new Gson();
         ourInstance=gson.fromJson(data,GlobalVariable.class);
-        LogUtil.d("xzx","ourInstance=> "+ourInstance.toString());
+        LogUtil.d("xzx","ourInstance READ_SHORT_MESSAGE_PERMISSION=> "+ourInstance.isREAD_SHORT_MESSAGE_PERMISSION());
+        LogUtil.d("xzx","ourInstance alarmList=> "+ourInstance.getAlarmList().toString());
     }
 }

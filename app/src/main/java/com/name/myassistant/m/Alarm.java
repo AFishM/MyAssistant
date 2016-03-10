@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
+import com.name.myassistant.GlobalVariable;
 import com.name.myassistant.alarm.AlarmReceiver;
 
 import java.util.Calendar;
@@ -37,7 +38,7 @@ public class Alarm {
         // The pending intent that is triggered when the alarm fires.
         alarmIntent= PendingIntent.getBroadcast(context, id, intent, 0);
 
-        setOpen(context,true);
+        GlobalVariable.getInstance().getAlarmList().add(this);
     }
 
     public void setOpen(Context context,boolean open){
@@ -59,5 +60,20 @@ public class Alarm {
         if(alarmManager!=null){
             alarmManager.cancel(alarmIntent);
         }
+        GlobalVariable.getInstance().save(context);
+    }
+
+    @Override
+    public String toString() {
+        return "Alarm{" +
+                "id=" + id +
+                ", hour='" + hour + '\'' +
+                ", minute='" + minute + '\'' +
+                ", note='" + note + '\'' +
+                ", weatherAddress='" + weatherAddress + '\'' +
+                ", open=" + open +
+                ", alarmManager=" + alarmManager +
+                ", alarmIntent=" + alarmIntent +
+                '}';
     }
 }

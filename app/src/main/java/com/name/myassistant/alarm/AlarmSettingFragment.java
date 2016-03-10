@@ -17,6 +17,7 @@ import android.widget.TimePicker;
 import com.name.myassistant.GlobalVariable;
 import com.name.myassistant.R;
 import com.name.myassistant.m.Alarm;
+import com.name.myassistant.util.LogUtil;
 
 /**
  *
@@ -72,12 +73,20 @@ public class AlarmSettingFragment extends Fragment implements View.OnClickListen
                 if(alarm==null){
                     int alarmId= GlobalVariable.getInstance().getAlarmList().size();
                     alarm=new Alarm(v.getContext(),alarmId,hour,minute,noteStr,null);
+                    alarm.setOpen(v.getContext(),true);
+                    LogUtil.d("xzx","alarm=> "+alarm.toString());
                 }else{
                     alarm.hour=hour;
                     alarm.minute=minute;
                     alarm.note=noteStr;
+                    GlobalVariable.getInstance().save(v.getContext());
                 }
-                GlobalVariable.getInstance().save(v.getContext());
+                AlarmListFragment alarmListFragment=(AlarmListFragment)activity.fragmentManager.findFragmentByTag(AlarmListFragment.class.toString());
+                if(alarmListFragment!=null){
+                    LogUtil.d("xzx");
+                    alarmListFragment.addAlarmData();
+                }
+                activity.onBackPressed();
                 break;
             case R.id.time_layout:
                 new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
@@ -88,7 +97,7 @@ public class AlarmSettingFragment extends Fragment implements View.OnClickListen
                         hourTextView.setText(hour);
                         minuteTextView.setText(displayMinute);
                     }
-                },Integer.valueOf(hourTextView.getText().toString()),Integer.valueOf(minuteTextView.getText().toString()),true);
+                },Integer.valueOf(hourTextView.getText().toString()),Integer.valueOf(minuteTextView.getText().toString()),true).show();
                 break;
             default:
                 break;
