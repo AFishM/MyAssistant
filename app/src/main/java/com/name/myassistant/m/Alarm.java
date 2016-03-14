@@ -5,8 +5,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-import com.name.myassistant.GlobalVariable;
 import com.name.myassistant.alarm.AlarmReceiver;
+import com.name.myassistant.util.LogUtil;
 
 import java.util.Calendar;
 
@@ -21,46 +21,34 @@ public class Alarm {
     public String weatherAddress;
     public boolean open;
 
-    private AlarmManager alarmManager;
-    private PendingIntent alarmIntent;
-
-    public Alarm(Context context,int id, String hour, String minute, String note, String weatherAddress) {
+    public Alarm(int id, String hour, String minute, String note, String weatherAddress) {
         this.id = id;
         this.hour = hour;
         this.minute = minute;
         this.note = note;
         this.weatherAddress = weatherAddress;
-        this.open = true;
-
-        Intent intent = new Intent(context, AlarmReceiver.class);
-        intent.putExtra("info",note);
-
-        // The pending intent that is triggered when the alarm fires.
-        alarmIntent= PendingIntent.getBroadcast(context, id, intent, 0);
-
-        GlobalVariable.getInstance().getAlarmList().add(this);
     }
 
     public void setOpen(Context context,boolean open){
-        if(this.open==open){
-            return;
-        }
+        LogUtil.d("xzx");
         this.open=open;
-        if(open){
-            alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
 
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        intent.putExtra("info",note);
+        PendingIntent alarmIntent= PendingIntent.getBroadcast(context, id, intent, 0);
+
+        AlarmManager alarmManager= (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+
+        if(open){
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
             calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(hour));
             calendar.set(Calendar.MINUTE, Integer.valueOf(minute));
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                    calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);
-            return;
-        }
-        if(alarmManager!=null){
+            calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);
+        }else{
             alarmManager.cancel(alarmIntent);
         }
-        GlobalVariable.getInstance().save(context);
     }
 
     @Override
@@ -72,8 +60,6 @@ public class Alarm {
                 ", note='" + note + '\'' +
                 ", weatherAddress='" + weatherAddress + '\'' +
                 ", open=" + open +
-                ", alarmManager=" + alarmManager +
-                ", alarmIntent=" + alarmIntent +
                 '}';
     }
 }

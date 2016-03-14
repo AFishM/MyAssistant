@@ -1,6 +1,6 @@
 package com.name.myassistant.alarm;
 
-
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,18 +8,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.name.myassistant.GlobalVariable;
 import com.name.myassistant.R;
 import com.name.myassistant.m.Alarm;
-import com.name.myassistant.util.LogUtil;
 
 import java.util.List;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * 闹钟列表的fragment
  */
 public class AlarmListFragment extends Fragment {
     RecyclerView alarmListView;
@@ -43,7 +43,6 @@ public class AlarmListFragment extends Fragment {
     }
 
     public void addAlarmData() {
-        LogUtil.d("xzx");
         List<Alarm> alarmList= GlobalVariable.getInstance().getAlarmList();
         if(alarmList.size()<=0){
             alarmListView.setVisibility(View.GONE);
@@ -60,7 +59,6 @@ public class AlarmListFragment extends Fragment {
             alarmListAdapter.setAlarmList(alarmList);
             alarmListAdapter.notifyDataSetChanged();
         }
-        LogUtil.d("xzx");
     }
 
     class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.ViewHolder>{
@@ -91,16 +89,24 @@ public class AlarmListFragment extends Fragment {
             }else{
                 holder.onOffTextView.setText(getString(R.string.on));
             }
+            holder.alarmItemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlarmSettingFragment alarmSettingFragment=new AlarmSettingFragment();
+                    alarmSettingFragment.alarm=alarm;
+                    AlarmSettingActivity activity=(AlarmSettingActivity) getActivity();
+                    FragmentTransaction transaction=activity.fragmentManager.beginTransaction();
+                    String tag=AlarmSettingFragment.class.toString();
+                    transaction.add(activity.fragmentLayoutId,alarmSettingFragment,tag);
+                    transaction.addToBackStack(tag);
+                    transaction.commit();
+                }
+            });
             holder.onOffTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(alarm.open){
-                        alarm.open=false;
-                        alarm.setOpen(v.getContext(),false);
-                    }else{
-                        alarm.open=true;
-                        alarm.setOpen(v.getContext(),true);
-                    }
+                    alarm.setOpen(v.getContext(),!alarm.open);
+                    GlobalVariable.save(v.getContext());
                 }
             });
         }
@@ -111,12 +117,14 @@ public class AlarmListFragment extends Fragment {
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder{
+            LinearLayout alarmItemView;
             TextView timeTextView;
             TextView noteTextView;
             TextView weatherAddressTextView;
             TextView onOffTextView;
             public ViewHolder(View itemView) {
                 super(itemView);
+                alarmItemView=(LinearLayout)itemView.findViewById(R.id.alarm_item_view);
                 timeTextView=(TextView)itemView.findViewById(R.id.time);
                 noteTextView=(TextView)itemView.findViewById(R.id.note);
                 weatherAddressTextView=(TextView)itemView.findViewById(R.id.weather_address);

@@ -1,5 +1,6 @@
 package com.name.myassistant;
 
+import android.app.AlarmManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +25,7 @@ public class BootReceiver extends BroadcastReceiver {
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED"))
         {
             LogUtil.d("xzx");
-            GlobalVariable.getInstance().recoverData(context);
+            GlobalVariable.recoverData(context);
             List<Alarm> alarmList=GlobalVariable.getInstance().getAlarmList();
             for(int i=0;i<alarmList.size();i++){
                 Alarm alarm=alarmList.get(i);

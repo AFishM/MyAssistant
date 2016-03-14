@@ -38,7 +38,8 @@ public class GlobalVariable {
         return alarmList;
     }
 
-    public void save(Context context){
+    public static void save(Context context){
+        LogUtil.d("xzx");
         Gson gson=new Gson();
         String data=gson.toJson(ourInstance);
         LogUtil.d("xzx","data=> "+data);
@@ -48,7 +49,7 @@ public class GlobalVariable {
         editor.putString("GlobalVariable",data).apply();
     }
 
-    public void recoverData(Context context){
+    public static void recoverData(Context context){
         SharedPreferences sharedPreferences=context.getSharedPreferences("myassistant", Context.MODE_PRIVATE);
         String data=sharedPreferences.getString("GlobalVariable",null);
         if(data==null){

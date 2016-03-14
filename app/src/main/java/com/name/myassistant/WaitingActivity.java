@@ -28,7 +28,7 @@ public class WaitingActivity extends Activity {
             Context context=params[0];
 
             //恢复闹钟和读取短信许可的数据
-            GlobalVariable.getInstance().recoverData(context);
+            GlobalVariable.recoverData(context);
 
             if(GlobalVariable.getInstance().getAlarmList().size()>0){
                 //如果有闹钟，就设置开机自启动闹钟设置

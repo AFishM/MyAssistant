@@ -39,9 +39,7 @@ public class AlarmSettingActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        LogUtil.d("xzx");
         if(fragmentManager.getBackStackEntryCount()>1){
-            LogUtil.d("xzx");
             fragmentManager.popBackStack();
             return;
         }

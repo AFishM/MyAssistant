@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,15 +71,15 @@ public class AlarmSettingFragment extends Fragment implements View.OnClickListen
                 String noteStr=noteEditText.getText().toString();
                 if(alarm==null){
                     int alarmId= GlobalVariable.getInstance().getAlarmList().size();
-                    alarm=new Alarm(v.getContext(),alarmId,hour,minute,noteStr,null);
-                    alarm.setOpen(v.getContext(),true);
-                    LogUtil.d("xzx","alarm=> "+alarm.toString());
+                    alarm=new Alarm(alarmId,hour,minute,noteStr,null);
+                    alarm.setOpen(v.getContext(), true);
+                    GlobalVariable.getInstance().getAlarmList().add(alarm);
                 }else{
                     alarm.hour=hour;
                     alarm.minute=minute;
                     alarm.note=noteStr;
-                    GlobalVariable.getInstance().save(v.getContext());
                 }
+                GlobalVariable.save(v.getContext());
                 AlarmListFragment alarmListFragment=(AlarmListFragment)activity.fragmentManager.findFragmentByTag(AlarmListFragment.class.toString());
                 if(alarmListFragment!=null){
                     LogUtil.d("xzx");
@@ -94,7 +93,13 @@ public class AlarmSettingFragment extends Fragment implements View.OnClickListen
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         String hour=String.valueOf(hourOfDay);
                         String displayMinute=String.valueOf(minute);
+                        if(hourOfDay<=9){
+                            hour="0"+hour;
+                        }
                         hourTextView.setText(hour);
+                        if(minute<=9){
+                            displayMinute="0"+displayMinute;
+                        }
                         minuteTextView.setText(displayMinute);
                     }
                 },Integer.valueOf(hourTextView.getText().toString()),Integer.valueOf(minuteTextView.getText().toString()),true).show();

@@ -1,6 +1,5 @@
 package com.name.myassistant.util;
 
-import android.util.Config;
 import android.util.Log;
 
 import com.name.myassistant.AppConfig;
@@ -9,8 +8,8 @@ import com.name.myassistant.AppConfig;
  * Created by xu on 16-2-19.
  */
 public class LogUtil {
-    public static final String S_BY_S_AT_S = "%s (by: %s at: %s)";
-    public static final String S_AT_S = "%s (at: %s)";
+    public static final String BY_S_AT_S_S = "(by: %s at: %s) %s";
+    public static final String AT_S_S = "(at: %s) %s";
 
 
     private static String sTag = "myassistant";
@@ -40,7 +39,7 @@ public class LogUtil {
             return;
         }
         if (sIsLogEnable) {
-            Log.v(sTag, String.format(S_AT_S, msg, getStackTraceMsg()));
+            Log.v(sTag, String.format(AT_S_S, msg, getStackTraceMsg()));
         }
     }
 
@@ -49,7 +48,7 @@ public class LogUtil {
             return;
         }
         if (sIsLogEnable) {
-            Log.d(sTag, String.format(S_AT_S, msg, getStackTraceMsg()));
+            Log.d(sTag, String.format(AT_S_S, getStackTraceMsg(),msg));
         }
     }
 
@@ -67,7 +66,7 @@ public class LogUtil {
             return;
         }
         if (sIsLogEnable) {
-            Log.i(sTag, String.format(S_AT_S, msg, getStackTraceMsg()));
+            Log.i(sTag, String.format(AT_S_S, msg, getStackTraceMsg()));
         }
     }
 
@@ -76,7 +75,7 @@ public class LogUtil {
             return;
         }
         if (sIsLogEnable) {
-            Log.w(sTag, String.format(S_AT_S, msg, getStackTraceMsg()));
+            Log.w(sTag, String.format(AT_S_S, msg, getStackTraceMsg()));
         }
     }
 
@@ -85,7 +84,7 @@ public class LogUtil {
             return;
         }
         if (sIsLogEnable) {
-            Log.e(sTag, String.format(S_AT_S, msg, getStackTraceMsg()));
+            Log.e(sTag, String.format(AT_S_S, msg, getStackTraceMsg()));
         }
     }
 
@@ -104,7 +103,7 @@ public class LogUtil {
         }
 
         if (sIsLogEnable) {
-            Log.d(sTag, String.format(S_AT_S, msg, getStackTraceMsg()));
+            Log.d(sTag, String.format(AT_S_S, msg, getStackTraceMsg()));
         }
     }
 
@@ -114,7 +113,7 @@ public class LogUtil {
             return;
         }
         if (sIsLogEnable) {
-            Log.wtf(sTag,String.format(S_AT_S, msg, getStackTraceMsg()));
+            Log.wtf(sTag,String.format(AT_S_S, msg, getStackTraceMsg()));
         }
     }
 
@@ -124,7 +123,7 @@ public class LogUtil {
             return;
         }
         if (sIsLogEnable) {
-            Log.v(sTag, String.format(S_BY_S_AT_S, msg,tag, getStackTraceMsg()));
+            Log.v(sTag, String.format(BY_S_AT_S_S, msg,tag, getStackTraceMsg()));
         }
     }
 
@@ -133,7 +132,7 @@ public class LogUtil {
             return;
         }
         if (sIsLogEnable) {
-            Log.d(sTag, String.format(S_BY_S_AT_S, msg,tag, getStackTraceMsg()));
+            Log.d(sTag, String.format(BY_S_AT_S_S,tag, getStackTraceMsg(),msg));
         }
     }
 
@@ -143,7 +142,7 @@ public class LogUtil {
             return;
         }
         if (sIsLogEnable) {
-            Log.i(sTag, String.format(S_BY_S_AT_S, msg,tag, getStackTraceMsg()));
+            Log.i(sTag, String.format(BY_S_AT_S_S, msg,tag, getStackTraceMsg()));
         }
     }
 
@@ -152,7 +151,7 @@ public class LogUtil {
             return;
         }
         if (sIsLogEnable) {
-            Log.w(sTag, String.format(S_BY_S_AT_S, msg,tag, getStackTraceMsg()));
+            Log.w(sTag, String.format(BY_S_AT_S_S, msg,tag, getStackTraceMsg()));
         }
     }
 
@@ -161,7 +160,7 @@ public class LogUtil {
             return;
         }
         if (sIsLogEnable) {
-            Log.e(sTag, String.format(S_BY_S_AT_S, msg,tag, getStackTraceMsg()));
+            Log.e(sTag, String.format(BY_S_AT_S_S, msg,tag, getStackTraceMsg()));
         }
     }
 
@@ -171,7 +170,7 @@ public class LogUtil {
             return;
         }
         if (sIsLogEnable) {
-            Log.wtf(sTag, String.format(S_BY_S_AT_S, msg, tag, getStackTraceMsg()));
+            Log.wtf(sTag, String.format(BY_S_AT_S_S, msg, tag, getStackTraceMsg()));
         }
     }
 
