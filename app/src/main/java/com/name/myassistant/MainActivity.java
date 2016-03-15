@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.PowerManager;
@@ -44,6 +45,7 @@ import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.Policy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     ImageView inputSwitchImageView;
     TextView pressToSayTextView;
+    TextView closeFlashlightTextView;
     EditText userInputEditText;
 
     ChatContentListViewAdapter chatContentListViewAdapter;
@@ -66,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String recognizerStr;
 
     PowerManager.WakeLock wl;
+
+    Camera camera;
 
     //听写监听器
     private RecognizerListener mRecoListener = new RecognizerListener(){
@@ -146,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ListView chatContentListView=(ListView)findViewById(R.id.chat_content);
         inputSwitchImageView=(ImageView)findViewById(R.id.input_switch);
         pressToSayTextView=(TextView)findViewById(R.id.press_to_say);
+        closeFlashlightTextView=(TextView)findViewById(R.id.close_flashlight);
         userInputEditText =(EditText)findViewById(R.id.question_input);
         TextView sendTextView=(TextView)findViewById(R.id.send);
 
@@ -184,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        closeFlashlightTextView.setOnClickListener(this);
         sendTextView.setOnClickListener(this);
 
         //初始化，创建语音配置对象
@@ -213,15 +220,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onPause() {
-        //释放
-        if(wl!=null){
-
-        }
-        super.onPause();
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode==RESULT_OK){
             Uri uri=data.getData();
@@ -242,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu_main,menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -321,9 +319,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         wl.release();
     }
 
+    void controlFlashlight(boolean open){
+        LogUtil.d("xzx");
+        if(open){
+            LogUtil.d("xzx");
+            camera = Camera.open();
+            Camera.Parameters parameters=camera.getParameters();
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            camera.setParameters(parameters);
+            camera.startPreview();
+        }else{
+            LogUtil.d("xzx");
+            if(camera!=null){
+                camera.stopPreview();
+                camera.release();
+            }
+
+        }
+
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            case R.id.close_flashlight:
+                controlFlashlight(false);
+                closeFlashlightTextView.setVisibility(View.GONE);
+                break;
             case R.id.input_switch:
                 if(isInputWithSay){
                     inputSwitchImageView.setImageResource(R.drawable.microphone_32);
@@ -340,12 +362,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.send:
                 String userInputStr= userInputEditText.getText().toString();
 
-                new AnswerTask().execute(userInputStr);
-
                 Chat chat=new Chat(true,userInputStr);
                 chatContentListViewAdapter.chatList.add(chat);
                 chatContentListViewAdapter.notifyDataSetChanged();
                 userInputEditText.setText("");
+                
+                if(userInputStr.equals(getString(R.string.open_flashlight))){
+                    controlFlashlight(true);
+                    closeFlashlightTextView.setVisibility(View.VISIBLE);
+                    return;
+                }
+
+                new AnswerTask().execute(userInputStr);
                 break;
             default:
                 break;

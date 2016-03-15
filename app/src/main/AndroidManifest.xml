@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.name.myassistant">
 
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" />
+
     <!-- 解锁的权限 -->
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <!-- 亮屏的权限 -->

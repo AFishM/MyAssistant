@@ -11,12 +11,26 @@
         android:layout_height="wrap_content"
         android:title="@string/app_name"
         android:background="@color/black"/>
-    <ListView
-        android:id="@+id/chat_content"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:divider="@null"/>
+        android:layout_weight="1">
+        <ListView
+            android:id="@+id/chat_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"/>
+        <TextView
+            android:id="@+id/close_flashlight"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="24sp"
+            android:textColor="@color/gray"
+            android:text="@string/close_flashlight"
+            android:visibility="gone"/>
+    </RelativeLayout>
+
 
     <View
         android:layout_width="match_parent"

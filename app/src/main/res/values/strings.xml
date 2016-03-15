@@ -8,6 +8,8 @@
     <string name="wait_please">请稍等，我准备下…</string>
 
     <!--main page-->
+    <string name="open_flashlight">打开手电筒。</string>
+    <string name="close_flashlight">点击关闭手电筒</string>
     <string name="setting">设置</string>
     <string name="send">发送</string>
     <string name="press_and_say">按住 说话</string>
