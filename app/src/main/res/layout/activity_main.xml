@@ -29,6 +29,17 @@
             android:textColor="@color/gray"
             android:text="@string/close_flashlight"
             android:visibility="gone"/>
+        <FrameLayout
+            android:id="@+id/contact_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="50dp"/>
+        <!--<android.support.v7.widget.RecyclerView-->
+            <!--android:id="@+id/contact_list"-->
+            <!--android:padding="50dp"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:visibility="gone"/>-->
     </RelativeLayout>
 
 

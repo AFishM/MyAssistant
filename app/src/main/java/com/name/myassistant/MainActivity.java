@@ -9,9 +9,9 @@ import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.v4.view.MotionEventCompat;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -45,7 +44,6 @@ import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.Policy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     PowerManager.WakeLock wl;
 
     Camera camera;
+
+    ContactFragment contactFragment;
 
     //听写监听器
     private RecognizerListener mRecoListener = new RecognizerListener(){
@@ -151,10 +151,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ListView chatContentListView=(ListView)findViewById(R.id.chat_content);
         inputSwitchImageView=(ImageView)findViewById(R.id.input_switch);
         pressToSayTextView=(TextView)findViewById(R.id.press_to_say);
-        closeFlashlightTextView=(TextView)findViewById(R.id.close_flashlight);
         userInputEditText =(EditText)findViewById(R.id.question_input);
         TextView sendTextView=(TextView)findViewById(R.id.send);
 
+        closeFlashlightTextView=(TextView)findViewById(R.id.close_flashlight);
+//        RecyclerView contactsListView=(RecyclerView)findViewById(R.id.contact_list);
         List<Chat> chatList=new ArrayList<>();
         chatContentListViewAdapter=new ChatContentListViewAdapter(chatList);
         Bitmap userBitmap =BitmapFactory.decodeResource(getResources(),R.drawable.user_img_48);
@@ -372,6 +373,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     closeFlashlightTextView.setVisibility(View.VISIBLE);
                     return;
                 }
+                LogUtil.d("userInputStr",userInputStr);
+                if(!userInputStr.contains("?")){
+                    LogUtil.d("userInputStr");
+
+                    if(contactFragment==null){
+                        android.support.v4.app.FragmentTransaction fragmentTransaction=getSupportFragmentManager().beginTransaction();
+                        contactFragment=new ContactFragment();
+                        contactFragment.setmSearchString(userInputStr);
+                        fragmentTransaction.add(R.id.contact_layout, contactFragment);
+                        fragmentTransaction.commit();
+                    }else{
+                        contactFragment.setmSearchString(userInputStr);
+//                        contactFragment.cursorLoader.loadInBackground();
+                        contactFragment.getLoaderManager().initLoader(0,null,contactFragment);
+                    }
+
+                    return;
+                }
 
                 new AnswerTask().execute(userInputStr);
                 break;
@@ -408,6 +427,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
+
 
     class ChatContentListViewAdapter extends BaseAdapter{
         List<Chat> chatList;
