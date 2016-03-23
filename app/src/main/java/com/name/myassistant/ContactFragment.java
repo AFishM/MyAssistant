@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -18,6 +19,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.name.myassistant.util.LogUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -58,6 +62,9 @@ public class ContactFragment extends Fragment implements
                     Contacts.DISPLAY_NAME
     };
 
+    private static final String[] PHONE_PROJECTION={
+        Contacts._ID,
+    };
     // The column index for the _ID column
     private static final int CONTACT_ID_INDEX = 0;
     // The column index for the LOOKUP_KEY column
@@ -71,6 +78,8 @@ public class ContactFragment extends Fragment implements
     private String mSearchString;
     // Defines the array to hold values that replace the ?
     private String[] mSelectionArgs = { mSearchString };
+
+
 
     public ContactFragment() {
         // Required empty public constructor
@@ -112,7 +121,7 @@ public class ContactFragment extends Fragment implements
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         LogUtil.d("load");
-        mCursorAdapter.swapCursor(null);
+//        mCursorAdapter.swapCursor(null);
         mCursorAdapter.swapCursor(data);
     }
 
@@ -124,16 +133,37 @@ public class ContactFragment extends Fragment implements
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        LogUtil.d("xzx");
         // Get the Cursor
         Cursor cursor = mCursorAdapter.getCursor();
         // Move to the selected contact
         cursor.moveToPosition(position);
         // Get the _ID value
         mContactId = cursor.getLong(CONTACT_ID_INDEX);
+        LogUtil.d("xzx", "mContactId=> " + mContactId);
+        int contactIdIndex = cursor.getColumnIndex(ContactsContract.Contacts._ID);
+        LogUtil.d("xzx","contactIdIndex=> "+contactIdIndex);
+        String contactId=cursor.getString(contactIdIndex);
+        LogUtil.d("xzx","contactId=> "+contactId);
         // Get the selected LOOKUP KEY
         mContactKey = cursor.getString(LOOKUP_KEY_INDEX);
         // Create the contact's content Uri
         mContactUri = Contacts.getLookupUri(mContactId, mContactKey);
+
+        Cursor phonesCursor=view.getContext().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID+"="+contactId,null,null);
+        int phoneIndex = 0;
+        List<String> phoneList=new ArrayList<>();
+        if(phonesCursor!=null&&phonesCursor.getCount() > 0) {
+            phoneIndex = phonesCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+            while(phonesCursor.moveToNext()) {
+                String phoneNumber = phonesCursor.getString(phoneIndex);
+                phoneList.add(phoneNumber);
+                LogUtil.d("xzx","phoneNumber=> "+phoneNumber);
+            }
+            LogUtil.d("xzx","phoneList=> "+phoneList.toString());
+        }
+
+        phonesCursor.close();
     /*
      * You can use mContactUri as the content URI for retrieving
      * the details for a contact.

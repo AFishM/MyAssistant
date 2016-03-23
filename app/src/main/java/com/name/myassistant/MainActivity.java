@@ -386,7 +386,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }else{
                         contactFragment.setmSearchString(userInputStr);
 //                        contactFragment.cursorLoader.loadInBackground();
-                        contactFragment.getLoaderManager().initLoader(0,null,contactFragment);
+                        contactFragment.getLoaderManager().restartLoader(0,null,contactFragment);
                     }
 
                     return;
