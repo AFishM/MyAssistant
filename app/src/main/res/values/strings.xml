@@ -16,6 +16,8 @@
     <string name="loosen_to_end">松开 结束</string>
 
     <string name="read_short_message">有新短信时我帮您读出来？</string>
+    <string name="num">号码</string>
+    <string name="short_message_tip">发来短信说</string>
     <string name="alarm_setting">闹钟设置</string>
 
     <string name="on">开</string>

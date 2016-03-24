@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 
-import com.name.myassistant.AppConfig;
 import com.name.myassistant.GlobalVariable;
 import com.name.myassistant.MainActivity;
 import com.name.myassistant.util.LogUtil;
@@ -22,6 +21,7 @@ public class SmsReceiver extends BroadcastReceiver {
         Bundle bundle = intent.getExtras();
         SmsMessage msg;
         String info="";
+        String phoneNum="";
         if (null != bundle) {
             Object[] smsObj = (Object[]) bundle.get("pdus");
             for (Object object : smsObj) {
@@ -30,12 +30,19 @@ public class SmsReceiver extends BroadcastReceiver {
                 LogUtil.d("xzx", "number:" + msg.getOriginatingAddress()
                         + "   body:" + msg.getDisplayMessageBody() + "  time:"
                         + msg.getTimestampMillis());
+                phoneNum=msg.getOriginatingAddress();
             }
+            Intent intent1=new Intent(context, MainActivity.class);
+            intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent1.putExtra("phoneNum",phoneNum);
+            intent1.putExtra("info",info);
+            context.startActivity(intent1);
             if(GlobalVariable.getInstance().isREAD_SHORT_MESSAGE_PERMISSION()){
-                Intent intent1=new Intent(context, MainActivity.class);
-                intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent1.putExtra("info",info);
-                context.startActivity(intent1);
+//                Intent intent1=new Intent(context, MainActivity.class);
+//                intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                intent1.putExtra("phoneNum",phoneNum);
+//                intent1.putExtra("info",info);
+//                context.startActivity(intent1);
             }
         }
     }

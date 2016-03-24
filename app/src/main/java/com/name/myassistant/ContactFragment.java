@@ -62,9 +62,7 @@ public class ContactFragment extends Fragment implements
                     Contacts.DISPLAY_NAME
     };
 
-    private static final String[] PHONE_PROJECTION={
-        Contacts._ID,
-    };
+
     // The column index for the _ID column
     private static final int CONTACT_ID_INDEX = 0;
     // The column index for the LOOKUP_KEY column
@@ -161,9 +159,10 @@ public class ContactFragment extends Fragment implements
                 LogUtil.d("xzx","phoneNumber=> "+phoneNumber);
             }
             LogUtil.d("xzx","phoneList=> "+phoneList.toString());
+            phonesCursor.close();
         }
 
-        phonesCursor.close();
+
     /*
      * You can use mContactUri as the content URI for retrieving
      * the details for a contact.

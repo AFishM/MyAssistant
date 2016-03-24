@@ -4,6 +4,7 @@ import android.app.KeyguardManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
@@ -11,9 +12,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.provider.ContactsContract;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -209,8 +212,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initSpeechRecognizer();
         initSpeechSynthesizer();
 
+        String phoneNum=getIntent().getStringExtra("phoneNum");
+        String contactName="";
+        if(!TextUtils.isEmpty(phoneNum)){
+            contactName=contactName+getContactNameWithPhone(phoneNum);
+        }
+
         String info=getIntent().getStringExtra("info");
         if(info!=null){
+            info=contactName+getString(R.string.short_message_tip)+info;
             wakeUpAndUnlock();
             Chat chat=new Chat(false,info);
             chatContentListViewAdapter.chatList.add(chat);
@@ -374,7 +384,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     return;
                 }
                 LogUtil.d("userInputStr",userInputStr);
-                if(!userInputStr.contains("?")){
+                if(!userInputStr.contains("？")){
                     LogUtil.d("userInputStr");
 
                     if(contactFragment==null){
@@ -527,5 +537,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         TextView userInputTextView;
         ImageView robotImgView;
         ImageView userImgView;
+    }
+
+    String getContactNameWithPhone(String phoneNum){
+        String[] PHONE_PROJECTION={ContactsContract.PhoneLookup._ID, ContactsContract.PhoneLookup.DISPLAY_NAME};
+        ContentResolver resolver=getContentResolver();
+        Uri lookUpUri=Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNum));
+        Cursor cursor=resolver.query(lookUpUri, PHONE_PROJECTION, null, null,null);
+        String contactName=null;
+        if(cursor!=null&&cursor.getCount()>0){
+            while (cursor.moveToNext()){
+                contactName=cursor.getString(1);
+            }
+            cursor.close();
+        }else{
+            contactName=getString(R.string.num)+phoneNum;
+        }
+        return contactName;
     }
 }
