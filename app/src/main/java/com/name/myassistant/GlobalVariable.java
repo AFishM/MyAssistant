@@ -17,6 +17,7 @@ public class GlobalVariable {
     private static GlobalVariable ourInstance = new GlobalVariable();
     private boolean READ_SHORT_MESSAGE_PERMISSION;
     private List<Alarm> alarmList=new ArrayList<>();
+    private String link;
 
     public static GlobalVariable getInstance() {
         return ourInstance;
@@ -59,5 +60,13 @@ public class GlobalVariable {
         ourInstance=gson.fromJson(data,GlobalVariable.class);
         LogUtil.d("xzx","ourInstance READ_SHORT_MESSAGE_PERMISSION=> "+ourInstance.isREAD_SHORT_MESSAGE_PERMISSION());
         LogUtil.d("xzx","ourInstance alarmList=> "+ourInstance.getAlarmList().toString());
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 }

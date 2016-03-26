@@ -10,10 +10,25 @@
             android:id="@+id/robot_img"
             android:layout_width="32dp"
             android:layout_height="32dp" />
-        <TextView
-            android:id="@+id/robot_output"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/robot_output"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"/>
+            <TextView
+                android:id="@+id/look_in_bai_du"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:gravity="center"
+                android:text="@string/look_in_bai_du"
+                android:visibility="gone"/>
+        </LinearLayout>
+
     </LinearLayout>
     <LinearLayout
         android:id="@+id/user_say_layout"
@@ -22,8 +37,10 @@
         android:layout_alignParentRight="true">
         <TextView
             android:id="@+id/user_input"
+            android:layout_marginTop="4dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"/>
         <ImageView
             android:id="@+id/user_img"
             android:layout_width="32dp"

@@ -8,16 +8,23 @@
     <string name="wait_please">请稍等，我准备下…</string>
 
     <!--main page-->
-    <string name="open_flashlight">打开手电筒。</string>
+    <string name="open_flashlight">打开手电筒</string>
     <string name="close_flashlight">点击关闭手电筒</string>
     <string name="setting">设置</string>
     <string name="send">发送</string>
     <string name="press_and_say">按住 说话</string>
     <string name="loosen_to_end">松开 结束</string>
 
+    <!--<string name="other_info">其他</string>-->
+
+    <string name="look_in_bai_du">在百度中查看更多结果</string>
+    <string name="call_somebody">打电话给</string>
+    <string name="send_message_to">发短信给</string>
+    <string name="say_something">说点什么？</string>
+    <string name="no_this_man">您的通讯录里没有这个人</string>
     <string name="read_short_message">有新短信时我帮您读出来？</string>
     <string name="num">号码</string>
-    <string name="short_message_tip">发来短信说</string>
+    <string name="short_message_tip">发来短信说，</string>
     <string name="alarm_setting">闹钟设置</string>
 
     <string name="on">开</string>
@@ -31,6 +38,5 @@
     <string name="confirm">确定</string>
 
     <string name="no_alarm">您没有设置任何闹钟</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_look_other_info_web">LookOtherInfoWebActivity</string>
 </resources>

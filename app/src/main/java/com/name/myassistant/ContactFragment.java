@@ -1,12 +1,16 @@
 package com.name.myassistant;
 
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -16,8 +20,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.name.myassistant.m.Chat;
 import com.name.myassistant.util.LogUtil;
 
 import java.util.ArrayList;
@@ -44,6 +52,7 @@ public class ContactFragment extends Fragment implements
     };
 
     ListView contactListView;
+    ListView phoneListView;
 
     long mContactId;
 
@@ -77,6 +86,7 @@ public class ContactFragment extends Fragment implements
     // Defines the array to hold values that replace the ?
     private String[] mSelectionArgs = { mSearchString };
 
+    MainActivity activity;
 
 
     public ContactFragment() {
@@ -91,10 +101,12 @@ public class ContactFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        activity=(MainActivity)getActivity();
         cursorLoader=(CursorLoader)getLoaderManager().initLoader(0, null, this);
 
         View view=inflater.inflate(R.layout.fragment_contact, container, false);
         contactListView=(ListView)view.findViewById(R.id.contact_list);
+        phoneListView=(ListView)view.findViewById(R.id.phone_list);
         mCursorAdapter=new SimpleCursorAdapter(view.getContext(),R.layout.contact_item,null,FROM_COLUMNS,TO_IDS,0);
         contactListView.setAdapter(mCursorAdapter);
         contactListView.setOnItemClickListener(this);
@@ -148,6 +160,7 @@ public class ContactFragment extends Fragment implements
         // Create the contact's content Uri
         mContactUri = Contacts.getLookupUri(mContactId, mContactKey);
 
+
         Cursor phonesCursor=view.getContext().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID+"="+contactId,null,null);
         int phoneIndex = 0;
         List<String> phoneList=new ArrayList<>();
@@ -161,11 +174,89 @@ public class ContactFragment extends Fragment implements
             LogUtil.d("xzx","phoneList=> "+phoneList.toString());
             phonesCursor.close();
         }
+        LogUtil.d("xzx", "phoneList=> " + phoneList.toString());
+
+        phoneListView.setVisibility(View.VISIBLE);
+        LogUtil.d("xzx");
+        phoneListView.setAdapter(new phoneListAdapter(phoneList));
 
 
     /*
      * You can use mContactUri as the content URI for retrieving
      * the details for a contact.
      */
+    }
+    class phoneListAdapter extends BaseAdapter{
+        public phoneListAdapter(List<String> phoneList) {
+            this.phoneList = phoneList;
+        }
+
+        List<String> phoneList;
+        @Override
+        public int getCount() {
+            return phoneList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view;
+            phoneListViewHolder holder;
+            if (null != convertView) {
+                view = convertView;
+                holder = (phoneListViewHolder) view.getTag();
+            } else {
+                holder = new phoneListViewHolder();
+                view = View.inflate(parent.getContext(), R.layout.phone_item, null);
+                holder.phoneTextView=(TextView)view.findViewById(R.id.phone);
+                view.setTag(holder);
+            }
+            final String phoneNum=phoneList.get(position);
+            holder.phoneTextView.setText(phoneNum);
+            holder.phoneTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    LogUtil.d("xzx", "phoneNum=> " + phoneNum);
+                    if (activity.prepareToSendMessage) {
+                        activity.phoneNum = phoneNum;
+
+                        String robotOutput=getString(R.string.say_something);
+                        Chat chat = new Chat(false, robotOutput);
+                        activity.chatContentListViewAdapter.chatList.add(chat);
+                        activity.chatContentListViewAdapter.notifyDataSetChanged();
+
+                        activity.mTts.startSpeaking(getString(R.string.say_something), activity.mSynListener);
+                    } else {
+                        callPhone(phoneNum);
+                    }
+                    activity.getSupportFragmentManager().popBackStack();
+                    activity.contactLayout.setVisibility(View.GONE);
+                }
+            });
+            return view;
+        }
+
+        class phoneListViewHolder{
+            TextView phoneTextView;
+        }
+    }
+
+    void callPhone(String phoneNum) {
+        LogUtil.d("xzx");
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNum));
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(getActivity(), " 是您拒绝哦，自己打 ", Toast.LENGTH_LONG).show();
+            return;
+        }
+        startActivity(intent);
     }
 }

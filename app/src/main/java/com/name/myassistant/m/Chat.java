@@ -6,9 +6,18 @@ package com.name.myassistant.m;
 public class Chat {
     public boolean isUserInput;
     public String chatStr;
+    private boolean isRobotAnswer;
 
     public Chat(boolean isUserInput, String chatStr) {
         this.isUserInput = isUserInput;
         this.chatStr = chatStr;
+    }
+
+    public boolean isRobotAnswer() {
+        return isRobotAnswer;
+    }
+
+    public void setIsRobotAnswer(boolean isRobotAnswer) {
+        this.isRobotAnswer = isRobotAnswer;
     }
 }

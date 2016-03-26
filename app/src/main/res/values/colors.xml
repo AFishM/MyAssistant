@@ -5,4 +5,5 @@
     <color name="green">@android:color/holo_green_light</color>
     <color name="light_gray">#a6a6a6</color>
     <color name="gray">@android:color/darker_gray</color>
+    <color name="transparent_black">#77000000</color>
 </resources>

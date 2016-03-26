@@ -1,9 +1,11 @@
 package com.name.myassistant;
 
+import android.Manifest;
 import android.app.KeyguardManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.ContactsContract;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,10 +27,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.iflytek.cloud.RecognizerListener;
 import com.iflytek.cloud.RecognizerResult;
@@ -50,16 +55,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener,View.OnLongClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
     ImageView inputSwitchImageView;
     TextView pressToSayTextView;
     TextView closeFlashlightTextView;
     EditText userInputEditText;
 
+    FrameLayout contactLayout;
+
     ChatContentListViewAdapter chatContentListViewAdapter;
 
-    boolean isInputWithSay=true;
+    boolean isInputWithSay = true;
     boolean isAllowRobotToSay;
 
     //SpeechRecognizer 语音听写对象
@@ -67,51 +74,60 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //SpeechSynthesizer 语音合成对象
     SpeechSynthesizer mTts;
 
-    String recognizerStr;
-
     PowerManager.WakeLock wl;
 
     Camera camera;
 
     ContactFragment contactFragment;
 
+    String phoneNum;
+
+//    boolean prepareToCallPhone;
+    boolean prepareToSendMessage;
+
+    boolean recognizeFinish;
+    String recognizerStr;
+
     //听写监听器
-    private RecognizerListener mRecoListener = new RecognizerListener(){
+    RecognizerListener mRecoListener = new RecognizerListener() {
         //听写结果回调接口(返回Json格式结果,用户可参见附录12.1);
         //一般情况下会通过onResults接口多次返回结果,完整的识别内容是多次结果的累加;
         //关于解析Json的代码可参见MscDemo中JsonParser类;
         //isLast等于true时会话结束。
         public void onResult(RecognizerResult results, boolean isLast) {
-            recognizerStr=recognizerStr+parseJsonToString(results.getResultString());
-            inputSwitchImageView.setImageResource(R.drawable.keyboard_32);
-            pressToSayTextView.setVisibility(View.GONE);
-            userInputEditText.setVisibility(View.VISIBLE);
-            userInputEditText.setText(recognizerStr);
-            isInputWithSay=false;
+            recognizerStr=recognizerStr + parseJsonToString(results.getResultString());
+            if(recognizeFinish){
+                userInputHandle(recognizerStr);
+                recognizeFinish=false;
+            }
         }
+
         //会话发生错误回调接口
         public void onError(SpeechError error) {
-            LogUtil.d("xzx","SpeechError=> "+error.toString());
+            LogUtil.d("xzx", "SpeechError=> " + error.toString());
             error.getPlainDescription(true);//获取错误码描述
         }
 
         //音量值0~30
         @Override
         public void onVolumeChanged(int i, byte[] bytes) {
-
         }
 
         //开始录音
-        public void onBeginOfSpeech() {}
+        public void onBeginOfSpeech() {
+        }
 
         //结束录音
-        public void onEndOfSpeech() {}
+        public void onEndOfSpeech() {
+        }
+
         //扩展用接口
-        public void onEvent(int eventType, int arg1, int arg2, Bundle obj) {}
+        public void onEvent(int eventType, int arg1, int arg2, Bundle obj) {
+        }
     };
 
     //合成监听器
-    private SynthesizerListener mSynListener = new SynthesizerListener() {
+    SynthesizerListener mSynListener = new SynthesizerListener() {
         //会话结束回调接口,没有错误时,error为null
         public void onCompleted(SpeechError error) {
         }
@@ -144,24 +160,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         //会话事件回调接口
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar=(Toolbar)findViewById(R.id.main_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-        ListView chatContentListView=(ListView)findViewById(R.id.chat_content);
-        inputSwitchImageView=(ImageView)findViewById(R.id.input_switch);
-        pressToSayTextView=(TextView)findViewById(R.id.press_to_say);
-        userInputEditText =(EditText)findViewById(R.id.question_input);
-        TextView sendTextView=(TextView)findViewById(R.id.send);
+        ListView chatContentListView = (ListView) findViewById(R.id.chat_content);
+        inputSwitchImageView = (ImageView) findViewById(R.id.input_switch);
+        pressToSayTextView = (TextView) findViewById(R.id.press_to_say);
+        userInputEditText = (EditText) findViewById(R.id.question_input);
+        TextView sendTextView = (TextView) findViewById(R.id.send);
 
-        closeFlashlightTextView=(TextView)findViewById(R.id.close_flashlight);
+        closeFlashlightTextView = (TextView) findViewById(R.id.close_flashlight);
+        contactLayout=(FrameLayout)findViewById(R.id.contact_layout);
+        contactLayout.setOnClickListener(this);
 //        RecyclerView contactsListView=(RecyclerView)findViewById(R.id.contact_list);
-        List<Chat> chatList=new ArrayList<>();
-        chatContentListViewAdapter=new ChatContentListViewAdapter(chatList);
-        Bitmap userBitmap =BitmapFactory.decodeResource(getResources(),R.drawable.user_img_48);
+        List<Chat> chatList = new ArrayList<>();
+        chatContentListViewAdapter = new ChatContentListViewAdapter(chatList);
+        Bitmap userBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.user_img_48);
         chatContentListViewAdapter.setUserImgBitmap(userBitmap);
         chatContentListViewAdapter.setRobotImgBitmap(userBitmap);
 
@@ -176,10 +195,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
                         //开始听写
+                        recognizerStr="";
                         pressToSayTextView.setText(getString(R.string.loosen_to_end));
                         pressToSayTextView.setBackgroundResource(R.drawable.oval_light_gray_solid);
                         mIat.startListening(mRecoListener);
-                        recognizerStr = "";
                         return true;
                     case MotionEvent.ACTION_UP:
                         pressToSayTextView.setText(getString(R.string.press_and_say));
@@ -199,30 +218,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //初始化，创建语音配置对象
         SpeechUtility.createUtility(this, SpeechConstant.APPID + "=" + getString(R.string.app_id));
-//        analyze("天空为什么是蓝的");
-//        analyze("香港什么时候回归");
-//        analyze("香港在哪里");
-//        analyze("广外校长是谁");
-//        analyze("中国的首都是什么");
-//        analyze("咖啡怎么做");
-//        analyze("中国有多少个省");
-//        analyze("珠穆朗玛峰有多高");
-//        userInputEditText.setText("广外校长是谁");
 
         initSpeechRecognizer();
         initSpeechSynthesizer();
 
-        String phoneNum=getIntent().getStringExtra("phoneNum");
-        String contactName="";
-        if(!TextUtils.isEmpty(phoneNum)){
-            contactName=contactName+getContactNameWithPhone(phoneNum);
+        String phoneNum = getIntent().getStringExtra("phoneNum");
+        String contactName = "";
+        if (!TextUtils.isEmpty(phoneNum)) {
+            contactName = contactName + getContactNameWithPhoneNum(phoneNum);
         }
 
-        String info=getIntent().getStringExtra("info");
-        if(info!=null){
-            info=contactName+getString(R.string.short_message_tip)+info;
+        String info = getIntent().getStringExtra("info");
+        if (info != null) {
+            info = contactName + getString(R.string.short_message_tip) + info;
             wakeUpAndUnlock();
-            Chat chat=new Chat(false,info);
+            Chat chat = new Chat(false, info);
             chatContentListViewAdapter.chatList.add(chat);
             chatContentListViewAdapter.notifyDataSetChanged();
             mTts.startSpeaking(info, mSynListener);
@@ -231,17 +241,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public void onBackPressed() {
+        LogUtil.d("xzx","getSupportFragmentManager().getBackStackEntryCount()=> "+getSupportFragmentManager().getBackStackEntryCount());
+        if(getSupportFragmentManager().getBackStackEntryCount()>0){
+            getSupportFragmentManager().popBackStack();
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode==RESULT_OK){
-            Uri uri=data.getData();
-            LogUtil.d("xzx","Uri=> "+uri.toString());
-            ContentResolver contentResolver=this.getContentResolver();
+        if (resultCode == RESULT_OK) {
+            Uri uri = data.getData();
+            LogUtil.d("xzx", "Uri=> " + uri.toString());
+            ContentResolver contentResolver = this.getContentResolver();
             try {
-                Bitmap bitmap= BitmapFactory.decodeStream(contentResolver.openInputStream(uri));
+                Bitmap bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(uri));
                 chatContentListViewAdapter.setUserImgBitmap(bitmap);
                 chatContentListViewAdapter.notifyDataSetChanged();
             } catch (FileNotFoundException e) {
-                LogUtil.d("xzx","e=> "+e.toString());
+                LogUtil.d("xzx", "e=> " + e.toString());
                 e.printStackTrace();
             }
         }
@@ -257,8 +277,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId()==R.id.action_settings){
-            Intent intent=new Intent(MainActivity.this,RobotSettingActivity.class);
+        if (item.getItemId() == R.id.action_settings) {
+            Intent intent = new Intent(MainActivity.this, RobotSettingActivity.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
@@ -267,9 +287,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 语音听写初始化以及参数设置
      */
-    void initSpeechRecognizer(){
+    void initSpeechRecognizer() {
         //1.创建SpeechRecognizer对象,第二个参数:本地听写时传InitListener
-        mIat= SpeechRecognizer.createRecognizer(this, null);
+        mIat = SpeechRecognizer.createRecognizer(this, null);
         //2.设置听写参数,详见《科大讯飞MSC API手册(Android)》SpeechConstant类
         mIat.setParameter(SpeechConstant.DOMAIN, "iat");
         mIat.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
@@ -279,9 +299,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 语音合成初始化以及参数设置
      */
-    void initSpeechSynthesizer(){
+    void initSpeechSynthesizer() {
         //1.创建 SpeechSynthesizer 对象, 第二个参数:本地合成时传 InitListener
-        mTts= SpeechSynthesizer.createSynthesizer(this, null);
+        mTts = SpeechSynthesizer.createSynthesizer(this, null);
         //2.合成参数设置,详见《科大讯飞MSC API手册(Android)》SpeechSynthesizer 类
         //设置发音人(更多在线发音人,用户可参见 附录12.2
         mTts.setParameter(SpeechConstant.VOICE_NAME, "xiaoyan");
@@ -293,116 +313,96 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //仅支持保存为 pcm 格式,如果不需要保存合成音频,注释该行代码
         mTts.setParameter(SpeechConstant.TTS_AUDIO_PATH, "./sdcard/iflytek.pcm");
     }
+
     //{"sn":1,"ls":false,"bg":0,"ed":0,"ws":[  {"bg":0,"cw":[{"sc":0.00,"w":"广"}]}   ,{"bg":0,"cw":[{"sc":0.00,"w":"外"}]},{"bg":0,"cw":[{"sc":0.00,"w":"校长"}]},{"bg":0,"cw":[{"sc":0.00,"w":"是"}]},{"bg":0,"cw":[{"sc":0.00,"w":"谁"}]}]}
-    String parseJsonToString(String jsonStr){
+    String parseJsonToString(String jsonStr) {
         try {
-            String parseResultStr="";
-            JSONObject jsonObject=new JSONObject(jsonStr);
-            JSONArray wsJsonArray=jsonObject.getJSONArray("ws");
+            String parseResultStr = "";
+            JSONObject jsonObject = new JSONObject(jsonStr);
+            JSONArray wsJsonArray = jsonObject.getJSONArray("ws");
+            recognizeFinish=jsonObject.getBoolean("ls");
             JSONObject wsJsonObject;
-            for(int i=0;i<wsJsonArray.length();i++){
-                wsJsonObject =wsJsonArray.getJSONObject(i);
-                parseResultStr=parseResultStr+wsJsonObject.getJSONArray("cw").getJSONObject(0).get("w");
+            for (int i = 0; i < wsJsonArray.length(); i++) {
+                wsJsonObject = wsJsonArray.getJSONObject(i);
+                parseResultStr = parseResultStr + wsJsonObject.getJSONArray("cw").getJSONObject(0).get("w");
             }
             return parseResultStr;
         } catch (JSONException e) {
-            LogUtil.d("xzx","e=> "+e.toString());
+            LogUtil.d("xzx", "e=> " + e.toString());
             e.printStackTrace();
         }
         return jsonStr;
     }
 
-    void wakeUpAndUnlock(){
-        LogUtil.d("xzx","wakeUpAndUnlock");
-        KeyguardManager km= (KeyguardManager) MainActivity.this.getSystemService(Context.KEYGUARD_SERVICE);
+    void wakeUpAndUnlock() {
+        LogUtil.d("xzx", "wakeUpAndUnlock");
+        KeyguardManager km = (KeyguardManager) MainActivity.this.getSystemService(Context.KEYGUARD_SERVICE);
         KeyguardManager.KeyguardLock kl = km.newKeyguardLock("unLock");
         //解锁
         kl.disableKeyguard();
         //获取电源管理器对象
-        PowerManager pm=(PowerManager) MainActivity.this.getSystemService(Context.POWER_SERVICE);
-        if(pm.isScreenOn()){
+        PowerManager pm = (PowerManager) MainActivity.this.getSystemService(Context.POWER_SERVICE);
+        if (pm.isScreenOn()) {
             return;
         }
         //获取PowerManager.WakeLock对象,后面的参数|表示同时传入两个值,最后的是LogCat里用的Tag
-        wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK,"bright");
+        wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "bright");
         //点亮屏幕
         wl.acquire();
         wl.release();
     }
 
-    void controlFlashlight(boolean open){
+    void controlFlashlight(boolean open) {
         LogUtil.d("xzx");
-        if(open){
+        if (open) {
             LogUtil.d("xzx");
             camera = Camera.open();
-            Camera.Parameters parameters=camera.getParameters();
+            Camera.Parameters parameters = camera.getParameters();
             parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
             camera.setParameters(parameters);
             camera.startPreview();
-        }else{
+        } else {
             LogUtil.d("xzx");
-            if(camera!=null){
+            if (camera != null) {
                 camera.stopPreview();
                 camera.release();
             }
-
         }
-
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.close_flashlight:
                 controlFlashlight(false);
                 closeFlashlightTextView.setVisibility(View.GONE);
                 break;
             case R.id.input_switch:
-                if(isInputWithSay){
+                if (isInputWithSay) {
                     inputSwitchImageView.setImageResource(R.drawable.microphone_32);
                     pressToSayTextView.setVisibility(View.GONE);
                     userInputEditText.setVisibility(View.VISIBLE);
-                    isInputWithSay=false;
-                }else{
+                    isInputWithSay = false;
+                } else {
                     inputSwitchImageView.setImageResource(R.drawable.keyboard_32);
                     pressToSayTextView.setVisibility(View.VISIBLE);
                     userInputEditText.setVisibility(View.GONE);
-                    isInputWithSay=true;
+                    isInputWithSay = true;
                 }
                 break;
             case R.id.send:
-                String userInputStr= userInputEditText.getText().toString();
-
-                Chat chat=new Chat(true,userInputStr);
-                chatContentListViewAdapter.chatList.add(chat);
-                chatContentListViewAdapter.notifyDataSetChanged();
+                String userInputStr = userInputEditText.getText().toString();
                 userInputEditText.setText("");
-                
-                if(userInputStr.equals(getString(R.string.open_flashlight))){
-                    controlFlashlight(true);
-                    closeFlashlightTextView.setVisibility(View.VISIBLE);
-                    return;
-                }
-                LogUtil.d("userInputStr",userInputStr);
-                if(!userInputStr.contains("？")){
-                    LogUtil.d("userInputStr");
-
-                    if(contactFragment==null){
-                        android.support.v4.app.FragmentTransaction fragmentTransaction=getSupportFragmentManager().beginTransaction();
-                        contactFragment=new ContactFragment();
-                        contactFragment.setmSearchString(userInputStr);
-                        fragmentTransaction.add(R.id.contact_layout, contactFragment);
-                        fragmentTransaction.commit();
-                    }else{
-                        contactFragment.setmSearchString(userInputStr);
-//                        contactFragment.cursorLoader.loadInBackground();
-                        contactFragment.getLoaderManager().restartLoader(0,null,contactFragment);
-                    }
-
-                    return;
-                }
-
-                new AnswerTask().execute(userInputStr);
+                userInputHandle(userInputStr);
+                break;
+//            case R.id.call_phone:
+//                String phone = userInputEditText.getText().toString();
+//                callPhone(phone);
+//                break;
+            case R.id.contact_layout:
+                getSupportFragmentManager().popBackStack();
+                contactLayout.setVisibility(View.GONE);
+                prepareToSendMessage=false;
                 break;
             default:
                 break;
@@ -415,13 +415,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    class AnswerTask extends AsyncTask<String,Void,String>{
+    class AnswerTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
             try {
                 return Qa.getAnswer(params[0]);
             } catch (IOException e) {
-                LogUtil.d("xzx","e=> "+e.toString());
+                LogUtil.d("xzx", "e=> " + e.toString());
                 e.printStackTrace();
             }
             return null;
@@ -429,17 +429,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         protected void onPostExecute(String answer) {
-            Chat chat=new Chat(false,answer);
+            Chat chat = new Chat(false, answer);
+            chat.setIsRobotAnswer(true);
             chatContentListViewAdapter.chatList.add(chat);
             chatContentListViewAdapter.notifyDataSetChanged();
-            if(isAllowRobotToSay){
+            if (isAllowRobotToSay) {
                 mTts.startSpeaking(answer, mSynListener);
             }
         }
     }
 
 
-    class ChatContentListViewAdapter extends BaseAdapter{
+    class ChatContentListViewAdapter extends BaseAdapter {
         List<Chat> chatList;
         Bitmap robotImgBitmap;
         Bitmap userImgBitmap;
@@ -475,22 +476,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public View getView(int position, View convertView, ViewGroup parent) {
             View view;
             ChatViewHolder holder;
-            if(null!=convertView){
-                view=convertView;
-                holder=(ChatViewHolder)view.getTag();
-            }else{
-                holder=new ChatViewHolder();
-                view=View.inflate(MainActivity.this,R.layout.chat_item,null);
-                holder.robotSayLayout=(LinearLayout)view.findViewById(R.id.robot_say_layout);
-                holder.robotOutputTextView=(TextView)view.findViewById(R.id.robot_output);
-                holder.robotImgView =(ImageView)view.findViewById(R.id.robot_img);
-                holder.userSayLayout=(LinearLayout)view.findViewById(R.id.user_say_layout);
-                holder.userInputTextView =(TextView)view.findViewById(R.id.user_input);
-                holder.userImgView =(ImageView)view.findViewById(R.id.user_img);
+            if (null != convertView) {
+                view = convertView;
+                holder = (ChatViewHolder) view.getTag();
+            } else {
+                holder = new ChatViewHolder();
+                view = View.inflate(MainActivity.this, R.layout.chat_item, null);
+                holder.robotSayLayout = (LinearLayout) view.findViewById(R.id.robot_say_layout);
+                holder.robotOutputTextView = (TextView) view.findViewById(R.id.robot_output);
+                holder.lookInBaiDuTextView =(TextView)view.findViewById(R.id.look_in_bai_du);
+                holder.robotImgView = (ImageView) view.findViewById(R.id.robot_img);
+                holder.userSayLayout = (LinearLayout) view.findViewById(R.id.user_say_layout);
+                holder.userInputTextView = (TextView) view.findViewById(R.id.user_input);
+                holder.userImgView = (ImageView) view.findViewById(R.id.user_img);
                 view.setTag(holder);
             }
-            final Chat chat=chatList.get(position);
-            if(chat.isUserInput){
+            final Chat chat = chatList.get(position);
+            if (chat.isUserInput) {
                 holder.robotSayLayout.setVisibility(View.GONE);
                 holder.userSayLayout.setVisibility(View.VISIBLE);
                 holder.userImgView.setImageBitmap(userImgBitmap);
@@ -504,7 +506,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         startActivityForResult(intent, 1);
                     }
                 });
-            }else{
+            } else {
                 holder.robotSayLayout.setVisibility(View.VISIBLE);
                 holder.userSayLayout.setVisibility(View.GONE);
                 holder.robotImgView.setImageBitmap(robotImgBitmap);
@@ -522,37 +524,125 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 holder.robotImgView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent=new Intent(MainActivity.this,RobotSettingActivity.class);
+                        Intent intent = new Intent(MainActivity.this, RobotSettingActivity.class);
                         startActivity(intent);
                     }
                 });
+                if(chat.isRobotAnswer()){
+                    holder.lookInBaiDuTextView.setVisibility(View.VISIBLE);
+                    holder.lookInBaiDuTextView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String link = GlobalVariable.getInstance().getLink();
+                            Intent intent = new Intent(MainActivity.this, LookOtherInfoWebActivity.class);
+                            intent.putExtra("link", link);
+                            startActivity(intent);
+                        }
+                    });
+                }else{
+                    holder.lookInBaiDuTextView.setVisibility(View.GONE);
+                    holder.lookInBaiDuTextView.setOnClickListener(null);
+                }
             }
             return view;
         }
     }
+
     class ChatViewHolder {
         LinearLayout robotSayLayout;
         LinearLayout userSayLayout;
         TextView robotOutputTextView;
+        TextView lookInBaiDuTextView;
         TextView userInputTextView;
         ImageView robotImgView;
         ImageView userImgView;
     }
 
-    String getContactNameWithPhone(String phoneNum){
-        String[] PHONE_PROJECTION={ContactsContract.PhoneLookup._ID, ContactsContract.PhoneLookup.DISPLAY_NAME};
-        ContentResolver resolver=getContentResolver();
-        Uri lookUpUri=Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNum));
-        Cursor cursor=resolver.query(lookUpUri, PHONE_PROJECTION, null, null,null);
-        String contactName=null;
-        if(cursor!=null&&cursor.getCount()>0){
-            while (cursor.moveToNext()){
-                contactName=cursor.getString(1);
+    String getContactNameWithPhoneNum(String phoneNum) {
+        String[] PHONE_PROJECTION = {ContactsContract.PhoneLookup._ID, ContactsContract.PhoneLookup.DISPLAY_NAME};
+        ContentResolver resolver = getContentResolver();
+        Uri lookUpUri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNum));
+        Cursor cursor = resolver.query(lookUpUri, PHONE_PROJECTION, null, null, null);
+        String contactName = null;
+        if (cursor != null && cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                contactName = cursor.getString(1);
             }
             cursor.close();
-        }else{
-            contactName=getString(R.string.num)+phoneNum;
+        } else {
+            contactName = getString(R.string.num) + phoneNum;
         }
         return contactName;
+    }
+
+    void getPhoneNumWithContactName(String contactName) {
+        if (contactFragment == null) {
+            contactLayout.setVisibility(View.VISIBLE);
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            contactFragment = new ContactFragment();
+            contactFragment.setmSearchString(contactName);
+            fragmentTransaction.add(R.id.contact_layout, contactFragment);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        } else {
+            contactFragment.setmSearchString(contactName);
+            contactFragment.getLoaderManager().restartLoader(0, null, contactFragment);
+        }
+    }
+
+    void callPhone(String phoneNum) {
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNum));
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, " 是您拒绝哦，自己打 ", Toast.LENGTH_LONG).show();
+            return;
+        }
+        startActivity(intent);
+    }
+
+    void sendShortMessage(String phoneNum,String message){
+        android.telephony.SmsManager smsManager=android.telephony.SmsManager.getDefault();
+        smsManager.sendTextMessage(phoneNum, null, message, null, null);
+    }
+
+    void userInputHandle(String userInput){
+        //将用户的输入输出到屏幕上
+        Chat chat = new Chat(true, userInput);
+        chatContentListViewAdapter.chatList.add(chat);
+        chatContentListViewAdapter.notifyDataSetChanged();
+
+        //打电话
+        String callTag = getString(R.string.call_somebody);
+        if (userInput.contains(callTag)) {
+//            prepareToCallPhone=true;
+            String contactName = userInput.replace(callTag, "");
+            getPhoneNumWithContactName(contactName);
+//            phoneNum = userInput.replace(callTag, "");
+//            callPhone(phoneNum);
+            return;
+        }
+
+        //发短信
+        if (prepareToSendMessage) {
+            sendShortMessage(phoneNum, userInput);
+            prepareToSendMessage = false;
+            return;
+        }
+        String smsTag = getString(R.string.send_message_to);
+        if (userInput.contains(smsTag)) {
+            String contactName = userInput.replace(smsTag, "");
+            prepareToSendMessage = true;
+            getPhoneNumWithContactName(contactName);
+            return;
+        }
+
+        //打开手电筒
+        if (userInput.contains(getString(R.string.open_flashlight))) {
+            controlFlashlight(true);
+            closeFlashlightTextView.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        new AnswerTask().execute(userInput);
     }
 }

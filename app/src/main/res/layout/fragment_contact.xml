@@ -7,6 +7,15 @@
     <ListView
         android:id="@+id/contact_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:layout_gravity="center"/>
+    <ListView
+        android:id="@+id/phone_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/white"
+        android:visibility="gone"/>
 
 </FrameLayout>

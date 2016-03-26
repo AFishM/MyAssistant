@@ -2,13 +2,14 @@ package com.name.myassistant.qoa;
 
 import android.util.Log;
 
+import com.name.myassistant.GlobalVariable;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ public class InfoSearch {
 
         String link="http://m.baidu.com/s?from=1086k&word="+ URLEncoder.encode(questionStr,"utf-8");
         Log.d("xzx","link=> "+link);
+        GlobalVariable.getInstance().setLink(link);
 
         URL url = new URL(link);
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();

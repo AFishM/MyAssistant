@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera" />
 
     <!-- 解锁的权限 -->
@@ -31,9 +32,11 @@
     <!-- 外存储写入权限,构建语法需要用到此权限 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <!-- 信息接收和读取 -->
+    <!-- 信息发送，接收和读取 -->
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <!-- 用于进行网络定位 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -80,7 +83,11 @@
         <!-- 高德定位服务 -->
         <service android:name="com.amap.api.location.APSService" />
 
-        <activity android:name=".alarm.AlarmSettingActivity"></activity>
+        <activity android:name=".alarm.AlarmSettingActivity" />
+        <activity
+            android:name=".LookOtherInfoWebActivity"
+            android:label="@string/title_activity_look_other_info_web"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>
