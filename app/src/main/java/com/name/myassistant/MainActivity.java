@@ -1,11 +1,10 @@
 package com.name.myassistant;
 
-import android.Manifest;
 import android.app.KeyguardManager;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,7 +14,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.ContactsContract;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -31,8 +29,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.iflytek.cloud.RecognizerListener;
 import com.iflytek.cloud.RecognizerResult;
@@ -60,9 +58,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageView inputSwitchImageView;
     TextView pressToSayTextView;
     TextView closeFlashlightTextView;
+    TextView sendTextView;
     EditText userInputEditText;
 
+    ListView chatContentListView;
+
     FrameLayout contactLayout;
+    ProgressDialog progressDialog;
+
+    RelativeLayout volumeChangeLayout;
+    View volumeTagView1;
+    View volumeTagView2;
+    View volumeTagView3;
+    View volumeTagView4;
+    View volumeTagView5;
+    View volumeTagView6;
+
 
     ChatContentListViewAdapter chatContentListViewAdapter;
 
@@ -97,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void onResult(RecognizerResult results, boolean isLast) {
             recognizerStr=recognizerStr + parseJsonToString(results.getResultString());
             if(recognizeFinish){
+                setProgressBarDialogShow(false);
                 userInputHandle(recognizerStr);
                 recognizeFinish=false;
             }
@@ -111,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //音量值0~30
         @Override
         public void onVolumeChanged(int i, byte[] bytes) {
+            changeVolumeView(i);
         }
 
         //开始录音
@@ -167,17 +180,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-        ListView chatContentListView = (ListView) findViewById(R.id.chat_content);
+
+        chatContentListView = (ListView) findViewById(R.id.chat_content);
         inputSwitchImageView = (ImageView) findViewById(R.id.input_switch);
         pressToSayTextView = (TextView) findViewById(R.id.press_to_say);
         userInputEditText = (EditText) findViewById(R.id.question_input);
-        TextView sendTextView = (TextView) findViewById(R.id.send);
+        sendTextView = (TextView) findViewById(R.id.send);
 
         closeFlashlightTextView = (TextView) findViewById(R.id.close_flashlight);
         contactLayout=(FrameLayout)findViewById(R.id.contact_layout);
+
+        volumeChangeLayout=(RelativeLayout)findViewById(R.id.volume_change_layout);
+        volumeTagView1=findViewById(R.id.volume_tag_1);
+        volumeTagView2=findViewById(R.id.volume_tag_2);
+        volumeTagView3=findViewById(R.id.volume_tag_3);
+        volumeTagView4=findViewById(R.id.volume_tag_4);
+        volumeTagView5=findViewById(R.id.volume_tag_5);
+        volumeTagView6=findViewById(R.id.volume_tag_6);
+
         contactLayout.setOnClickListener(this);
-//        RecyclerView contactsListView=(RecyclerView)findViewById(R.id.contact_list);
         List<Chat> chatList = new ArrayList<>();
         chatContentListViewAdapter = new ChatContentListViewAdapter(chatList);
         Bitmap userBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.user_img_48);
@@ -195,17 +216,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
                         //开始听写
+                        volumeChangeLayout.setVisibility(View.VISIBLE);
                         recognizerStr="";
                         pressToSayTextView.setText(getString(R.string.loosen_to_end));
                         pressToSayTextView.setBackgroundResource(R.drawable.oval_light_gray_solid);
                         mIat.startListening(mRecoListener);
                         return true;
                     case MotionEvent.ACTION_UP:
+                        volumeChangeLayout.setVisibility(View.GONE);
                         pressToSayTextView.setText(getString(R.string.press_and_say));
                         pressToSayTextView.setBackgroundResource(R.drawable.oval_gray);
                         if (mIat.isListening()) {
                             mIat.stopListening();
                         }
+                        setProgressBarDialogShow(true);
                         return true;
                     default:
                         return false;
@@ -272,6 +296,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        menu.getItem(0).setTitle(getString(R.string.show_look_more));
         return true;
     }
 
@@ -382,11 +407,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     inputSwitchImageView.setImageResource(R.drawable.microphone_32);
                     pressToSayTextView.setVisibility(View.GONE);
                     userInputEditText.setVisibility(View.VISIBLE);
+                    sendTextView.setVisibility(View.VISIBLE);
                     isInputWithSay = false;
                 } else {
                     inputSwitchImageView.setImageResource(R.drawable.keyboard_32);
                     pressToSayTextView.setVisibility(View.VISIBLE);
                     userInputEditText.setVisibility(View.GONE);
+                    sendTextView.setVisibility(View.GONE);
                     isInputWithSay = true;
                 }
                 break;
@@ -395,10 +422,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 userInputEditText.setText("");
                 userInputHandle(userInputStr);
                 break;
-//            case R.id.call_phone:
-//                String phone = userInputEditText.getText().toString();
-//                callPhone(phone);
-//                break;
             case R.id.contact_layout:
                 getSupportFragmentManager().popBackStack();
                 contactLayout.setVisibility(View.GONE);
@@ -436,6 +459,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (isAllowRobotToSay) {
                 mTts.startSpeaking(answer, mSynListener);
             }
+            setProgressBarDialogShow(false);
         }
     }
 
@@ -590,16 +614,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    void callPhone(String phoneNum) {
-        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNum));
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, " 是您拒绝哦，自己打 ", Toast.LENGTH_LONG).show();
-            return;
-        }
-        startActivity(intent);
-    }
-
     void sendShortMessage(String phoneNum,String message){
         android.telephony.SmsManager smsManager=android.telephony.SmsManager.getDefault();
         smsManager.sendTextMessage(phoneNum, null, message, null, null);
@@ -611,14 +625,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         chatContentListViewAdapter.chatList.add(chat);
         chatContentListViewAdapter.notifyDataSetChanged();
 
+        chatContentListView.smoothScrollToPosition(chatContentListViewAdapter.getCount());
+
         //打电话
         String callTag = getString(R.string.call_somebody);
         if (userInput.contains(callTag)) {
-//            prepareToCallPhone=true;
             String contactName = userInput.replace(callTag, "");
             getPhoneNumWithContactName(contactName);
-//            phoneNum = userInput.replace(callTag, "");
-//            callPhone(phoneNum);
             return;
         }
 
@@ -644,5 +657,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         new AnswerTask().execute(userInput);
+        setProgressBarDialogShow(true);
+    }
+
+
+    void changeVolumeView(int i){
+        volumeTagView1.setVisibility(View.VISIBLE);
+        volumeTagView2.setVisibility(View.VISIBLE);
+        volumeTagView3.setVisibility(View.VISIBLE);
+        volumeTagView4.setVisibility(View.VISIBLE);
+        volumeTagView5.setVisibility(View.VISIBLE);
+        volumeTagView6.setVisibility(View.VISIBLE);
+        switch (i/5){
+            case 0:
+                volumeTagView1.setVisibility(View.INVISIBLE);
+                volumeTagView2.setVisibility(View.INVISIBLE);
+                volumeTagView3.setVisibility(View.INVISIBLE);
+                volumeTagView4.setVisibility(View.INVISIBLE);
+                volumeTagView5.setVisibility(View.INVISIBLE);
+                break;
+            case 1:
+                volumeTagView1.setVisibility(View.INVISIBLE);
+                volumeTagView2.setVisibility(View.INVISIBLE);
+                volumeTagView3.setVisibility(View.INVISIBLE);
+                volumeTagView4.setVisibility(View.INVISIBLE);
+                break;
+            case 2:
+                volumeTagView1.setVisibility(View.INVISIBLE);
+                volumeTagView2.setVisibility(View.INVISIBLE);
+                volumeTagView3.setVisibility(View.INVISIBLE);
+                break;
+            case 3:
+                volumeTagView1.setVisibility(View.INVISIBLE);
+                volumeTagView2.setVisibility(View.INVISIBLE);
+                break;
+            case 4:
+                volumeTagView1.setVisibility(View.INVISIBLE);
+                break;
+            default:
+                break;
+        }
+    }
+
+    void setProgressBarDialogShow(boolean isShow){
+
+        if(isShow){
+            progressDialog=ProgressDialog.show(this,null,getString(R.string.please_wait),false,false);
+        }else{
+            if(progressDialog!=null){
+                progressDialog.cancel();
+            }
+        }
     }
 }

@@ -8,12 +8,15 @@
     <string name="wait_please">请稍等，我准备下…</string>
 
     <!--main page-->
+    <string name="show_look_more">显示查看更多</string>
+    <string name="dismiss_look_more">关闭查看更多</string>
     <string name="open_flashlight">打开手电筒</string>
     <string name="close_flashlight">点击关闭手电筒</string>
     <string name="setting">设置</string>
     <string name="send">发送</string>
     <string name="press_and_say">按住 说话</string>
     <string name="loosen_to_end">松开 结束</string>
+    <string name="please_wait">请稍候</string>
 
     <!--<string name="other_info">其他</string>-->
 

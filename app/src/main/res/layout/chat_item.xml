@@ -19,6 +19,7 @@
                 android:id="@+id/robot_output"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/chat_white"
                 android:textColor="@color/black"/>
             <TextView
                 android:id="@+id/look_in_bai_du"
@@ -40,6 +41,7 @@
             android:layout_marginTop="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/chat_green"
             android:textColor="@color/black"/>
         <ImageView
             android:id="@+id/user_img"

@@ -2,6 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
     <item android:id="@+id/action_settings" android:title="@string/setting"
-        android:icon="@drawable/setting_48"
-        android:orderInCategory="100" app:showAsAction="ifRoom" />
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/control_look_more"
+        android:title="@string/dismiss_look_more"
+        android:orderInCategory="110"
+        app:showAsAction="never"/>
 </menu>
