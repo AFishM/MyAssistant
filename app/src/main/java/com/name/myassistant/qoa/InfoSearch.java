@@ -1,8 +1,7 @@
 package com.name.myassistant.qoa;
 
-import android.util.Log;
-
 import com.name.myassistant.GlobalVariable;
+import com.name.myassistant.util.LogUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,7 +36,7 @@ public class InfoSearch {
         List<String> webPageDigestList = new ArrayList<>();
 
         String link="http://m.baidu.com/s?from=1086k&word="+ URLEncoder.encode(questionStr,"utf-8");
-        Log.d("xzx","link=> "+link);
+        LogUtil.d("xzx", "link=> " + link);
         GlobalVariable.getInstance().setLink(link);
 
         URL url = new URL(link);

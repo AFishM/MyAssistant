@@ -23,7 +23,7 @@
             android:layout_toRightOf="@id/robot_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/chat_white"
+            android:background="@drawable/chat_left"
             android:textColor="@color/black"
             android:text="dd"/>
         <LinearLayout

@@ -29,6 +29,8 @@ public class GetAnswer {
             for (int i = 0; i < webPageDigestList.size(); i++) {
                 tempSentenceArray = webPageDigestList.get(i).split("[。？！……\\n]");
                 for (String aTempSentenceArray : tempSentenceArray) {
+
+                    // FIXME: 16/4/11 这里不用再次请求命名实体
                     String tempStr = QaUtil.lexicalAnalysis(aTempSentenceArray, "ner");
                     //命名实体
                     String entityStr;

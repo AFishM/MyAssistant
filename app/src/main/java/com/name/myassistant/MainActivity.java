@@ -946,7 +946,6 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
                 return Qa.getAnswer(params[0]);
             } catch (IOException e) {
                 LogUtil.d("xzx", "e=> " + e.toString());
-                e.printStackTrace();
             }
             return null;
         }

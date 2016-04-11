@@ -1,21 +1,14 @@
 package com.name.myassistant.qoa;
 
-import android.content.Context;
-import android.util.Log;
+import com.name.myassistant.util.LogUtil;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * 问答系统工具类
@@ -58,9 +51,7 @@ public class QaUtil {
         inputStream.close();
         inputStreamReader.close();
         reader.close();
-        if(!pattern.equals("ws")){
-            Log.d("xzx","pattern="+pattern+" analysisResultStr=> "+analysisResultStr);
-        }
+        LogUtil.d("xzx","analysisResultStr=> "+analysisResultStr);
         return analysisResultStr;
     }
 
