@@ -1,15 +1,18 @@
 package com.name.myassistant;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.widget.ImageView;
 
 import com.name.myassistant.qoa.Qa;
+import com.name.myassistant.util.LocalDisplay;
 
 public class WaitingActivity extends Activity {
 
@@ -17,6 +20,14 @@ public class WaitingActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_waiting);
+        ImageView imageView=(ImageView)findViewById(R.id.robot);
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(
+                ObjectAnimator.ofFloat(imageView, "scaleX", 0.5f, 1.0f),
+                ObjectAnimator.ofFloat(imageView, "scaleY", 0.5f, 1.0f)
+        );
+
+        set.setDuration(700).start();
         new initTask().execute(this);
     }
 
@@ -26,6 +37,7 @@ public class WaitingActivity extends Activity {
         @Override
         protected Void doInBackground(Context... params) {
             Context context=params[0];
+            LocalDisplay.init(context);
 
             //恢复闹钟和读取短信许可的数据
             GlobalVariable.recoverData(context);

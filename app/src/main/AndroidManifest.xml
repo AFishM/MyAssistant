@@ -64,7 +64,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RobotSettingActivity" />
+        <activity android:name=".SettingActivity" />
 
         <receiver android:name=".shortMessage.SmsReceiver">
             <intent-filter android:priority="999">
@@ -87,6 +87,18 @@
         <activity
             android:name=".LookOtherInfoWebActivity"
             android:label="@string/title_activity_look_other_info_web"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".HelpActivity"
+            android:label="@string/title_activity_help"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".TakePhotoActivity"
+            android:label="@string/title_activity_take_photo"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".TimeUpActivity"
+            android:label="@string/title_activity_time_up"
             android:theme="@style/AppTheme"></activity>
     </application>
 

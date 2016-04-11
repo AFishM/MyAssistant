@@ -39,6 +39,8 @@ public class QuestionAnalyze {
             tmpWord = wordsAndPartOfSpeechList[i];
             questionKeyWordList.add(tmpWord);
             i = i + 1;
+            // TODO: 16/4/1 报错 java.lang.ArrayIndexOutOfBoundsException: length=109; index=109，以下为示例
+            //省政府_n 应急_v 办_v 、_wp 省_n 森林_n 防火办_j 、_wp 省_n 气象局_n 提醒_v 你_r ：_wp 清明_nt 扫墓_v 请_v 注意_v 野外_nl 用_p 火_n 安全_a ，_wp 严防_v 山火_n 。_wp4月_nt 3日_nt —_wp 4日_nt ，_wp 全省_n 有_v 大雨_n 局部_n 暴雨_n ，_wp 请_v 做好_v 防御_v 强_a 降水_n 、_wp 雷雨_n 大风_n 、_wp 山洪_n 、_wp 泥石流_n 、_wp 山体_n 滑坡_v 等_u 灾害_n 工作_v 。_wp
             partOfSpeechList.add(wordsAndPartOfSpeechList[i]);
         }
 

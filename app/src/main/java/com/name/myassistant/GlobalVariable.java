@@ -15,9 +15,17 @@ import java.util.List;
  */
 public class GlobalVariable {
     private static GlobalVariable ourInstance = new GlobalVariable();
-    private boolean READ_SHORT_MESSAGE_PERMISSION;
+    private boolean READ_SHORT_MESSAGE_PERMISSION=true;
+    private boolean allowToSay=true;
     private List<Alarm> alarmList=new ArrayList<>();
     private String link;
+    private boolean USER_HAS_IMG;
+    private int robotImgStatus;
+    public static final int ORIGINAL_IMG=0;
+    public static final int NEW_IMG=1;
+    public static final int NO_IMG=2;
+
+
 
     public static GlobalVariable getInstance() {
         return ourInstance;
@@ -35,8 +43,41 @@ public class GlobalVariable {
         save(context);
     }
 
+    public boolean isAllowToSay() {
+        return allowToSay;
+    }
+
+    public void setAllowToSay(boolean allowToSay) {
+        this.allowToSay = allowToSay;
+    }
+
     public List<Alarm> getAlarmList() {
         return alarmList;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+
+    public boolean isUSER_HAS_IMG() {
+        return USER_HAS_IMG;
+    }
+
+    public void setUSER_HAS_IMG(boolean USER_HAS_IMG) {
+        this.USER_HAS_IMG = USER_HAS_IMG;
+    }
+
+    public int getRobotImgStatus() {
+        return robotImgStatus;
+    }
+
+    public void setRobotImgStatus(int robotImgStatus) {
+        this.robotImgStatus = robotImgStatus;
     }
 
     public static void save(Context context){
@@ -58,15 +99,18 @@ public class GlobalVariable {
         }
         Gson gson=new Gson();
         ourInstance=gson.fromJson(data,GlobalVariable.class);
-        LogUtil.d("xzx","ourInstance READ_SHORT_MESSAGE_PERMISSION=> "+ourInstance.isREAD_SHORT_MESSAGE_PERMISSION());
-        LogUtil.d("xzx","ourInstance alarmList=> "+ourInstance.getAlarmList().toString());
+        LogUtil.d("xzx","GlobalVariable=> "+ourInstance.toString());
     }
 
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
+    @Override
+    public String toString() {
+        return "GlobalVariable{" +
+                "READ_SHORT_MESSAGE_PERMISSION=" + READ_SHORT_MESSAGE_PERMISSION +
+                ", allowToSay=" + allowToSay +
+                ", alarmList=" + alarmList +
+                ", link='" + link + '\'' +
+                ", USER_HAS_IMG=" + USER_HAS_IMG +
+                ", robotImgStatus=" + robotImgStatus +
+                '}';
     }
 }

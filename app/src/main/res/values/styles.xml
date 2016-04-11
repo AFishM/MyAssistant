@@ -9,4 +9,16 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <declare-styleable name="RoundImageView">
+        <attr name="borderRadius" />
+        <attr name="type" />
+        <attr name="roundBorderWidth" format="dimension" />
+    </declare-styleable>
+    <attr name="borderRadius" format="dimension" />
+
+    <attr name="type">
+        <enum name="circle" value="0" />
+        <enum name="round" value="1" />
+    </attr>
+
 </resources>

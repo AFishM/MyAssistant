@@ -2,9 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
     <item android:id="@+id/action_settings" android:title="@string/setting"
-        android:orderInCategory="100" app:showAsAction="never" />
+        android:orderInCategory="90" app:showAsAction="never" />
     <item android:id="@+id/control_look_more"
-        android:title="@string/dismiss_look_more"
-        android:orderInCategory="110"
+        android:title="@string/help"
+        android:orderInCategory="100"
         app:showAsAction="never"/>
 </menu>

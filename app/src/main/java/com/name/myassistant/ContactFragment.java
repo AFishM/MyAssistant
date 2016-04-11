@@ -115,6 +115,11 @@ public class ContactFragment extends Fragment implements
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         mSelectionArgs[0] = "%" + mSearchString + "%";
         // Starts the query
@@ -133,6 +138,13 @@ public class ContactFragment extends Fragment implements
         LogUtil.d("load");
 //        mCursorAdapter.swapCursor(null);
         mCursorAdapter.swapCursor(data);
+        int contactNameCount=mCursorAdapter.getCount();
+        LogUtil.d("xzx", "contactNameCount=> " + contactNameCount);
+        if(contactNameCount<=0){
+            Toast.makeText(activity,getString(R.string.no_this_man),Toast.LENGTH_LONG).show();
+//            activity.contactLayout.setVisibility(View.GONE);
+//            activity.getSupportFragmentManager().popBackStack();
+        }
     }
 
     @Override
@@ -178,7 +190,20 @@ public class ContactFragment extends Fragment implements
 
         phoneListView.setVisibility(View.VISIBLE);
         LogUtil.d("xzx");
-        phoneListView.setAdapter(new phoneListAdapter(phoneList));
+        if(phoneList.size()>1){
+            phoneListView.setAdapter(new phoneListAdapter(phoneList));
+        }else{
+            String phoneNum =phoneList.get(0);
+            activity.phoneNum=phoneNum;
+            activity.contactLayout.setVisibility(View.INVISIBLE);
+
+            if (activity.prepareToSendMessage) {
+                activity.robotOutputHandle(getString(R.string.say_something));
+            } else {
+                callPhone(phoneNum);
+            }
+        }
+
 
 
     /*
@@ -234,12 +259,12 @@ public class ContactFragment extends Fragment implements
                         activity.chatContentListViewAdapter.chatList.add(chat);
                         activity.chatContentListViewAdapter.notifyDataSetChanged();
 
-                        activity.mTts.startSpeaking(getString(R.string.say_something), activity.mSynListener);
+                        activity.speechSynthesizer.startSpeaking(getString(R.string.say_something), null);
                     } else {
                         callPhone(phoneNum);
                     }
                     activity.getSupportFragmentManager().popBackStack();
-                    activity.contactLayout.setVisibility(View.GONE);
+                    activity.contactLayout.setVisibility(View.INVISIBLE);
                 }
             });
             return view;
@@ -258,5 +283,7 @@ public class ContactFragment extends Fragment implements
             return;
         }
         startActivity(intent);
+        activity.onBackPressed();
+
     }
 }

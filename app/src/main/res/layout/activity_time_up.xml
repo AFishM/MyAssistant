@@ -3,12 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.name.myassistant.WaitingActivity"
-    android:background="@color/background_blue">
-    <ImageView
-        android:id="@+id/robot"
+    android:fitsSystemWindows="true"
+    tools:context="com.name.myassistant.TimeUpActivity">
+    <TextView
+        android:id="@+id/time_up"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:src="@drawable/banana_robot"/>
+        android:layout_height="wrap_content" />
 </RelativeLayout>

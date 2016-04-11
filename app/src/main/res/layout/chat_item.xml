@@ -1,51 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <LinearLayout
+    android:layout_height="wrap_content"
+    android:paddingTop="12dp">
+    <RelativeLayout
         android:id="@+id/robot_say_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="80dp">
         <ImageView
+            android:layout_alignParentBottom="true"
             android:id="@+id/robot_img"
-            android:layout_width="32dp"
-            android:layout_height="32dp" />
-        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="vertical">
+            android:adjustViewBounds= "true"
+            android:maxWidth="64dp"
+            android:maxHeight="64dp"
+            android:src="@drawable/robot_img"
+            android:layout_marginRight="8dp"/>
+        <TextView
+            android:id="@+id/robot_output"
+            android:layout_toRightOf="@id/robot_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/chat_white"
+            android:textColor="@color/black"
+            android:text="dd"/>
+        <LinearLayout
+            android:layout_marginTop="8dp"
+            android:id="@+id/long_click_layout"
+            android:layout_below="@id/robot_output"
+            android:layout_toRightOf="@id/robot_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible">
             <TextView
-                android:id="@+id/robot_output"
+                android:id="@+id/copy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/chat_white"
-                android:textColor="@color/black"/>
+                android:text="@string/copy"/>
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:background="@color/gray"/>
+            <TextView
+                android:id="@+id/delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/delete"/>
+            <View
+                android:id="@+id/look_more_line"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:background="@color/gray"/>
             <TextView
                 android:id="@+id/look_in_bai_du"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:gravity="center"
+                android:layout_height="wrap_content"
                 android:text="@string/look_in_bai_du"
                 android:visibility="gone"/>
         </LinearLayout>
-
-    </LinearLayout>
-    <LinearLayout
+    </RelativeLayout>
+    <RelativeLayout
         android:id="@+id/user_say_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true">
-        <TextView
-            android:id="@+id/user_input"
-            android:layout_marginTop="4dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="80dp">
+        <LinearLayout
+            android:id="@+id/user_input_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/chat_green"
-            android:textColor="@color/black"/>
+            android:orientation="vertical"
+            android:gravity="right">
+            <TextView
+                android:id="@+id/user_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/user_input"
+                android:textColor="@color/black"
+                android:layout_marginBottom="8dp"/>
+            <LinearLayout
+                android:id="@+id/user_input_long_click_layout"
+                android:layout_below="@id/user_input"
+                android:layout_alignRight="@id/user_input"
+                android:layout_marginRight="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible">
+                <TextView
+                    android:id="@+id/copy_user_input"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/copy"/>
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="4dp"
+                    android:background="@color/gray"/>
+                <TextView
+                    android:id="@+id/delete_user_input"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/delete"/>
+            </LinearLayout>
+        </LinearLayout>
+
         <ImageView
             android:id="@+id/user_img"
-            android:layout_width="32dp"
-            android:layout_height="32dp" />
-    </LinearLayout>
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/user_input_layout"
+            android:layout_marginLeft="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds= "true"
+            android:maxWidth="64dp"
+            android:maxHeight="64dp"/>
+    </RelativeLayout>
 </RelativeLayout>
