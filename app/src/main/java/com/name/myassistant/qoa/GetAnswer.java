@@ -2,6 +2,8 @@ package com.name.myassistant.qoa;
 
 import android.util.Log;
 
+import com.name.myassistant.util.LogUtil;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,8 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 答案抽取
@@ -22,71 +22,172 @@ public class GetAnswer {
 
     public static String getAnswer(ArrayList<String> keyWordList, Map<String, String> keyWordSynonymMap, int questionType, List<String> webPageDigestList) throws IOException {
         String punctuationStr = "[，。？：；‘’！“”—……、－{2}\\[ \\]（）【】{}《》\\s]";
+        List<String> endSentenceTagList=new ArrayList<>();
+        endSentenceTagList.add("。");
+        endSentenceTagList.add("？");
+        endSentenceTagList.add("！");
+        endSentenceTagList.add("……");
+        endSentenceTagList.add("\n");
+
+
+
         if (questionType == 3 || questionType == 4) {
             Map<String, Integer> entityCoOccurrenceMap = new HashMap<>();
+            Map<String,Integer> keyWordDistanceMap=new HashMap<>();
             //命名实体识别
-            String[] tempSentenceArray;
+//            String[] tempSentenceArray;
             for (int i = 0; i < webPageDigestList.size(); i++) {
-                tempSentenceArray = webPageDigestList.get(i).split("[。？！……\\n]");
-                for (String aTempSentenceArray : tempSentenceArray) {
+                //将网页摘要整个文本进行词性标注
+                String posStr=QaUtil.lexicalAnalysis(webPageDigestList.get(i),"pos");
+                //词列表
+                List<String> wordList=new ArrayList<>();
+                //词性列表
+                List<String> posList=new ArrayList<>();
 
-                    // FIXME: 16/4/11 这里不用再次请求命名实体
-                    String tempStr = QaUtil.lexicalAnalysis(aTempSentenceArray, "ner");
-                    //命名实体
-                    String entityStr;
-                    //命名实体对应属性
-                    String entityAttribute;
-                    Pattern pattern = Pattern.compile("\\[.*?\\]\\w{2}");
-                    Matcher matcher = pattern.matcher(tempStr);
-                    String[] tempEntityAndAttributeArray;
-                    String[] tempSentenceWordArray = null;
-                    Set<String> sentenceKeyWordSet = new HashSet<>();
-                    while (matcher.find()) {
-                        tempEntityAndAttributeArray = matcher.group().replaceAll("\\[", "").split("\\]");
-                        entityStr = tempEntityAndAttributeArray[0];
-                        entityAttribute = tempEntityAndAttributeArray[1];
+                String[] tempArray=posStr.split("_+|\\s+");
+                LogUtil.d("xzx","tempArray=> "+ Arrays.toString(tempArray));
+//                LogUtil.d("xzx","tempArray.length=> "+tempArray.length);
 
-                        if (keyWordList.contains(entityStr)) {
-                            Log.d("xzx","-----------------"+entityStr);
-                            continue;
-                        }
-                        Log.d("xzx","-----------------entityStr"+entityStr);
+                for(int j=0;j<tempArray.length;j++){
+                    wordList.add(tempArray[j]);
+                    j=j+1;
+                    posList.add(tempArray[j]);
+                }
+                LogUtil.d("xzx","wordList=> "+wordList.toString());
+                LogUtil.d("xzx","posList=> "+posList.toString());
 
-                        if(entityStr.equals("中国")){
-                            Log.d("xzx","keyWordSynonymMap=> "+keyWordSynonymMap.toString());
-                        }
 
-                        //类型_实体属性：3_Ns,4_Nh
-                        String answerEntityAttribute = "Ns";
-                        if (questionType == 4) {
-                            answerEntityAttribute = "Nh";
-                        }
-                        if (entityAttribute.equals(answerEntityAttribute)) {
-                            if (tempSentenceWordArray == null) {
-                                tempSentenceWordArray = QaUtil.lexicalAnalysis(aTempSentenceArray, "ws").split(punctuationStr);
+                //类型_实体属性：3_Ns,4_Nh
+                String answerEntityAttribute = "ns";
+                if (questionType == 4) {
+                    answerEntityAttribute = "nh";
+                }
+
+                //计算候选答案与关键词的共现
+
+                Set<String> sentenceKeyWordSet = new HashSet<>();
+                List<String> sentenceWordList=new ArrayList<>();
+                List<String> sentenceKeyWordList=new ArrayList<>();
+                String tempAnswer=null;
+                for(int j=0;j<posList.size();j++){
+                    String word=wordList.get(j);
+                    sentenceWordList.add(word);
+
+                    //如果遍历到句号问号等句子完结的标志，则将候选关键词与对应共现次数存起来，次数清零重新计算下一个候选词
+                    if(endSentenceTagList.contains(word)||j+1>=posList.size()){
+                        if(tempAnswer!=null){
+                            //计算共现次数
+                            int score=sentenceKeyWordSet.size();
+                            if (entityCoOccurrenceMap.containsKey(tempAnswer)) {
+                                score = score + entityCoOccurrenceMap.get(tempAnswer);
                             }
-                            for (String sentenceWord : tempSentenceWordArray) {
-                                if (keyWordSynonymMap.containsKey(sentenceWord)) {
-                                    sentenceKeyWordSet.add(keyWordSynonymMap.get(sentenceWord));
+                            LogUtil.d("xzx","tempAnswer=> "+tempAnswer+" score=> "+score);
+                            entityCoOccurrenceMap.put(tempAnswer,score);
+
+                            //计算与关键词的距离
+                            int indexOfTempAnswer=sentenceWordList.indexOf(tempAnswer);
+                            int distance=10000;
+                            for(int k=0;k<sentenceKeyWordList.size();k++){
+                                String keyWord=sentenceKeyWordList.get(k);
+                                int tempDistance=Math.abs(sentenceWordList.indexOf(keyWord)-indexOfTempAnswer);
+                                if(tempDistance<distance){
+                                    distance=tempDistance;
+                                    LogUtil.d("xzx","keyWord=> "+keyWord+" distance=> "+distance);
                                 }
                             }
-                            int score = sentenceKeyWordSet.size();
-                            if (entityCoOccurrenceMap.containsKey(entityStr)) {
-                                score = score + entityCoOccurrenceMap.get(entityStr);
-                            }
-                            entityCoOccurrenceMap.put(entityStr, score);
+                            keyWordDistanceMap.put(tempAnswer,distance);
                         }
+                        sentenceKeyWordSet=new HashSet<>();
+                        LogUtil.d("xzx","word=> "+word);
+                        continue;
+                    }
+
+                    //如果遍历到关键词
+                    if(keyWordSynonymMap.containsKey(word)){
+                        sentenceKeyWordSet.add(keyWordSynonymMap.get(word));
+                        sentenceKeyWordList.add(word);
+                    }
+
+                    //如果遍历到的词的对应问题所需答案的命名实体，该词为候选答案
+                    if(posList.get(j).equals(answerEntityAttribute)){
+                        tempAnswer=word;
+                        LogUtil.d("xzx","tempAnswer=> "+tempAnswer);
                     }
                 }
+                LogUtil.d("xzx","entityCoOccurrenceMap=> "+entityCoOccurrenceMap.toString());
+
+//                tempSentenceArray = webPageDigestList.get(i).split("[。？！……\\n]");
+//                for (String aTempSentenceArray : tempSentenceArray) {
+//
+//                    // FIXME: 16/4/11 这里不用再次请求命名实体
+//                    String tempStr = QaUtil.lexicalAnalysis(aTempSentenceArray, "ner");
+//                    //命名实体
+//                    String entityStr;
+//                    //命名实体对应属性
+//                    String entityAttribute;
+//                    Pattern pattern = Pattern.compile("\\[.*?\\]\\w{2}");
+//                    Matcher matcher = pattern.matcher(tempStr);
+//                    String[] tempEntityAndAttributeArray;
+//                    String[] tempSentenceWordArray = null;
+//                    Set<String> sentenceKeyWordSet = new HashSet<>();
+//                    while (matcher.find()) {
+//                        tempEntityAndAttributeArray = matcher.group().replaceAll("\\[", "").split("\\]");
+//                        entityStr = tempEntityAndAttributeArray[0];
+//                        entityAttribute = tempEntityAndAttributeArray[1];
+//
+//                        // TODO: 16/4/12 这里留意下，忘记用来干嘛了
+//                        if (keyWordList.contains(entityStr)) {
+//                            Log.d("xzx","-----------------"+entityStr);
+//                            continue;
+//                        }
+//
+//                        //类型_实体属性：3_Ns,4_Nh
+//                        String answerEntityAttribute = "Ns";
+//                        if (questionType == 4) {
+//                            answerEntityAttribute = "Nh";
+//                        }
+//                        if (entityAttribute.equals(answerEntityAttribute)) {
+//                            if (tempSentenceWordArray == null) {
+//                                tempSentenceWordArray = QaUtil.lexicalAnalysis(aTempSentenceArray, "ws").split(punctuationStr);
+//                            }
+//                            for (String sentenceWord : tempSentenceWordArray) {
+//                                if (keyWordSynonymMap.containsKey(sentenceWord)) {
+//                                    sentenceKeyWordSet.add(keyWordSynonymMap.get(sentenceWord));
+//                                }
+//                            }
+//                            int score = sentenceKeyWordSet.size();
+//                            if (entityCoOccurrenceMap.containsKey(entityStr)) {
+//                                score = score + entityCoOccurrenceMap.get(entityStr);
+//                            }
+//                            entityCoOccurrenceMap.put(entityStr, score);
+//                        }
+//                    }
+//                }
             }
+
+            LogUtil.d("xzx","entityCoOccurrenceMap=> "+entityCoOccurrenceMap.toString());
+            LogUtil.d("xzx","keyWordDistanceMap"+keyWordDistanceMap.toString());
             int score = 0;
-            String answer = "找不到答案";
+            int distance=10000;
+            String answer = "找不到答案，长按查看更多内容";
             for (String entityStr : entityCoOccurrenceMap.keySet()) {
 
                 int tempEntityScore = entityCoOccurrenceMap.get(entityStr);
+                if(tempEntityScore<score){
+                    continue;
+                }
+
+                int tempDistance=keyWordDistanceMap.get(entityStr);
                 if (tempEntityScore > score) {
                     score = tempEntityScore;
+                    distance=tempDistance;
                     answer = entityStr;
+                    continue;
+                }
+
+                if(tempDistance<distance){
+                    distance=tempDistance;
+                    answer=entityStr;
                 }
             }
             return answer;

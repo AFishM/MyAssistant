@@ -26,11 +26,17 @@ public class QaUtil {
      * @throws IOException
      */
     static String lexicalAnalysis(String sentence,String pattern) throws IOException {
+//        LogUtil.d("xzx","sentence=> "+sentence);
+        sentence=sentence.replaceAll("&nbsp;|&quot;|_","");
+
+//        LogUtil.d("xzx","sentence=> "+sentence);
+
         String analysisResultStr = "";
 
         String api_key = "p47180F0frlP1u1OQZhaNrwryyytjY2hEDhzcHdy";
         //输出的格式为简洁文本格式
         String format = "plain";
+
         sentence = URLEncoder.encode(sentence, "utf-8");
         String link="http://api.ltp-cloud.com/analysis/?api_key="+ api_key
                 + "&" + "text=" + sentence + "&" + "pattern=" + pattern
@@ -51,6 +57,8 @@ public class QaUtil {
         inputStream.close();
         inputStreamReader.close();
         reader.close();
+
+        analysisResultStr=analysisResultStr.replaceAll("_wp","_wp ");
         LogUtil.d("xzx","analysisResultStr=> "+analysisResultStr);
         return analysisResultStr;
     }

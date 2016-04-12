@@ -34,6 +34,10 @@ public class Qa {
         String answer;
         QuestionAnalyze.analyze(questionStr);
         List<String> webPageDigestList=InfoSearch.searchAndGetSnippetList(questionStr);
+        if(webPageDigestList==null||webPageDigestList.size()<=0){
+            answer="哎呀，网络不好，等下再试试～";
+            return answer;
+        }
         answer=GetAnswer.getAnswer(QuestionAnalyze.questionKeyWordList,QuestionAnalyze.keyWordSynonymMap,QuestionAnalyze.questionType, webPageDigestList);
         return answer;
     }

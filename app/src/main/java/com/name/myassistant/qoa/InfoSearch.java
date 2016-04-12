@@ -39,6 +39,7 @@ public class InfoSearch {
         LogUtil.d("xzx", "link=> " + link);
         GlobalVariable.getInstance().setLink(link);
 
+        // TODO: 16/4/12 以下，应该有网络断开访问不了的情况，最好能做个重新尝试连接
         URL url = new URL(link);
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         InputStream inputStream=conn.getInputStream();
@@ -58,6 +59,7 @@ public class InfoSearch {
                 tempStr=m.group();
 //                Log.d("xzx","tempStr=> "+tempStr);
                 webPageDigest = tempStr.replaceAll(htmlTag, "");
+//                LogUtil.d("xzx","webPageDigest=> "+webPageDigest);
 //                Log.d("xzx","webPageDigest=> "+webPageDigest);
                 webPageDigestList.add(webPageDigest);
             }
@@ -66,6 +68,7 @@ public class InfoSearch {
         inputStreamReader.close();
         bufferedReader.close();
         conn.disconnect();
+//        LogUtil.d("xzx","webPageDigestList=> "+webPageDigestList.toString());
         return webPageDigestList;
     }
 }
