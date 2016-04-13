@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        app:navigationIcon="@drawable/back_32"
+        app:navigationIcon="@drawable/arrow_32"
         app:title="@string/alarm"
         app:titleTextColor="@color/black"/>
     <View

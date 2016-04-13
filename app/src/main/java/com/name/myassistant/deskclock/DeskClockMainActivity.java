@@ -1,6 +1,5 @@
 package com.name.myassistant.deskclock;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,6 +8,9 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -22,7 +24,6 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CheckBox;
 import android.widget.CursorAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -31,13 +32,12 @@ import com.name.myassistant.R;
 
 import java.util.Calendar;
 
-public class DeskClockMainActivity extends Activity implements OnItemClickListener{
+public class DeskClockMainActivity extends AppCompatActivity implements OnItemClickListener{
 	
     static final String PREFERENCES = "AlarmClock";
 
     /** This must be false for production.  If true, turns on logging,
         test code, etc. */
-    static final boolean DEBUG = false;
 
     private SharedPreferences mPrefs;
     private LayoutInflater mFactory;
@@ -63,6 +63,22 @@ public class DeskClockMainActivity extends Activity implements OnItemClickListen
     //加载更新界面布局
     private void updateLayout() {
     	setContentView(R.layout.alarm_clock);
+        Toolbar toolbar=(Toolbar)findViewById(R.id.alarm_setting_toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        toolbar.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                v.setSelected(hasFocus);
+            }
+        });
+
+
         mAlarmsList = (ListView) findViewById(R.id.alarms_list);
         AlarmTimeAdapter adapter = new AlarmTimeAdapter(this, mCursor);
         mAlarmsList.setAdapter(adapter);
@@ -70,26 +86,6 @@ public class DeskClockMainActivity extends Activity implements OnItemClickListen
         mAlarmsList.setOnItemClickListener(this);
         mAlarmsList.setOnCreateContextMenuListener(this);
 
-        View addAlarm = findViewById(R.id.add_alarm);
-        addAlarm.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    addNewAlarm();
-                }
-            });
-        // Make the entire view selected when focused.
-        addAlarm.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                public void onFocusChange(View v, boolean hasFocus) {
-                    v.setSelected(hasFocus);
-                }
-        });
-
-        ImageButton deskClock =
-                (ImageButton) findViewById(R.id.desk_clock_button);
-        deskClock.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    
-                }
-        });
     }
     
     private void addNewAlarm() {
@@ -157,7 +153,7 @@ public class DeskClockMainActivity extends Activity implements OnItemClickListen
                     (TextView) digitalClock.findViewById(R.id.daysOfWeek);
             final String daysOfWeekStr =
                     alarm.daysOfWeek.toString(DeskClockMainActivity.this, false);
-            if (daysOfWeekStr != null && daysOfWeekStr.length() != 0) {
+            if (!TextUtils.isEmpty(daysOfWeekStr)) {
                 daysOfWeekView.setText(daysOfWeekStr);
                 daysOfWeekView.setVisibility(View.VISIBLE);
             } else {
@@ -291,10 +287,10 @@ public class DeskClockMainActivity extends Activity implements OnItemClickListen
             case R.id.menu_item_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
-            case R.id.menu_item_desk_clock:
-            	//modify by wangxianming in 2012-4-14
-//                startActivity(new Intent(this, DeskClock.class));
-                return true;
+//            case R.id.menu_item_desk_clock:
+//            	//modify by wangxianming in 2012-4-14
+////                startActivity(new Intent(this, DeskClock.class));
+//                return true;
             case R.id.menu_item_add_alarm:
                 addNewAlarm();
                 return true;

@@ -21,7 +21,7 @@
             app:title="@string/help"
             app:titleTextColor="@color/black"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:navigationIcon="@drawable/back_32"/>
+            app:navigationIcon="@drawable/arrow_32"/>
 
     </android.support.design.widget.AppBarLayout>
     <LinearLayout

@@ -302,6 +302,7 @@ public class SetAlarm extends PreferenceActivity
     }
 
     /**
+     * 弹出闹钟多久后响起
      * Display a toast that tells the user how long until the alarm
      * goes off.  This helps prevent "am/pm" mistakes.
      */

@@ -40,7 +40,6 @@ public class SettingActivity extends TakePhotoActivity implements View.OnClickLi
         TextView noImgTextView=(TextView)findViewById(R.id.no_img);
 
         setSupportActionBar(toolbar);
-        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -76,7 +76,7 @@
 
     <string name="label">"标签"</string>
     <string name="alarm_list_title">"闹钟"</string>
-    <string name="add_alarm">"添加玲闹钟"</string>
+    <string name="add_alarm">"添加闹钟"</string>
     <string name="desk_clock_button_description">"时钟显示"</string>
     <string name="default_label">"闹钟"</string>
     <string name="menu_desk_clock">"座钟"</string>

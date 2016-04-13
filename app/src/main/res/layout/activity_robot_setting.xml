@@ -11,9 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:title="@string/setting"
-        app:titleTextColor="@color/white"
-        app:navigationIcon="@drawable/back_32"
-        android:background="@color/black"/>
+        app:titleTextColor="@color/black"
+        app:navigationIcon="@drawable/arrow_32"
+        android:background="@color/background_blue"/>
     <ScrollView
         android:layout_below="@id/robot_setting_toolbar"
         android:layout_width="match_parent"

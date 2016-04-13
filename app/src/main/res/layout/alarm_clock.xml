@@ -15,37 +15,47 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/base_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ic_background"
-    android:orientation="vertical"> 
+    android:background="@color/white"
+    android:orientation="vertical">
 
-    <LinearLayout android:id="@+id/add_alarm"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="@android:drawable/list_selector_background"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/alarm_setting_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:background="@color/white"
+        app:navigationIcon="@drawable/arrow_32"
+        app:title="@string/alarm"
+        app:titleTextColor="@color/black"/>
 
-        <ImageView
-            style="@style/alarm_list_left_column"
-            android:duplicateParentState="true"
-            android:gravity="center"
-            android:scaleType="center"
-            android:src="@drawable/add_alarm" />
+    <!--<LinearLayout android:id="@+id/add_alarm"-->
+        <!--android:clickable="true"-->
+        <!--android:focusable="true"-->
+        <!--android:background="@android:drawable/list_selector_background"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal">-->
 
-        <TextView
-            android:duplicateParentState="true"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="?android:attr/textColorPrimary"
-            android:text="@string/add_alarm" />
+        <!--<ImageView-->
+            <!--style="@style/alarm_list_left_column"-->
+            <!--android:duplicateParentState="true"-->
+            <!--android:gravity="center"-->
+            <!--android:scaleType="center"-->
+            <!--android:src="@drawable/add_alarm" />-->
 
-    </LinearLayout>
+        <!--<TextView-->
+            <!--android:duplicateParentState="true"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_gravity="center_vertical"-->
+            <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
+            <!--android:textColor="?android:attr/textColorPrimary"-->
+            <!--android:text="@string/add_alarm" />-->
+
+    <!--</LinearLayout>-->
 
     <ImageView
         android:layout_width="match_parent"
@@ -60,45 +70,45 @@
         android:layout_height="wrap_content"
         android:layout_weight="1" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal" >-->
 
-        <ImageButton android:id="@+id/desk_clock_button"
-            style="@style/ButtonStripLeft"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_clock_strip_desk_clock"
-            android:contentDescription="@string/desk_clock_button_description"/>
+        <!--<ImageButton android:id="@+id/desk_clock_button"-->
+            <!--style="@style/ButtonStripLeft"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/ic_clock_strip_desk_clock"-->
+            <!--android:contentDescription="@string/desk_clock_button_description"/>-->
 
-        <com.name.myassistant.deskclock.DigitalClock
-            style="@style/ButtonStripRight"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <!--<com.name.myassistant.deskclock.DigitalClock-->
+            <!--style="@style/ButtonStripRight"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent">-->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:baselineAligned="true">
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:baselineAligned="true">-->
 
-                <TextView android:id="@+id/timeDisplay"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="6dip"
-                    android:textSize="45sp"
-                    android:textColor="?android:attr/textColorPrimary" />
+                <!--<TextView android:id="@+id/timeDisplay"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:paddingRight="6dip"-->
+                    <!--android:textSize="45sp"-->
+                    <!--android:textColor="?android:attr/textColorPrimary" />-->
 
-                <TextView android:id="@+id/am_pm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="?android:attr/textColorPrimary" />
+                <!--<TextView android:id="@+id/am_pm"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
+                    <!--android:textColor="?android:attr/textColorPrimary" />-->
 
-            </LinearLayout>
+            <!--</LinearLayout>-->
 
-      </com.name.myassistant.deskclock.DigitalClock>
+      <!--</com.name.myassistant.deskclock.DigitalClock>-->
 
-    </LinearLayout>
+    <!--</LinearLayout>-->
 
 </LinearLayout>
