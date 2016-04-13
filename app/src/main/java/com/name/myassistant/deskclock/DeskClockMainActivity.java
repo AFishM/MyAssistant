@@ -29,6 +29,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.name.myassistant.R;
+import com.name.myassistant.util.LogUtil;
 
 import java.util.Calendar;
 
@@ -163,14 +164,14 @@ public class DeskClockMainActivity extends AppCompatActivity implements OnItemCl
             // Display the label
             TextView labelView =
                     (TextView) view.findViewById(R.id.label);
-            if (alarm.label != null && alarm.label.length() != 0) {
+            if (!TextUtils.isEmpty(alarm.label)) {
                 labelView.setText(alarm.label);
                 labelView.setVisibility(View.VISIBLE);
             } else {
                 labelView.setVisibility(View.GONE);
             }
         }
-    };
+    }
     
     //更新checkbox
     private void updateIndicatorAndAlarm(boolean enabled, ImageView bar,
@@ -252,7 +253,7 @@ public class DeskClockMainActivity extends AppCompatActivity implements OnItemCl
         // Use the current item to create a custom view for the header.
         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
         final Cursor c =
-                (Cursor) mAlarmsList.getAdapter().getItem((int) info.position);
+                (Cursor) mAlarmsList.getAdapter().getItem(info.position);
         final Alarm alarm = new Alarm(c);
 
         // Construct the Calendar to compute the time.
@@ -263,10 +264,10 @@ public class DeskClockMainActivity extends AppCompatActivity implements OnItemCl
 
         // Inflate the custom view and set each TextView's text.
         final View v = mFactory.inflate(R.layout.context_menu_header, null);
-        TextView textView = (TextView) v.findViewById(R.id.header_time);
-        textView.setText(time);
-        textView = (TextView) v.findViewById(R.id.header_label);
-        textView.setText(alarm.label);
+        TextView timeTextView = (TextView) v.findViewById(R.id.header_time);
+        timeTextView.setText(time);
+        TextView labelTextView = (TextView) v.findViewById(R.id.header_label);
+        labelTextView.setText(alarm.label);
 
         // Set the custom view on the menu.
         menu.setHeaderView(v);
@@ -287,10 +288,6 @@ public class DeskClockMainActivity extends AppCompatActivity implements OnItemCl
             case R.id.menu_item_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
-//            case R.id.menu_item_desk_clock:
-//            	//modify by wangxianming in 2012-4-14
-////                startActivity(new Intent(this, DeskClock.class));
-//                return true;
             case R.id.menu_item_add_alarm:
                 addNewAlarm();
                 return true;
@@ -317,6 +314,7 @@ public class DeskClockMainActivity extends AppCompatActivity implements OnItemCl
      * 创建菜单的点击事件响应
      */
 	public void onItemClick(AdapterView<?> adapterView, View v, int pos, long id) {
+        LogUtil.d("xzx","id=> "+id);
 		Intent intent = new Intent(this, SetAlarm.class);
         intent.putExtra(Alarms.ALARM_ID, (int) id);
         startActivity(intent);
