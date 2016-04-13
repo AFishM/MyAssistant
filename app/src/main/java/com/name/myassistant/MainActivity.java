@@ -16,6 +16,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -346,6 +350,8 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
         File file = new File(Environment.getExternalStorageDirectory(), System.currentTimeMillis() + ".jpg");
         imageUri = Uri.fromFile(file);
         userInputEditText.setText("广外校长是谁");
+
+        shakeToClean(this);
     }
 
     @Override
@@ -828,6 +834,32 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
         ClipboardManager clipboardManager=(ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
         clipboardManager.setText(text);
         Toast.makeText(this,getString(R.string.copy_successfully),Toast.LENGTH_LONG).show();
+    }
+
+    //摇一摇清除记录
+    void shakeToClean(Context context){
+        SensorManager sensorManager=(SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
+        sensorManager.registerListener(new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                float[] values=event.values;
+                float x=values[0];
+                float y=values[1];
+                float z=values[2];
+
+                int value=15;
+                if(Math.abs(x)>=value||Math.abs(y)>=value||Math.abs(z)>=value){
+                    chatContentListViewAdapter.chatList.clear();
+                    chatContentListViewAdapter.notifyDataSetChanged();
+                    LogUtil.d("xzx","Math.abs(x)=> "+Math.abs(x)+" Math.abs(y)=> "+Math.abs(y)+" Math.abs(z)=> "+Math.abs(z));
+                }
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+            }
+        },sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     void getTime(){

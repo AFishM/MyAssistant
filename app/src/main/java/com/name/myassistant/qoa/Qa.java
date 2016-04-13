@@ -19,7 +19,7 @@ import java.util.Set;
  * 与外部交互的操作类
  */
 public class Qa {
-    //存放同义词集
+    //存放同义词集<词，该词的同义词数组>
     static Map<String, String[]> synonymsMap = new HashMap<>();
     //用来存放停用词的集合
     static Set<String> stopWordSet = new HashSet<>();
@@ -32,7 +32,9 @@ public class Qa {
      */
     public static String getAnswer(String questionStr) throws IOException {
         String answer;
+        //返回关键词和问句类型
         QuestionAnalyze.analyze(questionStr);
+
         List<String> webPageDigestList=InfoSearch.searchAndGetSnippetList(questionStr);
         if(webPageDigestList==null||webPageDigestList.size()<=0){
             answer="哎呀，网络不好，等下再试试～";

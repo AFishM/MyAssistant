@@ -29,7 +29,7 @@ public class GetAnswer {
         endSentenceTagList.add("……");
         endSentenceTagList.add("\n");
 
-
+        LogUtil.d("xzx","questionType=> "+questionType);
 
         if (questionType == 3 || questionType == 4) {
             Map<String, Integer> entityCoOccurrenceMap = new HashMap<>();

@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.name.myassistant.alarm.AlarmSettingActivity;
+import com.name.myassistant.deskclock.DeskClockMainActivity;
 import com.name.myassistant.util.LogUtil;
 
 import java.io.File;
@@ -92,7 +92,7 @@ public class SettingActivity extends TakePhotoActivity implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.alarm_setting:
-                Intent intent=new Intent(SettingActivity.this,AlarmSettingActivity.class);
+                Intent intent=new Intent(SettingActivity.this,DeskClockMainActivity.class);
                 startActivity(intent);
                 break;
             case R.id.user_img:

@@ -36,6 +36,7 @@ public class QuestionAnalyze {
         ArrayList<String> partOfSpeechList = new ArrayList<>();
         //分词，词性标注
         String[] wordsAndPartOfSpeechList = QaUtil.lexicalAnalysis(question, "pos").split("_+|\\s+");
+        //广外_词性 校长_词性。。。
         LogUtil.d("xzx","wordsAndPartOfSpeechList.length=> "+wordsAndPartOfSpeechList.length);
 
         String tmpWord;
@@ -115,11 +116,11 @@ public class QuestionAnalyze {
      */
     static int questionClassify(ArrayList<String> keyWordList, ArrayList<String> partOfSpeech) {
         // 疑问代词数组
-        String[] interrogativepronoun = {"为什么", "为何", "何时", "何地", "何处", "哪里"
+        String[] interrogativePronoun = {"为什么", "为何", "何时", "何地", "何处", "哪里"
                 , "哪儿", "谁", "怎么", "怎样", "如何", "多少"
                 , "几", "什么", "哪", "哪个", "哪些", "多"};
         //问题类型编号
-        int[] questiontype = {1, 1, 2, 3, 3, 3,
+        int[] questionType = {1, 1, 2, 3, 3, 3,
                 3, 4, -1, -1, -1, 7,
                 7, 0, 0, 0, 0, -2};
         //疑问修饰词词组
@@ -128,23 +129,23 @@ public class QuestionAnalyze {
                 "地点", "地方", "国家", "省份", "城市", "城镇",
                 "人"};
         //疑问修饰词对应问题类型编号
-        int[] qualifierquestiontype = {1,
+        int[] qualifierQuestionType = {1,
                 2, 2, 2, 2, 2,
                 3, 3, 3, 3, 3, 3,
                 4};
 
         //初始化问题类型为其他
         int type = 9;
-        for (int i = 0; i < interrogativepronoun.length; i++) {
-            if (keyWordList.contains(interrogativepronoun[i])) {
-                type = questiontype[i];
-                interrogative = interrogativepronoun[i];
+        for (int i = 0; i < interrogativePronoun.length; i++) {
+            if (keyWordList.contains(interrogativePronoun[i])) {
+                type = questionType[i];
+                interrogative = interrogativePronoun[i];
                 LogUtil.d("xzx","interrogative=> "+interrogative);
                 if (type == 0) {
                     type = 5;
                     for (int j = 0; j < qualifier.length; j++) {
                         if (keyWordList.contains(qualifier[j])) {
-                            type = qualifierquestiontype[j];
+                            type = qualifierQuestionType[j];
                             break;
                         }
                     }
