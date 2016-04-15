@@ -10,10 +10,11 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/background_blue"
-        android:fitsSystemWindows="true"
-        android:minHeight="?attr/actionBarSize"
+        android:titleTextColor="@color/black"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:title="@string/search"
         app:navigationIcon="@drawable/arrow_32"/>
 
         <!--<TextView-->

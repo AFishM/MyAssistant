@@ -4,8 +4,8 @@ import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,7 +17,6 @@ import android.text.format.DateFormat;
 import android.util.Log;
 
 import java.util.Calendar;
-import java.text.DateFormatSymbols;
 
 /**
  * The Alarms provider supplies info about Alarm Clock settings
@@ -380,7 +379,6 @@ public class Alarms {
     /**
      * Disables alert in AlarmManger and StatusBar.
      *
-     * @param id Alarm ID.
      */
     static void disableAlert(Context context) {
         AlarmManager am = (AlarmManager)

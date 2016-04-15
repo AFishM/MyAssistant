@@ -30,7 +30,7 @@ public class SmsReceiver extends BroadcastReceiver {
             Object[] smsObj = (Object[]) bundle.get("pdus");
             for (Object object : smsObj) {
                 msg = SmsMessage.createFromPdu((byte[]) object);
-                phoneNum=phoneNum+msg.getOriginatingAddress();
+                phoneNum=msg.getOriginatingAddress();
                 info=info+msg.getDisplayMessageBody();
 
                 LogUtil.d("xzx", "number:" + msg.getOriginatingAddress()

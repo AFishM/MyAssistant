@@ -68,6 +68,7 @@
     <string name="how_to_send_message">怎么发短信</string>
     <string name="send_to_someone">发短信给（某人）</string>
     <string name="how_to_open_flash_light">怎么打开手电筒</string>
+    <string name="how_to_see_guide">怎么查看帮助</string>
     <string name="title_activity_take_photo">TakePhotoActivity</string>
     <string name="title_activity_time_up">TimeUpActivity</string>
 

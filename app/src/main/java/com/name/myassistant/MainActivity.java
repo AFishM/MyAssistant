@@ -412,23 +412,11 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
         super.onBackPressed();
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (resultCode == RESULT_OK) {
-//            Uri uri = data.getData();
-//            LogUtil.d("xzx", "Uri=> " + uri.toString());
-//            ContentResolver contentResolver = this.getContentResolver();
-//            try {
-//                Bitmap bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(uri));
-//                chatContentListViewAdapter.setUserImgBitmap(bitmap);
-//                chatContentListViewAdapter.notifyDataSetChanged();
-//            } catch (FileNotFoundException e) {
-//                LogUtil.d("xzx", "e=> " + e.toString());
-//                e.printStackTrace();
-//            }
-//        }
-//        super.onActivityResult(requestCode, resultCode, data);
-//    }
+    @Override
+    protected void onDestroy() {
+        SmsReceiver.setmSmsListener(null);
+        super.onDestroy();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -523,11 +511,17 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
 
         chatContentListView.smoothScrollToPosition(chatContentListViewAdapter.getCount());
 
+        //查看帮助
+        if(userInput.contains(getString(R.string.help))){
+            Intent intent=new Intent(MainActivity.this,HelpActivity.class);
+            startActivity(intent);
+            return;
+        }
+
         //打电话
         String callTag = getString(R.string.call_somebody);
         if (userInput.contains(callTag)) {
             String contactName = userInput.replace(callTag, "");
-//            if(contactName){}
             getPhoneNumWithContactName(contactName);
             return;
         }
@@ -848,7 +842,7 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
                 float z=values[2];
 
                 int value=15;
-                if(Math.abs(x)>=value||Math.abs(y)>=value||Math.abs(z)>=value){
+                if(Math.abs(x)>=value||Math.abs(y)>=value){
                     chatContentListViewAdapter.chatList.clear();
                     chatContentListViewAdapter.notifyDataSetChanged();
                     LogUtil.d("xzx","Math.abs(x)=> "+Math.abs(x)+" Math.abs(y)=> "+Math.abs(y)+" Math.abs(z)=> "+Math.abs(z));

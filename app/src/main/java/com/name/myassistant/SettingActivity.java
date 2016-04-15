@@ -142,10 +142,10 @@ public class SettingActivity extends TakePhotoActivity implements View.OnClickLi
 
     void setUserImg(){
         boolean userHasImg=GlobalVariable.getInstance().isUSER_HAS_IMG();
+        File file = new File(Environment.getExternalStorageDirectory(), getString(R.string.user_img_tag) + ".jpg");
+        imageUri = Uri.fromFile(file);
         if(userHasImg){
             LogUtil.d("xzx");
-            File file = new File(Environment.getExternalStorageDirectory(), getString(R.string.user_img_tag) + ".jpg");
-            imageUri = Uri.fromFile(file);
             BitmapFactory.Options option = new BitmapFactory.Options();
             option.inSampleSize = 5;
             Bitmap bitmap = BitmapFactory.decodeFile(imageUri.getPath(), option);

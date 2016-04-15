@@ -18,10 +18,9 @@ import java.util.Set;
  */
 public class GetAnswer {
     static String[] fileWordArray;
-    static String[] partOfSpeechList;
 
     public static String getAnswer(ArrayList<String> keyWordList, Map<String, String> keyWordSynonymMap, int questionType, List<String> webPageDigestList) throws IOException {
-        String punctuationStr = "[，。？：；‘’！“”—……、－{2}\\[ \\]（）【】{}《》\\s]";
+
         List<String> endSentenceTagList=new ArrayList<>();
         endSentenceTagList.add("。");
         endSentenceTagList.add("？");
@@ -32,7 +31,15 @@ public class GetAnswer {
         LogUtil.d("xzx","questionType=> "+questionType);
 
         if (questionType == 3 || questionType == 4) {
+            //类型_实体属性：3_Ns,4_Nh
+            String answerEntityAttribute = "ns";
+            if (questionType == 4) {
+                answerEntityAttribute = "nh";
+            }
+
+            //候选答案与关键词共现的记录<候选答案，共现关键词个数>
             Map<String, Integer> entityCoOccurrenceMap = new HashMap<>();
+            //候选答案与最近的关键词的距离的记录<候选答案，距离>
             Map<String,Integer> keyWordDistanceMap=new HashMap<>();
             //命名实体识别
 //            String[] tempSentenceArray;
@@ -56,15 +63,7 @@ public class GetAnswer {
                 LogUtil.d("xzx","wordList=> "+wordList.toString());
                 LogUtil.d("xzx","posList=> "+posList.toString());
 
-
-                //类型_实体属性：3_Ns,4_Nh
-                String answerEntityAttribute = "ns";
-                if (questionType == 4) {
-                    answerEntityAttribute = "nh";
-                }
-
                 //计算候选答案与关键词的共现
-
                 Set<String> sentenceKeyWordSet = new HashSet<>();
                 List<String> sentenceWordList=new ArrayList<>();
                 List<String> sentenceKeyWordList=new ArrayList<>();
@@ -116,58 +115,13 @@ public class GetAnswer {
                 }
                 LogUtil.d("xzx","entityCoOccurrenceMap=> "+entityCoOccurrenceMap.toString());
 
-//                tempSentenceArray = webPageDigestList.get(i).split("[。？！……\\n]");
-//                for (String aTempSentenceArray : tempSentenceArray) {
-//
-//                    // FIXME: 16/4/11 这里不用再次请求命名实体
-//                    String tempStr = QaUtil.lexicalAnalysis(aTempSentenceArray, "ner");
-//                    //命名实体
-//                    String entityStr;
-//                    //命名实体对应属性
-//                    String entityAttribute;
-//                    Pattern pattern = Pattern.compile("\\[.*?\\]\\w{2}");
-//                    Matcher matcher = pattern.matcher(tempStr);
-//                    String[] tempEntityAndAttributeArray;
-//                    String[] tempSentenceWordArray = null;
-//                    Set<String> sentenceKeyWordSet = new HashSet<>();
-//                    while (matcher.find()) {
-//                        tempEntityAndAttributeArray = matcher.group().replaceAll("\\[", "").split("\\]");
-//                        entityStr = tempEntityAndAttributeArray[0];
-//                        entityAttribute = tempEntityAndAttributeArray[1];
-//
-//                        // TODO: 16/4/12 这里留意下，忘记用来干嘛了
-//                        if (keyWordList.contains(entityStr)) {
-//                            Log.d("xzx","-----------------"+entityStr);
-//                            continue;
-//                        }
-//
-//                        //类型_实体属性：3_Ns,4_Nh
-//                        String answerEntityAttribute = "Ns";
-//                        if (questionType == 4) {
-//                            answerEntityAttribute = "Nh";
-//                        }
-//                        if (entityAttribute.equals(answerEntityAttribute)) {
-//                            if (tempSentenceWordArray == null) {
-//                                tempSentenceWordArray = QaUtil.lexicalAnalysis(aTempSentenceArray, "ws").split(punctuationStr);
-//                            }
-//                            for (String sentenceWord : tempSentenceWordArray) {
-//                                if (keyWordSynonymMap.containsKey(sentenceWord)) {
-//                                    sentenceKeyWordSet.add(keyWordSynonymMap.get(sentenceWord));
-//                                }
-//                            }
-//                            int score = sentenceKeyWordSet.size();
-//                            if (entityCoOccurrenceMap.containsKey(entityStr)) {
-//                                score = score + entityCoOccurrenceMap.get(entityStr);
-//                            }
-//                            entityCoOccurrenceMap.put(entityStr, score);
-//                        }
-//                    }
-//                }
             }
 
             LogUtil.d("xzx","entityCoOccurrenceMap=> "+entityCoOccurrenceMap.toString());
             LogUtil.d("xzx","keyWordDistanceMap"+keyWordDistanceMap.toString());
+            //共现个数
             int score = 0;
+            //与最近关键词的距离
             int distance=10000;
             String answer = "找不到答案，长按查看更多内容";
             for (String entityStr : entityCoOccurrenceMap.keySet()) {
@@ -193,20 +147,31 @@ public class GetAnswer {
             return answer;
         }
 
-
-        Map<String, Map<Integer, Double>> index = buildIndex(webPageDigestList, keyWordSynonymMap, "ws");
+        //先对百度文摘建立倒排索引
+        Map<String, Map<Integer, Double>> index = buildIndex(webPageDigestList, keyWordSynonymMap);
+        //根据索引计算文摘坐标
         int digestPosition = getDocument(keyWordList, index);
         Log.d("xzx", "digestPosition=> " + digestPosition);
+        //根据坐标得出对应的文摘
         String content = webPageDigestList.get(digestPosition);             //文档内容
+
+        //将文摘切成句子，返回的是数组
         String[] sentence = content.split("[。？！……\\n]");
+        //将数组转为列表，因为建立索引的输入参数是列表
         List<String> sentenceList = new ArrayList<>();
         sentenceList.addAll(Arrays.asList(sentence));
-        index = buildIndex(sentenceList, QuestionAnalyze.keyWordSynonymMap, "ws");
+        //以下将句子看成是小摘，重复一次建索引，计算坐标，最后得出候选的答案句子
+        index = buildIndex(sentenceList, QuestionAnalyze.keyWordSynonymMap);
         int sentencePosition = getDocument(keyWordList, index);
         return sentenceList.get(sentencePosition);
     }
 
-
+    /**
+     * 获取候选答案文本在文本列表中的位置
+     * @param keyWordList：关键词列表
+     * @param index：倒排索引
+     * @return 候选答案文本的在列表中的坐标
+     */
     static int getDocument(ArrayList<String> keyWordList, Map<String, Map<Integer, Double>> index) {
         //根据问句关键词查找文档
         Map<Integer, Double> fileScoreMap = new HashMap<>();
@@ -243,12 +208,12 @@ public class GetAnswer {
 
     /**
      * 建立索引
-     *
-     * @param fileList：百度得到的网页摘要的列表
-     * @return ：倒排索引 <词，<文档坐标，tf-idf值>>
+     * @param fileList：文本列表（百度返回的文摘列表或者某文摘的句子列表）
+     * @param keyWordMap：<同义词，同义词对应的关键词>
+     * @return 倒排索引：Map<关键词,Map<文档坐标,tf-idf值>>
      * @throws IOException
      */
-    static Map<String, Map<Integer, Double>> buildIndex(List<String> fileList, Map<String, String> keyWordMap, String pattern) throws IOException {
+    static Map<String, Map<Integer, Double>> buildIndex(List<String> fileList, Map<String, String> keyWordMap) throws IOException {
         //Map<关键词,Map<文档坐标,词频>>
         Map<String, Map<Integer, Integer>> wordFrequencyMap = new HashMap<>();
         //Map<关键词,Map<文档坐标,tf-idf值>>
@@ -262,24 +227,8 @@ public class GetAnswer {
 
         //遍历文档列表中的文档
         for (int i = 0; i < fileNum; i++) {
-            if (pattern.equals("ws")) {
-                String answer = QaUtil.lexicalAnalysis(fileList.get(i), pattern);
-
-                fileWordArray = answer.split(punctuationStr);
-
-            } else {
-                String[] wordsAndPartOfSpeechList = QaUtil.lexicalAnalysis(fileList.get(i), "pos").split("_|\\s");
-
-                String tmpWord;
-                fileWordArray = new String[wordsAndPartOfSpeechList.length / 2];
-                partOfSpeechList = new String[wordsAndPartOfSpeechList.length / 2];
-                for (int j = 0; j < fileWordArray.length; j++) {
-                    tmpWord = wordsAndPartOfSpeechList[j * 2];
-                    fileWordArray[j] = tmpWord;
-                    partOfSpeechList[j] = wordsAndPartOfSpeechList[j * 2 + 1];
-                }
-            }
-
+            String answer = QaUtil.lexicalAnalysis(fileList.get(i), "ws");
+            fileWordArray = answer.split(punctuationStr);
 
             //词频
             int frequency;
@@ -323,7 +272,12 @@ public class GetAnswer {
         return tfIdfValueMap;
     }
 
-    //改写log函数
+    /**
+     * 数学log函数
+     * @param value：
+     * @param base：通常为底数10
+     * @return 返回
+     */
     static double log(double value, double base) {
         return Math.log(value) / Math.log(base);
     }
