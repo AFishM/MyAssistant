@@ -247,7 +247,6 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
         contactLayout.setOnClickListener(this);
 
         closeFlashlightTextView.setOnClickListener(this);
-        closeFlashlightView.setOnClickListener(this);
         closeFlashlightView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -255,10 +254,12 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
 
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
+                        closeFlashlightView.setOnClickListener(null);
                         lastX = (int) event.getRawX();
                         lastY = (int) event.getRawY();
                         break;
                     case MotionEvent.ACTION_MOVE:
+                        closeFlashlightView.setOnClickListener(null);
                         int dx = (int) event.getRawX() - lastX;
                         int dy = (int) event.getRawY() - lastY;
 
@@ -288,6 +289,12 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
                         lastY = (int) event.getRawY();
                         break;
                     case MotionEvent.ACTION_UP:
+                        closeFlashlightView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                controlFlashlight(false);
+                            }
+                        });
                         break;
                 }
                 return false;
@@ -347,8 +354,7 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
             }
         });
 
-        File file = new File(Environment.getExternalStorageDirectory(), System.currentTimeMillis() + ".jpg");
-        imageUri = Uri.fromFile(file);
+        robotOutputHandle("您好，主人～");
         userInputEditText.setText("广外校长是谁");
 
         shakeToClean(this);
@@ -357,11 +363,10 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-
+        File file = new File(Environment.getExternalStorageDirectory(), getString(R.string.user_img_tag) + ".jpg");
+        imageUri = Uri.fromFile(file);
         boolean userHasImg=GlobalVariable.getInstance().isUSER_HAS_IMG();
         if(userHasImg){
-            File file = new File(Environment.getExternalStorageDirectory(), getString(R.string.user_img_tag) + ".jpg");
-            imageUri = Uri.fromFile(file);
             BitmapFactory.Options option = new BitmapFactory.Options();
             option.inSampleSize = 5;
             Bitmap bitmap = BitmapFactory.decodeFile(imageUri.getPath(), option);
@@ -370,21 +375,22 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
             chatContentListViewAdapter.setUserImgBitmap(null);
         }
 
-
-        int robotImgStatus=GlobalVariable.getInstance().getRobotImgStatus();
-        if(robotImgStatus==GlobalVariable.NEW_IMG){
-            File file = new File(Environment.getExternalStorageDirectory(), getString(R.string.robot_img_tag) + ".jpg");
-            imageUri = Uri.fromFile(file);
-            BitmapFactory.Options option = new BitmapFactory.Options();
-            option.inSampleSize = 5;
-            Bitmap bitmap = BitmapFactory.decodeFile(imageUri.getPath(), option);
-            chatContentListViewAdapter.setRobotImgBitmap(bitmap);
-        }else if(robotImgStatus==GlobalVariable.ORIGINAL_IMG){
-            Bitmap userBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.robot_img);
-            chatContentListViewAdapter.setRobotImgBitmap(userBitmap);
-        }else{
-            chatContentListViewAdapter.setRobotImgBitmap(null);
-        }
+        Bitmap userBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.robot_img);
+        chatContentListViewAdapter.setRobotImgBitmap(userBitmap);
+//        int robotImgStatus=GlobalVariable.getInstance().getRobotImgStatus();
+//        if(robotImgStatus==GlobalVariable.NEW_IMG){
+//            File file = new File(Environment.getExternalStorageDirectory(), getString(R.string.robot_img_tag) + ".jpg");
+//            imageUri = Uri.fromFile(file);
+//            BitmapFactory.Options option = new BitmapFactory.Options();
+//            option.inSampleSize = 5;
+//            Bitmap bitmap = BitmapFactory.decodeFile(imageUri.getPath(), option);
+//            chatContentListViewAdapter.setRobotImgBitmap(bitmap);
+//        }else if(robotImgStatus==GlobalVariable.ORIGINAL_IMG){
+//            Bitmap userBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.robot_img);
+//            chatContentListViewAdapter.setRobotImgBitmap(userBitmap);
+//        }else{
+//            chatContentListViewAdapter.setRobotImgBitmap(null);
+//        }
         chatContentListViewAdapter.notifyDataSetChanged();
     }
 
@@ -445,7 +451,7 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
 //                closeFlashlightTextView.setVisibility(View.GONE);
                 break;
             case R.id.close_flashlight_view:
-                controlFlashlight(false);
+
 //                closeFlashlightView.setVisibility(View.GONE);
                 break;
             case R.id.input_switch:
@@ -478,22 +484,23 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
                 getTakePhoto().picSelectCrop(imageUri);
                 break;
             case R.id.no_img:
-                if(isRobotImgChange){
-                    GlobalVariable.getInstance().setRobotImgStatus(GlobalVariable.NO_IMG);
-//                    GlobalVariable.getInstance().setROBOT_HAS_IMG(false);
-                }else{
-                    GlobalVariable.getInstance().setUSER_HAS_IMG(false);
-                }
+//                if(isRobotImgChange){
+//                    GlobalVariable.getInstance().setRobotImgStatus(GlobalVariable.NO_IMG);
+////                    GlobalVariable.getInstance().setROBOT_HAS_IMG(false);
+//                }else{
+//
+//                }
+                GlobalVariable.getInstance().setUSER_HAS_IMG(false);
                 GlobalVariable.save(MainActivity.this);
                 setImgLayout.setVisibility(View.GONE);
                 onResume();
                 break;
-            case R.id.original_img:
-                GlobalVariable.getInstance().setRobotImgStatus(GlobalVariable.ORIGINAL_IMG);
-                GlobalVariable.save(MainActivity.this);
-                setImgLayout.setVisibility(View.GONE);
-                onResume();
-                break;
+//            case R.id.original_img:
+//                GlobalVariable.getInstance().setRobotImgStatus(GlobalVariable.ORIGINAL_IMG);
+//                GlobalVariable.save(MainActivity.this);
+//                setImgLayout.setVisibility(View.GONE);
+//                onResume();
+//                break;
             default:
                 break;
         }
@@ -546,10 +553,12 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
             return;
         }
 
+        //搜索
         String searchTag=getString(R.string.search);
         if(userInput.contains(searchTag)){
             String searchMsg=userInput.replace(searchTag,"");
             try {
+                //拼接链接前对字符串进行编码
                 String link="http://m.baidu.com/s?from=1086k&word="+ URLEncoder.encode(searchMsg, "utf-8");
 
                 Intent intent = new Intent(MainActivity.this, LookOtherInfoWebActivity.class);
@@ -562,6 +571,7 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
             return;
         }
 
+        //自动问答
         new AnswerTask().execute(userInput);
         setProgressBarDialogShow(true);
     }
@@ -571,6 +581,7 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
      * @param outputStr：机器人输出文本
      */
     void robotOutputHandle(String outputStr){
+        LogUtil.d("xzx","outputStr=> "+outputStr);
         boolean isRobotAnswer=true;
         //收到新短信时的处理
         String receiveSMSTag=getString(R.string.short_message_tip);
@@ -597,7 +608,8 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
         chatContentListViewAdapter.notifyDataSetChanged();
         chatContentListView.smoothScrollToPosition(chatContentListViewAdapter.getCount());
 
-        if(GlobalVariable.getInstance().isAllowToSay()){
+
+        if(GlobalVariable.getInstance().isALLOW_TO_SAY()){
             speechSynthesizer.startSpeaking(outputStr, null);
         }
     }
@@ -611,18 +623,15 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
         isFlashLightOn=open;
         if (open) {
             closeFlashlightTextView.setVisibility(View.VISIBLE);
-            LogUtil.d("xzx");
             camera = Camera.open();
             Camera.Parameters parameters = camera.getParameters();
             parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
             camera.setParameters(parameters);
             camera.startPreview();
         } else {
-            LogUtil.d("xzx");
             if (camera != null) {
                 camera.stopPreview();
                 camera.release();
-//                userInputEditText.setText("打开手电筒");
                 closeFlashlightTextView.setVisibility(View.GONE);
                 closeFlashlightView.setVisibility(View.GONE);
             }
@@ -634,42 +643,24 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
      */
     void zoomOutFlashLightControl(){
         LogUtil.d("xzx");
-//        if (mCurrentAnimator != null) {
-//            mCurrentAnimator.cancel();
-//        }
-
-        // Calculate the starting and ending bounds for the zoomed-in image.
-        // This step involves lots of math. Yay, math.
         final Rect startBounds = new Rect();
         final Rect finalBounds = new Rect();
         final Point globalOffset = new Point();
 
-        // The start bounds are the global visible rectangle of the thumbnail,
-        // and the final bounds are the global visible rectangle of the container
-        // view. Also set the container view's offset as the origin for the
-        // bounds, since that's the origin for the positioning animation
-        // properties (X, Y).
         closeFlashlightView.getGlobalVisibleRect(startBounds);
-        findViewById(R.id.container)
-                .getGlobalVisibleRect(finalBounds, globalOffset);
+        findViewById(R.id.container).getGlobalVisibleRect(finalBounds, globalOffset);
         startBounds.offset(-globalOffset.x, -globalOffset.y);
         finalBounds.offset(-globalOffset.x, -globalOffset.y);
 
-        // Adjust the start bounds to be the same aspect ratio as the final
-        // bounds using the "center crop" technique. This prevents undesirable
-        // stretching during the animation. Also calculate the start scaling
-        // factor (the end scaling factor is always 1.0).
         float startScale;
         if ((float) finalBounds.width() / finalBounds.height()
                 > (float) startBounds.width() / startBounds.height()) {
-            // Extend start bounds horizontally
             startScale = (float) startBounds.height() / finalBounds.height();
             float startWidth = startScale * finalBounds.width();
             float deltaWidth = (startWidth - startBounds.width()) / 2;
             startBounds.left -= deltaWidth;
             startBounds.right += deltaWidth;
         } else {
-            // Extend start bounds vertically
             startScale = (float) startBounds.width() / finalBounds.width();
             float startHeight = startScale * finalBounds.height();
             float deltaHeight = (startHeight - startBounds.height()) / 2;
@@ -680,10 +671,6 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
         closeFlashlightView.setVisibility(View.VISIBLE);
         closeFlashlightView.setAlpha(0f);
 
-//        closeFlashlightTextView.setPivotX(0f);
-//        closeFlashlightTextView.setPivotY(0f);
-        // Animate the four positioning/sizing properties in parallel,
-        // back to their original values.
         AnimatorSet set = new AnimatorSet();
         set.play(ObjectAnimator
                 .ofFloat(closeFlashlightTextView, View.X, startBounds.left))
@@ -708,7 +695,6 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
                         .setDuration(700)
                         .setListener(null);
                 closeFlashlightTextView.setVisibility(View.GONE);
-//                mCurrentAnimator = null;
             }
 
             @Override
@@ -719,11 +705,9 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
                         .setDuration(700)
                         .setListener(null);
                 closeFlashlightTextView.setVisibility(View.GONE);
-//                mCurrentAnimator = null;
             }
         });
         set.start();
-//        mCurrentAnimator = set;
     }
 
     String getContactNameWithPhoneNum(String phoneNum) {
@@ -762,6 +746,11 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
 //        }
     }
 
+    /**
+     * 发送短信
+     * @param phoneNum：电话号码
+     * @param message：短信内容
+     */
     void sendShortMessage(String phoneNum,String message){
         android.telephony.SmsManager smsManager=android.telephony.SmsManager.getDefault();
         smsManager.sendTextMessage(phoneNum, null, message, null, null);
@@ -769,6 +758,10 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
         onBackPressed();
     }
 
+    /**
+     * 随音量高低改变音量显示的高低
+     * @param i：音量值，在0～30之间
+     */
     void changeVolumeView(int i){
         volumeTagView1.setVisibility(View.VISIBLE);
         volumeTagView2.setVisibility(View.VISIBLE);
@@ -818,19 +811,30 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * 删除数据
+     * @param chat：聊天消息对象
+     */
     void deleteText(Chat chat){
         chatContentListViewAdapter.chatList.remove(chat);
         chatContentListViewAdapter.notifyDataSetChanged();
         Toast.makeText(this,getString(R.string.delete_successfully),Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * 复制文本数据
+     * @param text：要复制的文本数据内容
+     */
     void copyText(String text){
         ClipboardManager clipboardManager=(ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
         clipboardManager.setText(text);
         Toast.makeText(this,getString(R.string.copy_successfully),Toast.LENGTH_LONG).show();
     }
 
-    //摇一摇清除记录
+    /**
+     * 摇一摇清屏
+     * @param context：上下文
+     */
     void shakeToClean(Context context){
         SensorManager sensorManager=(SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
         sensorManager.registerListener(new SensorEventListener() {
@@ -942,14 +946,15 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
         BitmapFactory.Options option = new BitmapFactory.Options();
         option.inSampleSize = 5;
         Bitmap bitmap = BitmapFactory.decodeFile(uri.getPath(), option);
-        if(isRobotImgChange){
-            GlobalVariable.getInstance().setRobotImgStatus(GlobalVariable.NEW_IMG);
-//            GlobalVariable.getInstance().setROBOT_HAS_IMG(true);
-            chatContentListViewAdapter.setRobotImgBitmap(bitmap);
-        }else{
-            GlobalVariable.getInstance().setUSER_HAS_IMG(true);
-            chatContentListViewAdapter.setUserImgBitmap(bitmap);
-        }
+//        if(isRobotImgChange){
+//            GlobalVariable.getInstance().setRobotImgStatus(GlobalVariable.NEW_IMG);
+////            GlobalVariable.getInstance().setROBOT_HAS_IMG(true);
+//            chatContentListViewAdapter.setRobotImgBitmap(bitmap);
+//        }else{
+//
+//        }
+        GlobalVariable.getInstance().setUSER_HAS_IMG(true);
+        chatContentListViewAdapter.setUserImgBitmap(bitmap);
         GlobalVariable.save(this);
         chatContentListViewAdapter.notifyDataSetChanged();
         setImgLayout.setVisibility(View.GONE);
@@ -966,19 +971,31 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
     }
 
     class AnswerTask extends AsyncTask<String, Void, String> {
+        String questionStr;
         @Override
         protected String doInBackground(String... params) {
+            String answer="哎呀，网络好像不太好，等下再试试～";
+            questionStr=params[0];
             try {
-                return Qa.getAnswer(params[0]);
+                answer=Qa.getAnswer(questionStr);
+                return answer;
             } catch (IOException e) {
                 LogUtil.d("xzx", "e=> " + e.toString());
             }
-            return null;
+            return answer;
         }
 
         @Override
         protected void onPostExecute(String answer) {
             setProgressBarDialogShow(false);
+            int position=chatContentListViewAdapter.chatList.size();
+            try {
+                String link="http://m.baidu.com/s?from=1086k&word="+ URLEncoder.encode(questionStr,"utf-8");
+                GlobalVariable.getInstance().getLinkMap().put(position,link);
+            } catch (UnsupportedEncodingException e) {
+                LogUtil.e("xzx","e=> "+e.toString());
+                e.printStackTrace();
+            }
             robotOutputHandle(answer);
         }
     }
@@ -1017,9 +1034,10 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             View view;
             final ChatViewHolder holder;
+            //判断convertView是否为空，不为空则重用，为空则创建ChatViewHolder保存convertView中的各种控件
             if (null != convertView) {
                 view = convertView;
                 holder = (ChatViewHolder) view.getTag();
@@ -1044,33 +1062,37 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
                 view.setTag(holder);
             }
 
+            //初始化设置用户及语音助手的长按操作菜单布局均不可见，查看更多也不可见
             holder.longClickLayout.setVisibility(View.GONE);
             holder.moreTextView.setVisibility(View.GONE);
             holder.userInputLongClickLayout.setVisibility(View.GONE);
 
+            //获取消息对象，填充数据
             final Chat chat = chatList.get(position);
 
+            //如果是用户输入，语音助手输出布局不可见，用户输入布局可见
             if (chat.isUserInput) {
                 holder.robotSayLayout.setVisibility(View.GONE);
                 holder.userSayLayout.setVisibility(View.VISIBLE);
+
+                //设置用户头像（如果有的话）
                 holder.userImgView.setImageBitmap(userImgBitmap);
+                //设置用户输出的文本
                 holder.userInputTextView.setText(chat.chatStr);
 
+                //用户头像点击事件监听，打开更改头像布局
                 holder.userImgView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         isRobotImgChange=false;
                         File file = new File(Environment.getExternalStorageDirectory(), getString(R.string.user_img_tag) + ".jpg");
                         imageUri = Uri.fromFile(file);
                         setImgLayout.setVisibility(View.VISIBLE);
                         originalImgTextView.setVisibility(View.GONE);
-//                        Intent intent = new Intent();
-//                        intent.setType("image/*");
-//                        intent.setAction(Intent.ACTION_GET_CONTENT);
-//                        startActivityForResult(intent, 1);
                     }
                 });
+
+                //用户输出文本长按时间监听，显示用户操作菜单布局
                 holder.userInputTextView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
@@ -1078,6 +1100,8 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
                         return false;
                     }
                 });
+
+                //用户输入文本复制按钮点击监听，点击即复制，操作菜单设置不可见
                 holder.userCopyTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -1085,6 +1109,7 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
                         holder.userInputLongClickLayout.setVisibility(View.INVISIBLE);
                     }
                 });
+                //用户输入删除按钮，点击即删除，操作菜单不可见
                 holder.userDeleteTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -1093,21 +1118,15 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
                     }
                 });
             } else {
+                //如果是语音助手的输出，设置语音助手消息布局可见，用户消息布局不可见
                 holder.robotSayLayout.setVisibility(View.VISIBLE);
                 holder.userSayLayout.setVisibility(View.GONE);
+                //设置语音助手头像
                 holder.robotImgView.setImageBitmap(robotImgBitmap);
+                //设置输出文本
                 holder.robotOutputTextView.setText(chat.chatStr);
 
-                holder.robotImgView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        File file = new File(Environment.getExternalStorageDirectory(), getString(R.string.robot_img_tag) + ".jpg");
-                        imageUri = Uri.fromFile(file);
-                        isRobotImgChange=true;
-                        setImgLayout.setVisibility(View.VISIBLE);
-                        originalImgTextView.setVisibility(View.VISIBLE);
-                    }
-                });
+                //输出文本点击可语音播报（如果被允许），如果在播报中点击可暂停
                 holder.robotOutputTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -1115,12 +1134,14 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
                             speechSynthesizer.stopSpeaking();
                             return;
                         }
-                        if(GlobalVariable.getInstance().isAllowToSay()){
+                        if(GlobalVariable.getInstance().isALLOW_TO_SAY()){
                             speechSynthesizer.startSpeaking(chat.chatStr, null);
                         }
 
                     }
                 });
+
+                //输出文本长按显示操作菜单，如果是针对用户提问做出的回答，显示可以查看更多
                 holder.robotOutputTextView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
@@ -1136,15 +1157,19 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
                         return false;
                     }
                 });
+
+                //查看更多按钮点击可查看用户问题在百度搜索中的搜索结果
                 holder.moreTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String link = GlobalVariable.getInstance().getLink();
+                        String link = GlobalVariable.getInstance().getLinkMap().get(position);
                         Intent intent = new Intent(MainActivity.this, LookOtherInfoWebActivity.class);
                         intent.putExtra("link", link);
                         startActivity(intent);
                     }
                 });
+
+                //语音助手输出文本的复制及删除
                 holder.copyTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -1166,22 +1191,36 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
     }
 
     class ChatViewHolder {
+        //语音助手输出的消息布局
         RelativeLayout robotSayLayout;
+        //用户输入的消息布局
         RelativeLayout userSayLayout;
+        //语音助手长按出现的菜单布局
         LinearLayout longClickLayout;
+        //用户长按出现的菜单布局
         LinearLayout userInputLongClickLayout;
 
+        //用户针对语音助手回答的答案查看更多的按钮
         TextView moreTextView;
+        //查看更多旁边的竖线，查看更多按钮不可见时，线也不可见
         View lookMoreLine;
+        //语音助手输出文本的复制按钮
         TextView copyTextView;
+        //语音助手输出文本的删除按钮
         TextView deleteTextView;
 
+        //用户输入文本的复制按钮
         TextView userCopyTextView;
+        //用户输入文本的删除按钮
         TextView userDeleteTextView;
 
+        //语音助手输出文本的视图
         TextView robotOutputTextView;
+        //用户输入文本的视图
         TextView userInputTextView;
+        //语音助手头像
         ImageView robotImgView;
+        //用户头像
         ImageView userImgView;
     }
 }

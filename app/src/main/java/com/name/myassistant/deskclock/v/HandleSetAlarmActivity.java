@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package com.name.myassistant.deskclock;
+package com.name.myassistant.deskclock.v;
 
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+
+import com.name.myassistant.deskclock.Alarm;
+import com.name.myassistant.deskclock.Alarms;
+import com.name.myassistant.deskclock.v.DeskClockMainActivity;
+import com.name.myassistant.deskclock.v.SetAlarmActivity;
 
 import java.util.Calendar;
 
@@ -29,7 +34,7 @@ import static android.provider.AlarmClock.EXTRA_HOUR;
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 import static android.provider.AlarmClock.EXTRA_MINUTES;
 
-public class HandleSetAlarm extends Activity {
+public class HandleSetAlarmActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -70,7 +75,7 @@ public class HandleSetAlarm extends Activity {
             if (c != null && c.moveToFirst()) {
                 // Enable the first alarm we find.
                 Alarms.enableAlarm(this, c.getInt(0), true);
-                SetAlarm.popAlarmSetToast(this, timeInMillis);
+                SetAlarmActivity.popAlarmSetToast(this, timeInMillis);
                 finish();
                 return;
             }
@@ -89,7 +94,7 @@ public class HandleSetAlarm extends Activity {
 
         if (getContentResolver().insert(
                 Alarm.Columns.CONTENT_URI, values) != null) {
-            SetAlarm.popAlarmSetToast(this, timeInMillis);
+            SetAlarmActivity.popAlarmSetToast(this, timeInMillis);
             Alarms.setNextAlert(this);
         }
 

@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2009 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.name.myassistant.deskclock;
 
 import android.content.Context;
@@ -32,14 +16,6 @@ import java.util.Calendar;
 
 public final class Alarm implements Parcelable {
 
-    //////////////////////////////
-    //序列化的Parcelable接口
-	/*
-	 * by wangxianming 
-	 * in 2012-04-09
-	 * by start
-	 */
-    //////////////////////////////
     public static final Creator<Alarm> CREATOR
             = new Creator<Alarm>() {
                 public Alarm createFromParcel(Parcel p) {
@@ -112,7 +88,7 @@ public final class Alarm implements Parcelable {
         public static final String ENABLED = "enabled";
 
         /**
-         * True if alarm should vibrate
+         * True if alarm should vibrate(振动)
          * <P>Type: BOOLEAN</P>
          */
         public static final String VIBRATE = "vibrate";
@@ -246,7 +222,7 @@ public final class Alarm implements Parcelable {
      * 0x20: Saturday
      * 0x40: Sunday
      */
-    static final class DaysOfWeek {
+    public static final class DaysOfWeek {
 
         private static int[] DAY_MAP = new int[] {
             Calendar.MONDAY,
@@ -261,7 +237,7 @@ public final class Alarm implements Parcelable {
         // Bitmask of all repeating days
         private int mDays;
 
-        DaysOfWeek(int days) {
+        public DaysOfWeek(int days) {
             mDays = days;
         }
 

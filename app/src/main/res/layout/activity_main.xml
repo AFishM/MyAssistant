@@ -15,10 +15,9 @@
             android:id="@+id/main_toolbar"
             android:layout_width="match_parent"
             android:title="@string/app_name"
-            android:titleTextColor="@color/black"
+            app:titleTextColor="@color/white"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+            android:background="@color/toolbar_background"/>
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -27,6 +26,7 @@
             android:id="@+id/chat_content"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:background="@color/background_green"
             android:layout_weight="1"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
@@ -160,11 +160,11 @@
         android:textColor="@color/white"
         android:text="@string/close_flashlight"
         android:visibility="gone"/>
-    <View android:id="@+id/close_flashlight_view"
+    <ImageView android:id="@+id/close_flashlight_view"
         android:layout_centerInParent="true"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:background="@color/transparent_black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/flashlight_64"
         android:clickable="true"
         android:visibility="gone"/>
     <LinearLayout

@@ -10,4 +10,6 @@
     <color name="transparent_background_blue">#7797cae9</color>
     <color name="robot_yellow">#f7e426</color>
     <color name="robot_yellow_light">#f8f067</color>
+    <color name="background_green">#e0f7f8</color>
+    <color name="toolbar_background">#34363f</color>
 </resources>

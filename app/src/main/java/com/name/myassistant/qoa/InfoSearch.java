@@ -1,8 +1,5 @@
 package com.name.myassistant.qoa;
 
-import com.name.myassistant.GlobalVariable;
-import com.name.myassistant.util.LogUtil;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,8 +33,8 @@ public class InfoSearch {
         List<String> webPageDigestList = new ArrayList<>();
 
         String link="http://m.baidu.com/s?from=1086k&word="+ URLEncoder.encode(questionStr,"utf-8");
-        LogUtil.d("xzx", "link=> " + link);
-        GlobalVariable.getInstance().setLink(link);
+//        LogUtil.d("xzx", "link=> " + link);
+//        GlobalVariable.getInstance().setLink(link);
 
         // TODO: 16/4/12 以下，应该有网络断开访问不了的情况，最好能做个重新尝试连接
         URL url = new URL(link);

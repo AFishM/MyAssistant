@@ -176,7 +176,7 @@ public class DigitalClock extends LinearLayout {
     }
 
 
-    void updateTime(Calendar c) {
+    public void updateTime(Calendar c) {
         mCalendar = c;
         updateTime();
     }
@@ -196,11 +196,11 @@ public class DigitalClock extends LinearLayout {
         mAmPm.setShowAmPm(mFormat == M12);
     }
 
-    void setLive(boolean live) {
+    public void setLive(boolean live) {
         mLive = live;
     }
 
-    void setTypeface(Typeface tf) {
+    public void setTypeface(Typeface tf) {
         mTimeDisplay.setTypeface(tf);
     }
 }

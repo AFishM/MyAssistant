@@ -69,16 +69,16 @@ public class AlarmSettingFragment extends Fragment implements View.OnClickListen
                 String hour=hourTextView.getText().toString();
                 String minute=minuteTextView.getText().toString();
                 String noteStr=noteEditText.getText().toString();
-                if(alarm==null){
-                    int alarmId= GlobalVariable.getInstance().getAlarmList().size();
-                    alarm=new Alarm(alarmId,hour,minute,noteStr,null);
-                    alarm.setOpen(v.getContext(), true);
-                    GlobalVariable.getInstance().getAlarmList().add(alarm);
-                }else{
-                    alarm.hour=hour;
-                    alarm.minute=minute;
-                    alarm.note=noteStr;
-                }
+//                if(alarm==null){
+//                    int alarmId= GlobalVariable.getInstance().getAlarmList().size();
+//                    alarm=new Alarm(alarmId,hour,minute,noteStr,null);
+//                    alarm.setOpen(v.getContext(), true);
+//                    GlobalVariable.getInstance().getAlarmList().add(alarm);
+//                }else{
+//                    alarm.hour=hour;
+//                    alarm.minute=minute;
+//                    alarm.note=noteStr;
+//                }
                 GlobalVariable.save(v.getContext());
                 AlarmListFragment alarmListFragment=(AlarmListFragment)activity.fragmentManager.findFragmentByTag(AlarmListFragment.class.toString());
                 if(alarmListFragment!=null){

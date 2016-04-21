@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.name.myassistant.deskclock.DeskClockMainActivity;
+import com.name.myassistant.deskclock.v.DeskClockMainActivity;
 import com.name.myassistant.util.LogUtil;
 
 import java.io.File;
@@ -48,7 +48,7 @@ public class SettingActivity extends TakePhotoActivity implements View.OnClickLi
         });
         
         readShortMessageCheckBox.setChecked(GlobalVariable.getInstance().isREAD_SHORT_MESSAGE_PERMISSION());
-        allowToSayCheckBox.setChecked(GlobalVariable.getInstance().isAllowToSay());
+        allowToSayCheckBox.setChecked(GlobalVariable.getInstance().isALLOW_TO_SAY());
         alarmSettingTextView.setOnClickListener(this);
         imageView.setOnClickListener(this);
         takePhotoTextView.setOnClickListener(this);
@@ -70,7 +70,7 @@ public class SettingActivity extends TakePhotoActivity implements View.OnClickLi
         allowToSayCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                GlobalVariable.getInstance().setAllowToSay(isChecked);
+                GlobalVariable.getInstance().setALLOW_TO_SAY(isChecked);
                 GlobalVariable.save(SettingActivity.this);
             }
         });

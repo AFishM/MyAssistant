@@ -1,10 +1,9 @@
-package com.name.myassistant.deskclock;
+package com.name.myassistant.deskclock.v;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -29,19 +28,23 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.name.myassistant.R;
+import com.name.myassistant.deskclock.Alarm;
+import com.name.myassistant.deskclock.Alarms;
+import com.name.myassistant.deskclock.DigitalClock;
+import com.name.myassistant.deskclock.ToastMaster;
 import com.name.myassistant.util.LogUtil;
 
 import java.util.Calendar;
 
 public class DeskClockMainActivity extends AppCompatActivity implements OnItemClickListener{
 	
-    static final String PREFERENCES = "AlarmClock";
+    public static final String PREFERENCES = "AlarmClock";
 
     /** This must be false for production.  If true, turns on logging,
         test code, etc. */
 
-    private SharedPreferences mPrefs;
-    private LayoutInflater mFactory;
+//    private SharedPreferences mPrefs;
+//    private LayoutInflater layoutInflater;
     private ListView mAlarmsList;
     private Cursor mCursor;
 	
@@ -50,9 +53,9 @@ public class DeskClockMainActivity extends AppCompatActivity implements OnItemCl
         super.onCreate(savedInstanceState);
         
         //取自定义布局的LayoutInflater
-        mFactory = LayoutInflater.from(this);
+//        layoutInflater = LayoutInflater.from(this);
         //取getSharedPreferences中key==“AlarmClock”的值
-        mPrefs = getSharedPreferences(PREFERENCES, 0);
+//        mPrefs = getSharedPreferences(PREFERENCES, 0);
         //获取闹钟的cursor
         mCursor = Alarms.getAlarmsCursor(getContentResolver());
         
@@ -90,7 +93,7 @@ public class DeskClockMainActivity extends AppCompatActivity implements OnItemCl
     }
     
     private void addNewAlarm() {
-        startActivity(new Intent(this, SetAlarm.class));
+        startActivity(new Intent(this, SetAlarmActivity.class));
     }
     
     /**
@@ -104,7 +107,7 @@ public class DeskClockMainActivity extends AppCompatActivity implements OnItemCl
         }
 
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            View ret = mFactory.inflate(R.layout.alarm_time, parent, false);
+            View ret = LayoutInflater.from(DeskClockMainActivity.this).inflate(R.layout.alarm_time, parent, false);
 
             DigitalClock digitalClock =
                     (DigitalClock) ret.findViewById(R.id.digitalClock);
@@ -178,9 +181,10 @@ public class DeskClockMainActivity extends AppCompatActivity implements OnItemCl
             Alarm alarm) {
         bar.setImageResource(enabled ? R.drawable.ic_indicator_on
                 : R.drawable.ic_indicator_off);
+
         Alarms.enableAlarm(this, alarm.id, enabled);
         if (enabled) {
-            SetAlarm.popAlarmSetToast(this, alarm.hour, alarm.minutes,
+            SetAlarmActivity.popAlarmSetToast(this, alarm.hour, alarm.minutes,
                     alarm.daysOfWeek);
         }
     }
@@ -222,13 +226,13 @@ public class DeskClockMainActivity extends AppCompatActivity implements OnItemCl
                 final Alarm alarm = new Alarm(c);
                 Alarms.enableAlarm(this, alarm.id, !alarm.enabled);
                 if (!alarm.enabled) {
-                    SetAlarm.popAlarmSetToast(this, alarm.hour, alarm.minutes,
+                    SetAlarmActivity.popAlarmSetToast(this, alarm.hour, alarm.minutes,
                             alarm.daysOfWeek);
                 }
                 return true;
 
             case R.id.edit_alarm:
-                Intent intent = new Intent(this, SetAlarm.class);
+                Intent intent = new Intent(this, SetAlarmActivity.class);
                 intent.putExtra(Alarms.ALARM_ID, id);
                 startActivity(intent);
                 return true;
@@ -263,7 +267,7 @@ public class DeskClockMainActivity extends AppCompatActivity implements OnItemCl
         final String time = Alarms.formatTime(this, cal);
 
         // Inflate the custom view and set each TextView's text.
-        final View v = mFactory.inflate(R.layout.context_menu_header, null);
+        final View v = LayoutInflater.from(this).inflate(R.layout.context_menu_header, null);
         TextView timeTextView = (TextView) v.findViewById(R.id.header_time);
         timeTextView.setText(time);
         TextView labelTextView = (TextView) v.findViewById(R.id.header_label);
@@ -315,7 +319,7 @@ public class DeskClockMainActivity extends AppCompatActivity implements OnItemCl
      */
 	public void onItemClick(AdapterView<?> adapterView, View v, int pos, long id) {
         LogUtil.d("xzx","id=> "+id);
-		Intent intent = new Intent(this, SetAlarm.class);
+		Intent intent = new Intent(this, SetAlarmActivity.class);
         intent.putExtra(Alarms.ALARM_ID, (int) id);
         startActivity(intent);
 		

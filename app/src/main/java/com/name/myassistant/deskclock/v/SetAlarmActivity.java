@@ -1,5 +1,5 @@
 
-package com.name.myassistant.deskclock;
+package com.name.myassistant.deskclock.v;
 
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
@@ -20,12 +20,17 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.name.myassistant.R;
+import com.name.myassistant.deskclock.Alarm;
+import com.name.myassistant.deskclock.AlarmPreference;
+import com.name.myassistant.deskclock.Alarms;
+import com.name.myassistant.deskclock.RepeatPreference;
+import com.name.myassistant.deskclock.ToastMaster;
 
 /**
  * 管理每一个闹钟
  * 每一个闹钟对应的信息都绑定在Preference中了
  */
-public class SetAlarm extends PreferenceActivity
+public class SetAlarmActivity extends PreferenceActivity
         implements TimePickerDialog.OnTimeSetListener,
         Preference.OnPreferenceChangeListener {
 
@@ -41,7 +46,7 @@ public class SetAlarm extends PreferenceActivity
     private int     mHour;
     private int     mMinutes;
     private boolean mTimePickerCancelled;
-    private Alarm   mOriginalAlarm;
+    private Alarm mOriginalAlarm;
 
     /**
      * Set an alarm.  Requires an Alarms.ALARM_ID to be passed in as an
@@ -67,7 +72,7 @@ public class SetAlarm extends PreferenceActivity
                         p.setSummary(val);
                         if (val != null && !val.equals(mLabel.getText())) {
                             // Call through to the generic listener.
-                            return SetAlarm.this.onPreferenceChange(p,
+                            return SetAlarmActivity.this.onPreferenceChange(p,
                                 newValue);
                         }
                         return true;
@@ -80,10 +85,10 @@ public class SetAlarm extends PreferenceActivity
                             Object newValue) {
                         // Pop a toast when enabling alarms.
                         if (!mEnabledPref.isChecked()) {
-                            popAlarmSetToast(SetAlarm.this, mHour, mMinutes,
+                            popAlarmSetToast(SetAlarmActivity.this, mHour, mMinutes,
                                 mRepeatPref.getDaysOfWeek());
                         }
-                        return SetAlarm.this.onPreferenceChange(p, newValue);
+                        return SetAlarmActivity.this.onPreferenceChange(p, newValue);
                     }
                 });
         mTimePref = findPreference("time");
@@ -134,7 +139,7 @@ public class SetAlarm extends PreferenceActivity
                     updatePrefs(mOriginalAlarm);
                     // "Revert" on a newly created alarm should delete it.
                     if (mOriginalAlarm.id == -1) {
-                        Alarms.deleteAlarm(SetAlarm.this, newId);
+                        Alarms.deleteAlarm(SetAlarmActivity.this, newId);
                     } else {
                         saveAlarm();
                     }
@@ -273,7 +278,7 @@ public class SetAlarm extends PreferenceActivity
                 .setPositiveButton(android.R.string.ok,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface d, int w) {
-                                Alarms.deleteAlarm(SetAlarm.this, mId);
+                                Alarms.deleteAlarm(SetAlarmActivity.this, mId);
                                 finish();
                             }
                         })
@@ -286,7 +291,7 @@ public class SetAlarm extends PreferenceActivity
      * Display a toast that tells the user how long until the alarm
      * goes off.  This helps prevent "am/pm" mistakes.
      */
-    static void popAlarmSetToast(Context context, int hour, int minute,
+    public static void popAlarmSetToast(Context context, int hour, int minute,
                                  Alarm.DaysOfWeek daysOfWeek) {
         popAlarmSetToast(context,
                 Alarms.calculateAlarm(hour, minute, daysOfWeek)

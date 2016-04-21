@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.name.myassistant.deskclock;
+package com.name.myassistant.deskclock.v;
 
 import android.media.AudioManager;
 import android.os.Bundle;

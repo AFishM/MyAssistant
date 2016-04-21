@@ -15,6 +15,7 @@ import com.name.myassistant.GlobalVariable;
 import com.name.myassistant.R;
 import com.name.myassistant.m.Alarm;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -43,7 +44,8 @@ public class AlarmListFragment extends Fragment {
     }
 
     public void addAlarmData() {
-        List<Alarm> alarmList= GlobalVariable.getInstance().getAlarmList();
+//        List<Alarm> alarmList= GlobalVariable.getInstance().getAlarmList();
+        List<Alarm> alarmList= new ArrayList<>();
         if(alarmList.size()<=0){
             alarmListView.setVisibility(View.GONE);
             noAlarmNoteTextView.setVisibility(View.VISIBLE);

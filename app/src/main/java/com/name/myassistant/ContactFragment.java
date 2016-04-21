@@ -275,6 +275,10 @@ public class ContactFragment extends Fragment implements
         }
     }
 
+    /**
+     * 拨打电话
+     * @param phoneNum：电话号码
+     */
     void callPhone(String phoneNum) {
         LogUtil.d("xzx");
         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNum));

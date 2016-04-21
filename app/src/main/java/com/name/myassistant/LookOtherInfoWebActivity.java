@@ -25,6 +25,8 @@ public class LookOtherInfoWebActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+
+
         String link=getIntent().getStringExtra("link");
         WebView webView=(WebView)findViewById(R.id.webView);
 

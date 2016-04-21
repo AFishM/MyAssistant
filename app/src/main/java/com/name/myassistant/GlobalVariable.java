@@ -4,34 +4,36 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
-import com.name.myassistant.m.Alarm;
 import com.name.myassistant.util.LogUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by xu on 16-3-9.
  */
 public class GlobalVariable {
-    private static GlobalVariable ourInstance = new GlobalVariable();
+    private static GlobalVariable ourInstance = null;
+
     private boolean READ_SHORT_MESSAGE_PERMISSION=true;
-    private boolean allowToSay=true;
-    private List<Alarm> alarmList=new ArrayList<>();
-    private String link;
+    private boolean ALLOW_TO_SAY =true;
     private boolean USER_HAS_IMG;
-    private int robotImgStatus;
-    public static final int ORIGINAL_IMG=0;
-    public static final int NEW_IMG=1;
-    public static final int NO_IMG=2;
 
-
-
-    public static GlobalVariable getInstance() {
-        return ourInstance;
-    }
+    //<语音助手回答答案所在坐标，该答案对应问题的搜索链接>
+    private Map<Integer,String> linkMap=new HashMap<>();
 
     private GlobalVariable() {
+    }
+
+    public static GlobalVariable getInstance() {
+        if(ourInstance==null){
+            synchronized (GlobalVariable.class){
+                if(ourInstance==null){
+                    ourInstance=new GlobalVariable();
+                }
+            }
+        }
+        return ourInstance;
     }
 
     public boolean isREAD_SHORT_MESSAGE_PERMISSION() {
@@ -43,26 +45,17 @@ public class GlobalVariable {
         save(context);
     }
 
-    public boolean isAllowToSay() {
-        return allowToSay;
+    public boolean isALLOW_TO_SAY() {
+        return ALLOW_TO_SAY;
     }
 
-    public void setAllowToSay(boolean allowToSay) {
-        this.allowToSay = allowToSay;
+    public void setALLOW_TO_SAY(boolean ALLOW_TO_SAY) {
+        this.ALLOW_TO_SAY = ALLOW_TO_SAY;
     }
 
-    public List<Alarm> getAlarmList() {
-        return alarmList;
+    public Map<Integer, String> getLinkMap() {
+        return linkMap;
     }
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
 
     public boolean isUSER_HAS_IMG() {
         return USER_HAS_IMG;
@@ -72,16 +65,11 @@ public class GlobalVariable {
         this.USER_HAS_IMG = USER_HAS_IMG;
     }
 
-    public int getRobotImgStatus() {
-        return robotImgStatus;
-    }
-
-    public void setRobotImgStatus(int robotImgStatus) {
-        this.robotImgStatus = robotImgStatus;
-    }
-
+    /**
+     * 将全局变量转化为字符串并保存到永久存储SharedPreferences中
+     * @param context：上下文
+     */
     public static void save(Context context){
-        LogUtil.d("xzx");
         Gson gson=new Gson();
         String data=gson.toJson(ourInstance);
         LogUtil.d("xzx","data=> "+data);
@@ -91,6 +79,10 @@ public class GlobalVariable {
         editor.putString("GlobalVariable",data).apply();
     }
 
+    /**
+     * 从SharedPreferences中读取全局变量字符串并转化为对象
+     * @param context：上下文
+     */
     public static void recoverData(Context context){
         SharedPreferences sharedPreferences=context.getSharedPreferences("myassistant", Context.MODE_PRIVATE);
         String data=sharedPreferences.getString("GlobalVariable",null);
@@ -106,11 +98,9 @@ public class GlobalVariable {
     public String toString() {
         return "GlobalVariable{" +
                 "READ_SHORT_MESSAGE_PERMISSION=" + READ_SHORT_MESSAGE_PERMISSION +
-                ", allowToSay=" + allowToSay +
-                ", alarmList=" + alarmList +
-                ", link='" + link + '\'' +
+                ", ALLOW_TO_SAY=" + ALLOW_TO_SAY +
                 ", USER_HAS_IMG=" + USER_HAS_IMG +
-                ", robotImgStatus=" + robotImgStatus +
+                ", linkMap=" + linkMap +
                 '}';
     }
 }

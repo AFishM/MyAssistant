@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.name.myassistant.deskclock;
+package com.name.myassistant.deskclock.v;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -37,6 +37,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.name.myassistant.R;
+import com.name.myassistant.deskclock.Alarm;
+import com.name.myassistant.deskclock.AlarmReceiver;
+import com.name.myassistant.deskclock.Alarms;
 
 import java.util.Calendar;
 
@@ -45,7 +48,7 @@ import java.util.Calendar;
  * tone. This activity is the full screen version which shows over the lock
  * screen with the wallpaper as the background.
  */
-public class AlarmAlertFullScreen extends Activity {
+public class AlarmAlertFullScreenActivity extends Activity {
 
     // These defaults must match the values in res/xml/settings.xml
     private static final String DEFAULT_SNOOZE = "10";
@@ -55,7 +58,7 @@ public class AlarmAlertFullScreen extends Activity {
     protected Alarm mAlarm;
     private int mVolumeBehavior;
 
-    // Receives the ALARM_KILLED action from the AlarmKlaxon,
+    // Receives the ALARM_KILLED action from the AlarmKlaxonService,
     // and also ALARM_SNOOZE_ACTION / ALARM_DISMISS_ACTION from other applications
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -94,7 +97,7 @@ public class AlarmAlertFullScreen extends Activity {
         final Window win = getWindow();
         win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-        // Turn on the screen unless we are being launched from the AlarmAlert
+        // Turn on the screen unless we are being launched from the AlarmAlertActivity
         // subclass.
         if (!getIntent().getBooleanExtra(SCREEN_OFF, false)) {
             win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
@@ -158,7 +161,7 @@ public class AlarmAlertFullScreen extends Activity {
 
         final long snoozeTime = System.currentTimeMillis()
                 + (1000 * 60 * snoozeMinutes);
-        Alarms.saveSnoozeAlert(AlarmAlertFullScreen.this, mAlarm.id,
+        Alarms.saveSnoozeAlert(AlarmAlertFullScreenActivity.this, mAlarm.id,
                 snoozeTime);
 
         // Get the display time for the snooze and update the notification.
@@ -211,10 +214,10 @@ public class AlarmAlertFullScreen extends Activity {
         String displayTime = getString(R.string.alarm_alert_snooze_set,
                 snoozeMinutes);
         // Intentionally log the snooze time for debugging.
-        Log.v("wangxianming", " AlarmAlertFullScreen"+displayTime);
+        Log.v("wangxianming", " AlarmAlertFullScreenActivity"+displayTime);
 
         // Display the snooze minutes in a toast.
-        Toast.makeText(AlarmAlertFullScreen.this, displayTime,
+        Toast.makeText(AlarmAlertFullScreenActivity.this, displayTime,
                 Toast.LENGTH_LONG).show();
         stopService(new Intent(Alarms.ALARM_ALERT_ACTION));
         finish();
@@ -245,7 +248,7 @@ public class AlarmAlertFullScreen extends Activity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        Log.v("wangxianming", "AlarmAlert.OnNewIntent()");
+        Log.v("wangxianming", "AlarmAlertActivity.OnNewIntent()");
 
         mAlarm = intent.getParcelableExtra(Alarms.ALARM_INTENT_EXTRA);
 
@@ -265,7 +268,7 @@ public class AlarmAlertFullScreen extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.v("wangxianming", "AlarmAlert.onDestroy()");
+        Log.v("wangxianming", "AlarmAlertActivity.onDestroy()");
         // No longer care about the alarm being killed.
         unregisterReceiver(mReceiver);
     }
@@ -303,7 +306,7 @@ public class AlarmAlertFullScreen extends Activity {
 
     @Override
     public void onBackPressed() {
-        // Don't allow back to dismiss. This method is overriden by AlarmAlert
+        // Don't allow back to dismiss. This method is overriden by AlarmAlertActivity
         // so that the dialog is dismissed.
         return;
     }

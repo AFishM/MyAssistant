@@ -16,6 +16,8 @@ import android.provider.Settings;
 import android.text.format.DateFormat;
 import android.util.Log;
 
+import com.name.myassistant.deskclock.v.DeskClockMainActivity;
+
 import java.util.Calendar;
 
 /**
@@ -24,25 +26,25 @@ import java.util.Calendar;
  */
 public class Alarms {
 
-    // This action triggers the AlarmReceiver as well as the AlarmKlaxon. It
+    // This action triggers the AlarmReceiver as well as the AlarmKlaxonService. It
     // is a public action used in the manifest for receiving Alarm broadcasts
     // from the alarm manager.
     public static final String ALARM_ALERT_ACTION = "com.name.myassistant.deskclock.ALARM_ALERT";
 
-    // A public action sent by AlarmKlaxon when the alarm has stopped sounding
-    // for any reason (e.g. because it has been dismissed from AlarmAlertFullScreen,
+    // A public action sent by AlarmKlaxonService when the alarm has stopped sounding
+    // for any reason (e.g. because it has been dismissed from AlarmAlertFullScreenActivity,
     // or killed due to an incoming phone call, etc).
     public static final String ALARM_DONE_ACTION = "com.name.myassistant.deskclock.ALARM_DONE";
 
-    // AlarmAlertFullScreen listens for this broadcast intent, so that other applications
+    // AlarmAlertFullScreenActivity listens for this broadcast intent, so that other applications
     // can snooze the alarm (after ALARM_ALERT_ACTION and before ALARM_DONE_ACTION).
     public static final String ALARM_SNOOZE_ACTION = "com.name.myassistant.deskclock.ALARM_SNOOZE";
 
-    // AlarmAlertFullScreen listens for this broadcast intent, so that other applications
+    // AlarmAlertFullScreenActivity listens for this broadcast intent, so that other applications
     // can dismiss the alarm (after ALARM_ALERT_ACTION and before ALARM_DONE_ACTION).
     public static final String ALARM_DISMISS_ACTION = "com.name.myassistant.deskclock.ALARM_DISMISS";
 
-    // This is a private action used by the AlarmKlaxon to update the UI to
+    // This is a private action used by the AlarmKlaxonService to update the UI to
     // show the alarm has been killed.
     public static final String ALARM_KILLED = "alarm_killed";
 
@@ -65,7 +67,7 @@ public class Alarms {
     // the Intent extras.
     public static final String ALARM_RAW_DATA = "intent.extra.alarm_raw";
 
-    // This string is used to identify the alarm id passed to SetAlarm from the
+    // This string is used to identify the alarm id passed to SetAlarmActivity from the
     // list of alarms.
     public static final String ALARM_ID = "alarm_id";
 
@@ -227,7 +229,9 @@ public class Alarms {
 
     public static void enableAlarm(
             final Context context, final int id, boolean enabled) {
+        //启用内部闹钟
         enableAlarmInternal(context, id, enabled);
+        //设置下次警报
         setNextAlert(context);
     }
 
@@ -391,7 +395,7 @@ public class Alarms {
         saveNextAlarm(context, "");
     }
 
-    static void saveSnoozeAlert(final Context context, final int id,
+    public static void saveSnoozeAlert(final Context context, final int id,
             final long time) {
         SharedPreferences prefs = context.getSharedPreferences(
         		DeskClockMainActivity.PREFERENCES, 0);
@@ -487,7 +491,7 @@ public class Alarms {
      * Given an alarm in hours and minutes, return a time suitable for
      * setting in AlarmManager.
      */
-    static Calendar calculateAlarm(int hour, int minute,
+    public static Calendar calculateAlarm(int hour, int minute,
             Alarm.DaysOfWeek daysOfWeek) {
 
         // start with now
@@ -512,14 +516,14 @@ public class Alarms {
         return c;
     }
 
-    static String formatTime(final Context context, int hour, int minute,
+    public static String formatTime(final Context context, int hour, int minute,
                              Alarm.DaysOfWeek daysOfWeek) {
         Calendar c = calculateAlarm(hour, minute, daysOfWeek);
         return formatTime(context, c);
     }
 
-    /* used by AlarmAlert */
-    static String formatTime(final Context context, Calendar c) {
+    /* used by AlarmAlertActivity */
+    public static String formatTime(final Context context, Calendar c) {
         String format = get24HourMode(context) ? M24 : M12;
         return (c == null) ? "" : (String)DateFormat.format(format, c);
     }

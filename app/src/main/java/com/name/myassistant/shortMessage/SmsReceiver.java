@@ -9,7 +9,6 @@ import android.telephony.SmsMessage;
 import com.name.myassistant.GlobalVariable;
 import com.name.myassistant.MainActivity;
 import com.name.myassistant.R;
-import com.name.myassistant.util.LogUtil;
 
 /**
  * 短信广播接收
@@ -32,10 +31,6 @@ public class SmsReceiver extends BroadcastReceiver {
                 msg = SmsMessage.createFromPdu((byte[]) object);
                 phoneNum=msg.getOriginatingAddress();
                 info=info+msg.getDisplayMessageBody();
-
-                LogUtil.d("xzx", "number:" + msg.getOriginatingAddress()
-                        + "   body:" + msg.getDisplayMessageBody() + "  time:"
-                        + msg.getTimestampMillis());
             }
             robotOutputStr=phoneNum+context.getString(R.string.short_message_tip)+info;
 

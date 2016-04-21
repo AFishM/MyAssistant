@@ -39,9 +39,9 @@ import com.name.myassistant.R;
 
 /**
  * Manages alarms and vibe. Runs as a service so that it can continue to play
- * if another activity overrides the AlarmAlert dialog.
+ * if another activity overrides the AlarmAlertActivity dialog.
  */
-public class AlarmKlaxon extends Service {
+public class AlarmKlaxonService extends Service {
 
     /** Play alarm up to 10 minutes before silencing */
     private static final int ALARM_TIMEOUT_SECONDS = 10 * 60;
@@ -65,7 +65,7 @@ public class AlarmKlaxon extends Service {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case KILLER:
-                    Log.v("wangxianming", "*********** Alarm killer triggered ***********");
+
                     sendKillBroadcast((Alarm) msg.obj);
                     stopSelf();
                     break;
@@ -155,7 +155,7 @@ public class AlarmKlaxon extends Service {
                 Alarms.ALARM_INTENT_EXTRA);
 
         if (alarm == null) {
-            Log.v("wangxianming", "AlarmKlaxon failed to parse the alarm from the intent");
+            Log.v("wangxianming", "AlarmKlaxonService failed to parse the alarm from the intent");
             stopSelf();
             return START_NOT_STICKY;
         }
@@ -196,7 +196,7 @@ public class AlarmKlaxon extends Service {
                 AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
         stop();
 
-        Log.v("wangxianming", "AlarmKlaxon.play() " + alarm.id + " alert " + alarm.alert);
+        Log.v("wangxianming", "AlarmKlaxonService.play() " + alarm.id + " alert " + alarm.alert);
 
         if (!alarm.silent) {
             Uri alert = alarm.alert;
@@ -293,7 +293,7 @@ public class AlarmKlaxon extends Service {
      * repeating
      */
     public void stop() {
-        Log.v("wangxianming", "AlarmKlaxon.stop()");
+        Log.v("wangxianming", "AlarmKlaxonService.stop()");
         if (mPlaying) {
             mPlaying = false;
 

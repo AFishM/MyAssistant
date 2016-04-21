@@ -27,9 +27,12 @@ import android.os.Parcel;
 import android.util.Log;
 
 import com.name.myassistant.R;
+import com.name.myassistant.deskclock.v.AlarmAlertActivity;
+import com.name.myassistant.deskclock.v.AlarmAlertFullScreenActivity;
+import com.name.myassistant.deskclock.v.SetAlarmActivity;
 
 /**
- * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert
+ * Glue class: connects AlarmAlertActivity IntentReceiver to AlarmAlertActivity
  * activity.  Passes through Alarm ID.
  */
 public class AlarmReceiver extends BroadcastReceiver {
@@ -95,7 +98,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             return;
         }
 
-        // Maintain a cpu wake lock until the AlarmAlert and AlarmKlaxon can
+        // Maintain a cpu wake lock until the AlarmAlertActivity and AlarmKlaxonService can
         // pick it up.
         AlarmAlertWakeLock.acquireCpuWakeLock(context);
 
@@ -104,12 +107,12 @@ public class AlarmReceiver extends BroadcastReceiver {
         context.sendBroadcast(closeDialogs);
 
         // Decide which activity to start based on the state of the keyguard.
-        Class c = AlarmAlert.class;
+        Class c = AlarmAlertActivity.class;
         KeyguardManager km = (KeyguardManager) context.getSystemService(
                 Context.KEYGUARD_SERVICE);
         if (km.inKeyguardRestrictedInputMode()) {
             // Use the full screen activity for security.
-            c = AlarmAlertFullScreen.class;
+            c = AlarmAlertFullScreenActivity.class;
         }
 
         // Play the alarm alert and vibrate the device.
@@ -120,7 +123,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         // Trigger a notification that, when clicked, will show the alarm alert
         // dialog. No need to check for fullscreen since this will always be
         // launched from a user action.
-        Intent notify = new Intent(context, AlarmAlert.class);
+        Intent notify = new Intent(context, AlarmAlertActivity.class);
         notify.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
         PendingIntent pendingNotify = PendingIntent.getActivity(context,
                 alarm.id, notify, 0);
@@ -179,8 +182,8 @@ public class AlarmReceiver extends BroadcastReceiver {
             return;
         }
 
-        // Launch SetAlarm when clicked.
-        Intent viewAlarm = new Intent(context, SetAlarm.class);
+        // Launch SetAlarmActivity when clicked.
+        Intent viewAlarm = new Intent(context, SetAlarmActivity.class);
         viewAlarm.putExtra(Alarms.ALARM_ID, alarm.id);
         PendingIntent intent =
                 PendingIntent.getActivity(context, alarm.id, viewAlarm, 0);

@@ -230,7 +230,6 @@ public class TakePhoto {
         Intent intent = new Intent();
         intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);//设置Action为拍照
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);//将拍取的照片保存到指定URI
-//        intent.putExtra(MediaStore.Images.Media.ORIENTATION, 0);//设置竖屏
         activity.startActivityForResult(intent, PIC_TAKE_CROP);
     }
 

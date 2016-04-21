@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.name.myassistant.deskclock;
+package com.name.myassistant.deskclock.v;
 
 import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
@@ -26,11 +26,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.name.myassistant.deskclock.Alarms;
+
 /**
  * Full screen alarm alert: pops visible indicator and plays alarm tone. This
  * activity shows the alert as a dialog.
  */
-public class AlarmAlert extends AlarmAlertFullScreen {
+public class AlarmAlertActivity extends AlarmAlertFullScreenActivity {
 
     // If we try to check the keyguard more than 5 times, just launch the full
     // screen activity.
@@ -93,7 +95,7 @@ public class AlarmAlert extends AlarmAlertFullScreen {
             }
         } else {
             // Launch the full screen activity but do not turn the screen on.
-            Intent i = new Intent(this, AlarmAlertFullScreen.class);
+            Intent i = new Intent(this, AlarmAlertFullScreenActivity.class);
             i.putExtra(Alarms.ALARM_INTENT_EXTRA, mAlarm);
             i.putExtra(SCREEN_OFF, true);
             startActivity(i);

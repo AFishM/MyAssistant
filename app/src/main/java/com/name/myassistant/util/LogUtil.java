@@ -21,7 +21,7 @@ public class LogUtil {
     public static final int LEVEL_WARNING = 3;
     public static final int LEVEL_ERROR = 4;
     public static final int LEVEL_FATAL = 5;
-    private static int sLevel = LEVEL_VERBOSE;
+    private static int sLevel = AppConfig.DEBUG_LEVEL;
 
     /**
      * set log level, the level lower than this level will not be logged
@@ -34,6 +34,7 @@ public class LogUtil {
 
     private static boolean sIsLogEnable = AppConfig.DEBUG;
 
+
     public static void v(String msg) {
         if (sLevel > LEVEL_VERBOSE) {
             return;
@@ -43,6 +44,10 @@ public class LogUtil {
         }
     }
 
+    /**
+     * 打印消息，不加标识
+     * @param msg：日志消息
+     */
     public static void d(String msg) {
         if (sLevel > LEVEL_DEBUG) {
             return;
@@ -127,6 +132,11 @@ public class LogUtil {
         }
     }
 
+    /**
+     * 打印加标识的日志
+     * @param tag：标识
+     * @param msg：日志消息
+     */
     public static void d(String tag, String msg) {
         if (sLevel > LEVEL_DEBUG) {
             return;
@@ -175,7 +185,7 @@ public class LogUtil {
     }
 
     /**
-     * 定位代码位置，只能在该类内部使用
+     * 定位代码位置（类名(line:行数)->方法名() ），只能在该类内部使用
      */
     private static String getStackTraceMsg() {
         String fileInfo = "";
