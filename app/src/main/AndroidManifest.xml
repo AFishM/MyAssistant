@@ -116,7 +116,6 @@
             android:label="@string/app_name"
             android:name=".deskclock.v.DeskClockMainActivity"
             android:icon="@drawable/clock_launcher"
-            android:launchMode="singleInstance"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation">
 
             <!-- while docked, this is our home application -->
@@ -163,16 +162,6 @@
             android:taskAffinity=""
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"/>
 
-
-        <activity android:name=".deskclock.v.HandleSetAlarmActivity"
-            android:theme="@android:style/Theme.NoDisplay"
-            android:excludeFromRecents="true"
-            android:permission="com.android.alarm.permission.SET_ALARM">
-            <intent-filter>
-                <action android:name="android.intent.action.SET_ALARM" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
 
         <!-- This service receives the same intent as AlarmReceiver but it does
              not respond to the same broadcast. The AlarmReceiver will receive

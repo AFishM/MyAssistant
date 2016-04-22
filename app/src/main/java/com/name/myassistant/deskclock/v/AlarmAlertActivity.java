@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2007 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.name.myassistant.deskclock.v;
 
 import android.app.KeyguardManager;
@@ -37,7 +21,6 @@ public class AlarmAlertActivity extends AlarmAlertFullScreenActivity {
     // If we try to check the keyguard more than 5 times, just launch the full
     // screen activity.
     private int mKeyguardRetryCount;
-    private final int MAX_KEYGUARD_CHECKS = 5;
 
     private final Handler mHandler = new Handler() {
         @Override
@@ -81,6 +64,7 @@ public class AlarmAlertActivity extends AlarmAlertFullScreenActivity {
     }
 
     private boolean checkRetryCount() {
+        int MAX_KEYGUARD_CHECKS = 5;
         if (mKeyguardRetryCount++ >= MAX_KEYGUARD_CHECKS) {
             Log.v("wangxianming", "Tried to read keyguard status too many times, bailing...");
             return false;
