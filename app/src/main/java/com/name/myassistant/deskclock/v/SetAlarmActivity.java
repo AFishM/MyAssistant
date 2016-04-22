@@ -1,4 +1,3 @@
-
 package com.name.myassistant.deskclock.v;
 
 import android.app.AlertDialog;

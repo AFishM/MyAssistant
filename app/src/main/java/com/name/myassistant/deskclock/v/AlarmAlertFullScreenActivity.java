@@ -190,23 +190,6 @@ public class AlarmAlertFullScreenActivity extends Activity {
                 .setPriority(Notification.PRIORITY_DEFAULT)
                 .build();
 
-
-//        builder.setNumber(this.number);
-//        builder.setColor(this.color);
-//        builder.mFlags = this.flags;
-//        builder.setSound(this.sound, this.audioStreamType);
-//        builder.setDefaults(this.defaults);
-//        builder.setVibrate(this.vibrate);
-//        builder.setDeleteIntent(this.deleteIntent);
-//
-//        builder.buildInto(this);
-
-//        Notification n = new Notification(R.drawable.stat_notify_alarm,
-//                label, 0);
-
-//        n.setLatestEventInfo(this, label,
-//                getString(R.string.alarm_notify_snooze_text,
-//                    Alarms.formatTime(this, c)), broadcast);
         n.flags |= Notification.FLAG_AUTO_CANCEL
                 | Notification.FLAG_ONGOING_EVENT;
         nm.notify(mAlarm.id, n);
@@ -302,12 +285,5 @@ public class AlarmAlertFullScreenActivity extends Activity {
                 break;
         }
         return super.dispatchKeyEvent(event);
-    }
-
-    @Override
-    public void onBackPressed() {
-        // Don't allow back to dismiss. This method is overriden by AlarmAlertActivity
-        // so that the dialog is dismissed.
-        return;
     }
 }
