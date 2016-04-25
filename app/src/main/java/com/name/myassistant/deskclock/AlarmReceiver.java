@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2007 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.name.myassistant.deskclock;
 
 import android.app.KeyguardManager;
@@ -30,6 +14,7 @@ import com.name.myassistant.R;
 import com.name.myassistant.deskclock.v.AlarmAlertActivity;
 import com.name.myassistant.deskclock.v.AlarmAlertFullScreenActivity;
 import com.name.myassistant.deskclock.v.SetAlarmActivity;
+import com.name.myassistant.util.LogUtil;
 
 /**
  * Glue class: connects AlarmAlertActivity IntentReceiver to AlarmAlertActivity
@@ -53,7 +38,8 @@ public class AlarmReceiver extends BroadcastReceiver {
             Alarms.saveSnoozeAlert(context, -1, -1);
             return;
         } else if (!Alarms.ALARM_ALERT_ACTION.equals(intent.getAction())) {
-            // Unknown intent, bail.
+            // Unknown intent, bail
+            LogUtil.d("xzx","Unknown intent");
             return;
         }
 
@@ -71,8 +57,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
 
         if (alarm == null) {
-            Log.v("wangxianming", "Failed to parse the alarm from the intent");
-            // Make sure we set the next alert if needed.
             Alarms.setNextAlert(context);
             return;
         }
@@ -94,7 +78,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         // Always verbose to track down time change problems.
         if (now > alarm.time + STALE_WINDOW) {
-            Log.v("wangxianming", "Ignoring stale alarm");
+            LogUtil.v("xzx", "Ignoring stale alarm");
             return;
         }
 
@@ -103,67 +87,61 @@ public class AlarmReceiver extends BroadcastReceiver {
         AlarmAlertWakeLock.acquireCpuWakeLock(context);
 
         /* Close dialogs and window shade */
+        // FIXME: 16/4/24 这个不知道干嘛的
         Intent closeDialogs = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         context.sendBroadcast(closeDialogs);
 
-        // Decide which activity to start based on the state of the keyguard.
-        Class c = AlarmAlertActivity.class;
-        KeyguardManager km = (KeyguardManager) context.getSystemService(
-                Context.KEYGUARD_SERVICE);
-        if (km.inKeyguardRestrictedInputMode()) {
-            // Use the full screen activity for security.
-            c = AlarmAlertFullScreenActivity.class;
-        }
 
         // Play the alarm alert and vibrate the device.
-        Intent playAlarm = new Intent(Alarms.ALARM_ALERT_ACTION);
-        playAlarm.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
-        context.startService(playAlarm);
+        Intent playAlarmIntent = new Intent(Alarms.ALARM_ALERT_ACTION);
+        playAlarmIntent.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
+        context.startService(playAlarmIntent);
 
         // Trigger a notification that, when clicked, will show the alarm alert
         // dialog. No need to check for fullscreen since this will always be
         // launched from a user action.
-        Intent notify = new Intent(context, AlarmAlertActivity.class);
-        notify.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
-        PendingIntent pendingNotify = PendingIntent.getActivity(context,
-                alarm.id, notify, 0);
+        Intent notifyIntent = new Intent(context, AlarmAlertActivity.class);
+        notifyIntent.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, alarm.id, notifyIntent, 0);
 
         // Use the alarm's label or the default label as the ticker text and
         // main text of the notification.
         String label = alarm.getLabelOrDefault(context);
 
-        Notification n=new Notification.Builder(context)
+        Notification notification=new Notification.Builder(context)
                 .setTicker(label)
                 .setContentTitle(label)
                 .setContentText(context.getString(R.string.alarm_notify_text))
                 .setSmallIcon(R.drawable.stat_notify_alarm)
                 .setWhen(alarm.time)
-                .setContentIntent(pendingNotify)
+                .setContentIntent(pendingIntent)
                 .setPriority(Notification.PRIORITY_DEFAULT)
                 .build();
 
-//        Notification n = new Notification(R.drawable.stat_notify_alarm,
-//                label, alarm.time);
-
-//        n.setLatestEventInfo(context, label,
-//                context.getString(R.string.alarm_notify_text),
-//                pendingNotify);
-        n.flags |= Notification.FLAG_SHOW_LIGHTS
+        notification.flags |= Notification.FLAG_SHOW_LIGHTS
                 | Notification.FLAG_ONGOING_EVENT;
-        n.defaults |= Notification.DEFAULT_LIGHTS;
+        notification.defaults |= Notification.DEFAULT_LIGHTS;
 
+        // Decide which activity to start based on the state of the keyguard.
+        Class activityClass = AlarmAlertActivity.class;
+        KeyguardManager km = (KeyguardManager) context.getSystemService(
+                Context.KEYGUARD_SERVICE);
+        if (km.inKeyguardRestrictedInputMode()) {
+            // Use the full screen activity for security.
+            activityClass = AlarmAlertFullScreenActivity.class;
+        }
         // NEW: Embed the full-screen UI here. The notification manager will
         // take care of displaying it if it's OK to do so.
-        Intent alarmAlert = new Intent(context, c);
+        Intent alarmAlert = new Intent(context, activityClass);
         alarmAlert.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
         alarmAlert.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_NO_USER_ACTION);
-        n.fullScreenIntent = PendingIntent.getActivity(context, alarm.id, alarmAlert, 0);
+        notification.fullScreenIntent = PendingIntent.getActivity(context, alarm.id, alarmAlert, 0);
 
         // Send the notification using the alarm id to easily identify the
         // correct notification.
-        NotificationManager nm = getNotificationManager(context);
-        nm.notify(alarm.id, n);
+        NotificationManager notificationManager = getNotificationManager(context);
+        notificationManager.notify(alarm.id, notification);
     }
 
     private NotificationManager getNotificationManager(Context context) {

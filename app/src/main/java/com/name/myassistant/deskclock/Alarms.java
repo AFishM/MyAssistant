@@ -16,8 +16,6 @@ import android.provider.Settings;
 import android.text.format.DateFormat;
 import android.util.Log;
 
-import com.name.myassistant.deskclock.v.DeskClockMainActivity;
-
 import java.util.Calendar;
 
 /**
@@ -25,6 +23,7 @@ import java.util.Calendar;
  * 核心类，对Clock设置提供支持信息
  */
 public class Alarms {
+    public static final String PREFERENCES = "AlarmClock";
 
     // This action triggers the AlarmReceiver as well as the AlarmKlaxonService. It
     // is a public action used in the manifest for receiving Alarm broadcasts
@@ -161,7 +160,7 @@ public class Alarms {
         // If this alarm fires before the next snooze, clear the snooze to
         // enable this alarm.
         SharedPreferences prefs =
-                context.getSharedPreferences(DeskClockMainActivity.PREFERENCES, 0);
+                context.getSharedPreferences(PREFERENCES, 0);
         long snoozeTime = prefs.getLong(PREF_SNOOZE_TIME, 0);
         if (alarmTime < snoozeTime) {
             clearSnoozePreference(context, prefs);
@@ -227,18 +226,11 @@ public class Alarms {
      * @param enabled        corresponds to the ENABLED column
      */
 
-    public static void enableAlarm(
-            final Context context, final int id, boolean enabled) {
-        //启用内部闹钟
-        enableAlarmInternal(context, id, enabled);
+    public static void enableAlarm(final Context context, final int id, boolean enabled) {
+        //更新内部闹钟启用状态，通过ContentResolver存进表中，如果是关闭闹钟，则关闭该闹钟沉睡中的警报
+        enableAlarmInternal(context, getAlarm(context.getContentResolver(), id), enabled);
         //设置下次警报
         setNextAlert(context);
-    }
-
-    private static void enableAlarmInternal(final Context context,
-            final int id, boolean enabled) {
-        enableAlarmInternal(context, getAlarm(context.getContentResolver(), id),
-                enabled);
     }
 
     private static void enableAlarmInternal(final Context context,
@@ -344,12 +336,7 @@ public class Alarms {
      */
     private static void enableAlert(Context context, final Alarm alarm,
             final long atTimeInMillis) {
-        AlarmManager am = (AlarmManager)
-                context.getSystemService(Context.ALARM_SERVICE);
-
-        if (true) {
-            Log.v("wangxianming", "** setAlert id " + alarm.id + " atTime " + atTimeInMillis);
-        }
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         Intent intent = new Intent(ALARM_ALERT_ACTION);
 
@@ -367,10 +354,10 @@ public class Alarms {
         out.setDataPosition(0);
         intent.putExtra(ALARM_RAW_DATA, out.marshall());
 
-        PendingIntent sender = PendingIntent.getBroadcast(
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-        am.set(AlarmManager.RTC_WAKEUP, atTimeInMillis, sender);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, atTimeInMillis, pendingIntent);
 
         setStatusBarIcon(context, true);
 
@@ -385,20 +372,17 @@ public class Alarms {
      *
      */
     static void disableAlert(Context context) {
-        AlarmManager am = (AlarmManager)
-                context.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent sender = PendingIntent.getBroadcast(
-                context, 0, new Intent(ALARM_ALERT_ACTION),
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent(ALARM_ALERT_ACTION),
                 PendingIntent.FLAG_CANCEL_CURRENT);
-        am.cancel(sender);
+        alarmManager.cancel(pendingIntent);
         setStatusBarIcon(context, false);
         saveNextAlarm(context, "");
     }
 
     public static void saveSnoozeAlert(final Context context, final int id,
             final long time) {
-        SharedPreferences prefs = context.getSharedPreferences(
-        		DeskClockMainActivity.PREFERENCES, 0);
+        SharedPreferences prefs = context.getSharedPreferences(PREFERENCES, 0);
         if (id == -1) {
             clearSnoozePreference(context, prefs);
         } else {
@@ -415,8 +399,7 @@ public class Alarms {
      * Disable the snooze alert if the given id matches the snooze id.
      */
     static void disableSnoozeAlert(final Context context, final int id) {
-        SharedPreferences prefs = context.getSharedPreferences(
-        		DeskClockMainActivity.PREFERENCES, 0);
+        SharedPreferences prefs = context.getSharedPreferences(PREFERENCES, 0);
         int snoozeId = prefs.getInt(PREF_SNOOZE_ID, -1);
         if (snoozeId == -1) {
             // No snooze set, do nothing.
@@ -450,8 +433,7 @@ public class Alarms {
      * @return true if snooze is set
      */
     private static boolean enableSnoozeAlert(final Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(
-        		DeskClockMainActivity.PREFERENCES, 0);
+        SharedPreferences prefs = context.getSharedPreferences(PREFERENCES, 0);
 
         int id = prefs.getInt(PREF_SNOOZE_ID, -1);
         if (id == -1) {

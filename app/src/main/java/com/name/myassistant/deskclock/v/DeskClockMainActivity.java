@@ -37,36 +37,16 @@ import com.name.myassistant.util.LogUtil;
 import java.util.Calendar;
 
 public class DeskClockMainActivity extends AppCompatActivity implements OnItemClickListener{
-	
-    public static final String PREFERENCES = "AlarmClock";
 
-    /** This must be false for production.  If true, turns on logging,
-        test code, etc. */
 
-//    private SharedPreferences mPrefs;
-//    private LayoutInflater layoutInflater;
     private ListView mAlarmsList;
     private Cursor mCursor;
-	
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        //取自定义布局的LayoutInflater
-//        layoutInflater = LayoutInflater.from(this);
-        //取getSharedPreferences中key==“AlarmClock”的值
-//        mPrefs = getSharedPreferences(PREFERENCES, 0);
-        //获取闹钟的cursor
-        mCursor = Alarms.getAlarmsCursor(getContentResolver());
-        
-        //更新布局界面
-        updateLayout();
 
-    }
-    
-    //加载更新界面布局
-    private void updateLayout() {
-    	setContentView(R.layout.alarm_clock);
+        setContentView(R.layout.alarm_clock);
         Toolbar toolbar=(Toolbar)findViewById(R.id.alarm_setting_toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new OnClickListener() {
@@ -75,27 +55,16 @@ public class DeskClockMainActivity extends AppCompatActivity implements OnItemCl
                 onBackPressed();
             }
         });
-        toolbar.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                v.setSelected(hasFocus);
-            }
-        });
-
 
         mAlarmsList = (ListView) findViewById(R.id.alarms_list);
+        mCursor = Alarms.getAlarmsCursor(getContentResolver());
         AlarmTimeAdapter adapter = new AlarmTimeAdapter(this, mCursor);
         mAlarmsList.setAdapter(adapter);
         mAlarmsList.setVerticalScrollBarEnabled(true);
         mAlarmsList.setOnItemClickListener(this);
         mAlarmsList.setOnCreateContextMenuListener(this);
+    }
 
-    }
-    
-    private void addNewAlarm() {
-        startActivity(new Intent(this, SetAlarmActivity.class));
-    }
-    
     /**
      * listview的适配器继承CursorAdapter
      * @author wangxianming
@@ -175,10 +144,9 @@ public class DeskClockMainActivity extends AppCompatActivity implements OnItemCl
             }
         }
     }
-    
+
     //更新checkbox
-    private void updateIndicatorAndAlarm(boolean enabled, ImageView bar,
-            Alarm alarm) {
+    private void updateIndicatorAndAlarm(boolean enabled, ImageView bar, Alarm alarm) {
         bar.setImageResource(enabled ? R.drawable.ic_indicator_on
                 : R.drawable.ic_indicator_off);
 
@@ -188,69 +156,9 @@ public class DeskClockMainActivity extends AppCompatActivity implements OnItemCl
                     alarm.daysOfWeek);
         }
     }
-    
-    /*
-     * (non-Javadoc)
-     * @see android.app.Activity#onContextItemSelected(android.view.MenuItem)
-     * 创建上下文菜单
-     */
+
     @Override
-    public boolean onContextItemSelected(final MenuItem item) {
-        final AdapterContextMenuInfo info =
-                (AdapterContextMenuInfo) item.getMenuInfo();
-        final int id = (int) info.id;
-        // Error check just in case.
-        if (id == -1) {
-            return super.onContextItemSelected(item);
-        }
-        switch (item.getItemId()) {
-            case R.id.delete_alarm:
-                // Confirm that the alarm will be deleted.
-                new AlertDialog.Builder(this)
-                        .setTitle(getString(R.string.delete_alarm))
-                        .setMessage(getString(R.string.delete_alarm_confirm))
-                        .setPositiveButton(android.R.string.ok,
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface d,
-                                            int w) {
-                                        Alarms.deleteAlarm(DeskClockMainActivity.this, id);
-                                    }
-                                })
-                        .setNegativeButton(android.R.string.cancel, null)
-                        .show();
-                return true;
-
-            case R.id.enable_alarm:
-                final Cursor c = (Cursor) mAlarmsList.getAdapter()
-                        .getItem(info.position);
-                final Alarm alarm = new Alarm(c);
-                Alarms.enableAlarm(this, alarm.id, !alarm.enabled);
-                if (!alarm.enabled) {
-                    SetAlarmActivity.popAlarmSetToast(this, alarm.hour, alarm.minutes,
-                            alarm.daysOfWeek);
-                }
-                return true;
-
-            case R.id.edit_alarm:
-                Intent intent = new Intent(this, SetAlarmActivity.class);
-                intent.putExtra(Alarms.ALARM_ID, id);
-                startActivity(intent);
-                return true;
-
-            default:
-                break;
-        }
-        return super.onContextItemSelected(item);
-    }
-    
-    /*
-     * (non-Javadoc)
-     * @see android.app.Activity#onCreateContextMenu(android.view.ContextMenu, android.view.View, android.view.ContextMenu.ContextMenuInfo)
-     * 创建菜单
-     */
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View view,
-            ContextMenuInfo menuInfo) {
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
         // Inflate the menu from xml.
         getMenuInflater().inflate(R.menu.context_menu, menu);
 
@@ -280,12 +188,62 @@ public class DeskClockMainActivity extends AppCompatActivity implements OnItemCl
             menu.findItem(R.id.enable_alarm).setTitle(R.string.disable_alarm);
         }
     }
-    
-    /*
-     * (non-Javadoc)
-     * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
-     * 设置菜单的点击事件的处理
-     */
+
+    @Override
+    public boolean onContextItemSelected(final MenuItem item) {
+        final AdapterContextMenuInfo info =
+                (AdapterContextMenuInfo) item.getMenuInfo();
+        final int id = (int) info.id;
+        // Error check just in case.
+        if (id == -1) {
+            return super.onContextItemSelected(item);
+        }
+        switch (item.getItemId()) {
+            case R.id.delete_alarm:
+                // Confirm that the alarm will be deleted.
+                new AlertDialog.Builder(this)
+                        .setTitle(getString(R.string.delete_alarm))
+                        .setMessage(getString(R.string.delete_alarm_confirm))
+                        .setPositiveButton(android.R.string.ok,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface d,
+                                                        int w) {
+                                        Alarms.deleteAlarm(DeskClockMainActivity.this, id);
+                                    }
+                                })
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .show();
+                return true;
+
+            case R.id.enable_alarm:
+                final Cursor c = (Cursor) mAlarmsList.getAdapter()
+                        .getItem(info.position);
+                final Alarm alarm = new Alarm(c);
+                Alarms.enableAlarm(this, alarm.id, !alarm.enabled);
+                if (!alarm.enabled) {
+                    SetAlarmActivity.popAlarmSetToast(this, alarm.hour, alarm.minutes,
+                            alarm.daysOfWeek);
+                }
+                return true;
+
+            case R.id.edit_alarm:
+                Intent intent = new Intent(this, SetAlarmActivity.class);
+                intent.putExtra(Alarms.ALARM_ID, id);
+                startActivity(intent);
+                return true;
+
+            default:
+                break;
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.alarm_list_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -293,38 +251,22 @@ public class DeskClockMainActivity extends AppCompatActivity implements OnItemCl
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.menu_item_add_alarm:
-                addNewAlarm();
+                startActivity(new Intent(this, SetAlarmActivity.class));
                 return true;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
-   
-    /*
-     * (non-Javadoc)
-     * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
-     * 创建菜单
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.alarm_list_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-    
-    /*
-     * (non-Javadoc)
-     * @see android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget.AdapterView, android.view.View, int, long)
-     * 创建菜单的点击事件响应
-     */
+
 	public void onItemClick(AdapterView<?> adapterView, View v, int pos, long id) {
         LogUtil.d("xzx","id=> "+id);
 		Intent intent = new Intent(this, SetAlarmActivity.class);
         intent.putExtra(Alarms.ALARM_ID, (int) id);
         startActivity(intent);
-		
+
 	}
-	
+
    @Override
     protected void onDestroy() {
         super.onDestroy();
