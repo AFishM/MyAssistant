@@ -51,9 +51,7 @@ public final class Alarm implements Parcelable {
     // 定义列
     //////////////////////////////
     public static class Columns implements BaseColumns {
-        /**
-         * The content:// 为这个表定义一个共享的Url
-         */
+        //The content:// 为这个表定义一个共享的Url
         public static final Uri CONTENT_URI =
                 Uri.parse("content://com.name.myassistant.deskclock/alarm");
 
@@ -138,15 +136,25 @@ public final class Alarm implements Parcelable {
     //////////////////////////////
 
     // 对应的公共的每一列的映射
+    //闹钟ID
     public int        id;
+    //是否启用
     public boolean    enabled;
+    //闹钟响起时间的小时部分
     public int        hour;
+    //闹钟响起时间的分钟部分
     public int        minutes;
+    //闹钟设置重复的天数（周一到周日）
     public DaysOfWeek daysOfWeek;
+
     public long       time;
+    //闹钟响起时是否振动
     public boolean    vibrate;
+    //闹钟标签（提醒）
     public String     label;
+    //闹钟铃声的地址信息
     public Uri        alert;
+    //是否静音
     public boolean    silent;
 
     public Alarm(Cursor c) {

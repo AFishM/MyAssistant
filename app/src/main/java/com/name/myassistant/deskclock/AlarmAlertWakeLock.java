@@ -31,7 +31,6 @@ class AlarmAlertWakeLock {
         if (sCpuWakeLock != null) {
             return;
         }
-
         PowerManager pm =
                 (PowerManager) context.getSystemService(Context.POWER_SERVICE);
 
@@ -41,7 +40,6 @@ class AlarmAlertWakeLock {
                 PowerManager.ON_AFTER_RELEASE, "AlarmClock");
         sCpuWakeLock.acquire();
     }
-
     static void releaseCpuLock() {
         if (sCpuWakeLock != null) {
             sCpuWakeLock.release();

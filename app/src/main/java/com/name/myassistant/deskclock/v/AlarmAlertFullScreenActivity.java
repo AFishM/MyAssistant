@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -105,9 +104,7 @@ public class AlarmAlertFullScreenActivity extends Activity {
     }
 
     private void updateLayout() {
-        LayoutInflater inflater = LayoutInflater.from(this);
-
-        setContentView(inflater.inflate(R.layout.alarm_alert, null));
+        setContentView(R.layout.alarm_alert);
 
         /* snooze behavior: pop a snooze confirmation view, kick alarm
            manager. */
@@ -133,37 +130,26 @@ public class AlarmAlertFullScreenActivity extends Activity {
 
     // Attempt to snooze this alert.
     private void snooze() {
-        // Do not snooze if the snooze button is disabled.
         if (!findViewById(R.id.snooze).isEnabled()) {
             dismiss(false);
             return;
         }
-        final String snooze =
-                PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(SettingsActivity.KEY_ALARM_SNOOZE, DEFAULT_SNOOZE);
+        final String snooze =PreferenceManager.getDefaultSharedPreferences(this).getString(SettingsActivity.KEY_ALARM_SNOOZE, DEFAULT_SNOOZE);
         int snoozeMinutes = Integer.parseInt(snooze);
-
         final long snoozeTime = System.currentTimeMillis()
                 + (1000 * 60 * snoozeMinutes);
         Alarms.saveSnoozeAlert(AlarmAlertFullScreenActivity.this, mAlarm.id,
                 snoozeTime);
-
-        // Get the display time for the snooze and update the notification.
         final Calendar c = Calendar.getInstance();
         c.setTimeInMillis(snoozeTime);
-
-        // Append (snoozed) to the label.
         String label = mAlarm.getLabelOrDefault(this);
         label = getString(R.string.alarm_notify_snooze_label, label);
-
-        // Notify the user that the alarm has been snoozed.
         Intent cancelSnooze = new Intent(this, AlarmReceiver.class);
         cancelSnooze.setAction(Alarms.CANCEL_SNOOZE);
         cancelSnooze.putExtra(Alarms.ALARM_ID, mAlarm.id);
         PendingIntent broadcast =
                 PendingIntent.getBroadcast(this, mAlarm.id, cancelSnooze, 0);
         NotificationManager nm = getNotificationManager();
-
         Notification n=new Notification.Builder(this)
                 .setTicker(label)
                 .setContentTitle(label)
@@ -173,19 +159,12 @@ public class AlarmAlertFullScreenActivity extends Activity {
                 .setContentIntent(broadcast)
                 .setPriority(Notification.PRIORITY_DEFAULT)
                 .build();
-
         n.flags |= Notification.FLAG_AUTO_CANCEL
                 | Notification.FLAG_ONGOING_EVENT;
         nm.notify(mAlarm.id, n);
-
         String displayTime = getString(R.string.alarm_alert_snooze_set,
                 snoozeMinutes);
-        // Intentionally log the snooze time for debugging.
-        Log.v("wangxianming", " AlarmAlertFullScreenActivity"+displayTime);
-
-        // Display the snooze minutes in a toast.
-        Toast.makeText(AlarmAlertFullScreenActivity.this, displayTime,
-                Toast.LENGTH_LONG).show();
+        Toast.makeText(AlarmAlertFullScreenActivity.this, displayTime,Toast.LENGTH_LONG).show();
         stopService(new Intent(Alarms.ALARM_ALERT_ACTION));
         finish();
     }
@@ -196,10 +175,7 @@ public class AlarmAlertFullScreenActivity extends Activity {
 
     // Dismiss the alarm.
     private void dismiss(boolean killed) {
-        // The service told us that the alarm has been killed, do not modify
-        // the notification or stop the service.
         if (!killed) {
-            // Cancel the notification and stop playing the alarm
             NotificationManager nm = getNotificationManager();
             nm.cancel(mAlarm.id);
             stopService(new Intent(Alarms.ALARM_ALERT_ACTION));

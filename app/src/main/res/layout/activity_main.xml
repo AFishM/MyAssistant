@@ -30,7 +30,7 @@
             android:layout_weight="1"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:divider="@null"/>
+            android:divider="@null" />
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

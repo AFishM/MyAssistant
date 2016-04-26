@@ -847,8 +847,23 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
 
                 int value=15;
                 if(Math.abs(x)>=value||Math.abs(y)>=value){
-                    chatContentListViewAdapter.chatList.clear();
-                    chatContentListViewAdapter.notifyDataSetChanged();
+                    int size=chatContentListViewAdapter.chatList.size();
+                    for(int i=size-1;i>=0;i--){
+                        try {
+                            Thread.sleep(3000);
+                            LogUtil.d("xzx");
+                        } catch (InterruptedException e) {
+                            LogUtil.v("xzx","e=> "+e.toString());
+                            e.printStackTrace();
+                        }
+                        LogUtil.d("xzx","location=> "+i);
+
+                        chatContentListViewAdapter.chatList.remove(i);
+                        chatContentListViewAdapter.notifyDataSetChanged();
+                        LogUtil.d("xzx");
+
+                    }
+
                     LogUtil.d("xzx","Math.abs(x)=> "+Math.abs(x)+" Math.abs(y)=> "+Math.abs(y)+" Math.abs(z)=> "+Math.abs(z));
                 }
             }

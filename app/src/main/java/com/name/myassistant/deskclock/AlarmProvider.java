@@ -12,7 +12,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
+
+import com.name.myassistant.util.LogUtil;
 
 public class AlarmProvider extends ContentProvider {
     private SQLiteOpenHelper mOpenHelper;
@@ -33,10 +34,12 @@ public class AlarmProvider extends ContentProvider {
 
         public DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
+            LogUtil.d("xzx");
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
+            LogUtil.d("xzx");
             db.execSQL("CREATE TABLE alarms (" +
                        "_id INTEGER PRIMARY KEY," +
                        "hour INTEGER, " +
@@ -53,15 +56,13 @@ public class AlarmProvider extends ContentProvider {
                     "(hour, minutes, daysofweek, alarmtime, enabled, vibrate, message, alert) " +
                     "VALUES ";
             db.execSQL(insertMe + "(8, 30, 31, 0, 0, 1, '', '');");
-            db.execSQL(insertMe + "(9, 00, 96, 0, 0, 1, '', '');");
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int currentVersion) {
-            if (true) Log.v("wangxianming",
-                    "Upgrading alarms database from version " +
-                    oldVersion + " to " + currentVersion +
-                    ", which will destroy all old data");
+            LogUtil.v("xzx", "Upgrading alarms database from version " +
+                            oldVersion + " to " + currentVersion +
+                            ", which will destroy all old data");
             db.execSQL("DROP TABLE IF EXISTS alarms");
             onCreate(db);
         }
@@ -72,6 +73,7 @@ public class AlarmProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
+        LogUtil.d("xzx");
         mOpenHelper = new DatabaseHelper(getContext());
         return true;
     }
@@ -79,34 +81,35 @@ public class AlarmProvider extends ContentProvider {
     @Override
     public Cursor query(Uri url, String[] projectionIn, String selection,
             String[] selectionArgs, String sort) {
-        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        SQLiteQueryBuilder sqLiteQueryBuilder = new SQLiteQueryBuilder();
 
         // Generate the body of the query
         int match = sURLMatcher.match(url);
         switch (match) {
             case ALARMS:
-                qb.setTables("alarms");
+                sqLiteQueryBuilder.setTables("alarms");
                 break;
             case ALARMS_ID:
-                qb.setTables("alarms");
-                qb.appendWhere("_id=");
-                qb.appendWhere(url.getPathSegments().get(1));
+                sqLiteQueryBuilder.setTables("alarms");
+                sqLiteQueryBuilder.appendWhere("_id=");
+                sqLiteQueryBuilder.appendWhere(url.getPathSegments().get(1));
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URL " + url);
         }
 
+        LogUtil.d("xzx");
         SQLiteDatabase db = mOpenHelper.getReadableDatabase();
-        Cursor ret = qb.query(db, projectionIn, selection, selectionArgs,
-                              null, null, sort);
+        Cursor cursor = sqLiteQueryBuilder.query(db, projectionIn, selection, selectionArgs,
+                null, null, sort);
 
-        if (ret == null) {
-            if (true) Log.v("wangxianming", "Alarms.query: failed");
+        if (cursor == null) {
+            LogUtil.v("xzx", "Alarms.query: failed");
         } else {
-            ret.setNotificationUri(getContext().getContentResolver(), url);
+            cursor.setNotificationUri(getContext().getContentResolver(), url);
         }
 
-        return ret;
+        return cursor;
     }
 
     @Override
@@ -140,7 +143,7 @@ public class AlarmProvider extends ContentProvider {
                         "Cannot update URL: " + url);
             }
         }
-        Log.v("wangxianming", "*** notifyChange() rowId: " + rowId + " url " + url);
+        LogUtil.v("xzx", "*** notifyChange() rowId: " + rowId + " url " + url);
         getContext().getContentResolver().notifyChange(url, null);
         return count;
     }
@@ -158,7 +161,7 @@ public class AlarmProvider extends ContentProvider {
         if (rowId < 0) {
             throw new SQLException("Failed to insert row into " + url);
         }
-        Log.v("wangxianming", "Added alarm rowId = " + rowId);
+        LogUtil.v("xzx", "Added alarm rowId = " + rowId);
 
         Uri newUrl = ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, rowId);
         getContext().getContentResolver().notifyChange(newUrl, null);

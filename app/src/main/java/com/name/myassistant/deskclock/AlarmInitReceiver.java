@@ -33,7 +33,7 @@ public class AlarmInitReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        LogUtil.v("wangxianming", "AlarmInitReceiver" + action);
+        LogUtil.v("xzx", "AlarmInitReceiver" + action);
 
         // Remove the snooze alarm after a boot.
         if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {

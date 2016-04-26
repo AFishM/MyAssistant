@@ -85,8 +85,7 @@ public class Alarms {
      */
     public static long addAlarm(Context context, Alarm alarm) {
         ContentValues values = createContentValues(alarm);
-        Uri uri = context.getContentResolver().insert(
-                Alarm.Columns.CONTENT_URI, values);
+        Uri uri = context.getContentResolver().insert(Alarm.Columns.CONTENT_URI, values);
         alarm.id = (int) ContentUris.parseId(uri);
 
         long timeInMillis = calculateAlarm(alarm);
@@ -339,16 +338,6 @@ public class Alarms {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         Intent intent = new Intent(ALARM_ALERT_ACTION);
-
-        // XXX: This is a slight hack to avoid an exception in the remote
-        // AlarmManagerService process. The AlarmManager adds extra data to
-        // this Intent which causes it to inflate. Since the remote process
-        // does not know about the Alarm class, it throws a
-        // ClassNotFoundException.
-        //
-        // To avoid this, we marshall the data ourselves and then parcel a plain
-        // byte[] array. The AlarmReceiver class knows to build the Alarm
-        // object from the byte[] array.
         Parcel out = Parcel.obtain();
         alarm.writeToParcel(out, 0);
         out.setDataPosition(0);

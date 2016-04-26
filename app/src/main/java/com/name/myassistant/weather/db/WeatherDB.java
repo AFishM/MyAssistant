@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.name.myassistant.m.Alarm;
+
 import com.name.myassistant.weather.model.City;
 import com.name.myassistant.weather.model.County;
 import com.name.myassistant.weather.model.Province;

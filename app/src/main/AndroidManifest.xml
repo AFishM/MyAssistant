@@ -102,7 +102,7 @@
         <activity
             android:name=".TimeUpActivity"
             android:label="@string/title_activity_time_up"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme"/>
 
         <provider android:name=".deskclock.AlarmProvider"
             android:authorities="com.name.myassistant.deskclock"
