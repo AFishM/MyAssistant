@@ -5,10 +5,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -64,18 +62,21 @@ public class TakePhoto {
     public void onResult(int requestCode, int resultCode, Intent data) {
         StringBuffer sb = new StringBuffer();
         sb.append("requestCode:").append(requestCode).append("--resultCode:").append(resultCode).append("--data:").append(data).append("--imageUri:").append(imageUri);
-        Log.w("info", sb.toString());
+        LogUtil.d("xzx", sb.toString());
         switch (requestCode) {
             case PIC_SELECT_CROP:
                 if (resultCode == Activity.RESULT_OK) {
-                    l.takeSuccess(imageUri);
+                    Uri uriStr=data.getData();
+                    LogUtil.d("xzx","uriStr=> "+uriStr.toString());
+                    cropImageUri(uriStr,480,480,PIC_CROP);
+//                    l.takeSuccess(imageUri);
                 } else if (resultCode == Activity.RESULT_CANCELED) {//裁切的照片没有保存
                     if (data != null) {
                         Bitmap bitmap = data.getParcelableExtra("data");//获取裁切的结果数据
                         //将裁切的结果写入到文件
                         writeToFile(bitmap);
                         l.takeSuccess(imageUri);
-                        Log.w("info", bitmap == null ? "null" : "not null");
+                        LogUtil.d("xzx", bitmap == null ? "null" : "not null");
                     } else {
                         l.takeFail("没有获取到裁剪结果");
                     }
@@ -129,13 +130,18 @@ public class TakePhoto {
                 break;
             case PIC_TAKE_CROP://拍取照片,并裁切
                 if (resultCode == Activity.RESULT_OK) {
+                    LogUtil.d("xzx");
+//                    l.takeSuccess(imageUri);
                     cropImageUri(imageUri, 480, 480, PIC_CROP);
+                }else{
+                    l.takeCancel();
                 }
                 break;
             case PIC_TAKE_ORIGINAL://拍取照片
                 if (resultCode == Activity.RESULT_OK) {
                     l.takeSuccess(imageUri);
                 } else {
+                    LogUtil.d("xzx");
                     l.takeCancel();
                 }
                 break;
@@ -144,11 +150,13 @@ public class TakePhoto {
                     l.takeSuccess(imageUri);
                 } else if (resultCode == Activity.RESULT_CANCELED) {//裁切的照片没有保存
                     if (data != null) {
+                        LogUtil.d("xzx");
                         Bitmap bitmap = data.getParcelableExtra("data");//获取裁切的结果数据
+                        LogUtil.d("xzx","bitmap=> "+bitmap.toString());
                         //将裁切的结果写入到文件
                         writeToFile(bitmap);
                         l.takeSuccess(imageUri);
-                        Log.w("info", bitmap == null ? "null" : "not null");
+
                     } else {
                         l.takeFail("没有获取到裁剪结果");
                     }
@@ -180,20 +188,22 @@ public class TakePhoto {
      * @param height 裁切的高度
      */
     public void picSelectCrop(Uri uri, int with, int height) {
+
+
         imageUri = uri;
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_PICK);//Pick an item from the data
         intent.setType("image/*");//从所有图片中进行选择
-        intent.putExtra("crop", "true");//设置为裁切
-        intent.putExtra("aspectX", 1);//裁切的宽比例
-        intent.putExtra("aspectY", 1);//裁切的高比例
-        intent.putExtra("outputX", with);//裁切的宽度
-        intent.putExtra("outputY", height);//裁切的高度
-        intent.putExtra("scale", true);//支持缩放
-        intent.putExtra("return-data", false);
+//        intent.putExtra("crop", "true");//设置为裁切
+//        intent.putExtra("aspectX", 1);//裁切的宽比例
+//        intent.putExtra("aspectY", 1);//裁切的高比例
+//        intent.putExtra("outputX", with);//裁切的宽度
+//        intent.putExtra("outputY", height);//裁切的高度
+//        intent.putExtra("scale", true);//支持缩放
+//        intent.putExtra("return-data", false);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);//将裁切的结果输出到指定的Uri
-        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());//裁切成的图片的格式
-        intent.putExtra("noFaceDetection", true); // no face detection
+//        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());//裁切成的图片的格式
+//        intent.putExtra("noFaceDetection", true); // no face detection
         activity.startActivityForResult(intent, PIC_SELECT_CROP);
     }
 
@@ -242,8 +252,10 @@ public class TakePhoto {
      * @param requestCode：请求码
      */
     private void cropImageUri(Uri imageUri, int outputX, int outputY, int requestCode) {
-        boolean isReturnData = isReturnData();
-        Log.w("ksdinf","isReturnData:"+( isReturnData ? "true" : "false"));
+//        boolean isReturnData = isReturnData();
+//        LogUtil.d("xzx","isReturnData:"+( isReturnData ? "true" : "false"));
+        LogUtil.d("xzx","imageUri=> "+imageUri);
+        LogUtil.d("xzx","");
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(imageUri, "image/*");
         intent.putExtra("crop", "true");
@@ -252,31 +264,29 @@ public class TakePhoto {
         intent.putExtra("outputX", outputX);
         intent.putExtra("outputY", outputY);
         intent.putExtra("scale", true);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-        intent.putExtra("return-data", isReturnData);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, this.imageUri);
+        intent.putExtra("return-data", false);
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent.putExtra("noFaceDetection", true); // no face detection
         activity.startActivityForResult(intent, requestCode);
     }
 
-    /**
-     * 是否裁剪之后返回数据
-     **/
-    private boolean isReturnData() {
-        String release= Build.VERSION.RELEASE;
-        int sdk= Build.VERSION.SDK_INT;
-        Log.i("ksdinf","release:"+release+"sdk:"+sdk);
-        String manufacturer = android.os.Build.MANUFACTURER;
-        if (!TextUtils.isEmpty(manufacturer)) {
-            if (manufacturer.toLowerCase().contains("lenovo")) {//对于联想的手机返回数据
-                return true;
-            }
-        }
-        if (sdk>=21){//5.0或以上版本要求返回数据
-            return  true;
-        }
-        return false;
-    }
+//    /**
+//     * 是否裁剪之后返回数据
+//     **/
+//    private boolean isReturnData() {
+//        String release= Build.VERSION.RELEASE;
+//        int sdk= Build.VERSION.SDK_INT;
+//        Log.i("ksdinf","release:"+release+"sdk:"+sdk);
+//        String manufacturer = android.os.Build.MANUFACTURER;
+//        if (!TextUtils.isEmpty(manufacturer)) {
+//            if (manufacturer.toLowerCase().contains("lenovo")) {//对于联想的手机返回数据
+//                return true;
+//            }
+//        }
+//
+//        return false;
+//    }
 
     /**
      * 将bitmap写入到文件

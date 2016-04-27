@@ -155,7 +155,7 @@ public class AlarmKlaxonService extends Service {
                 Alarms.ALARM_INTENT_EXTRA);
 
         if (alarm == null) {
-            Log.v("wangxianming", "AlarmKlaxonService failed to parse the alarm from the intent");
+            Log.v("xzx", "AlarmKlaxonService failed to parse the alarm from the intent");
             stopSelf();
             return START_NOT_STICKY;
         }

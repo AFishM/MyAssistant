@@ -6,16 +6,23 @@
     android:id="@+id/setting_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/robot_setting_toolbar"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/setting_toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="@string/setting"
-        app:titleTextColor="@color/black"
-        app:navigationIcon="@drawable/arrow_32"
-        android:background="@color/background_blue"/>
+        android:theme="@style/AppTheme.AppBarOverlay">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/robot_setting_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title="@string/setting"
+            app:titleTextColor="@color/black"
+            app:navigationIcon="@drawable/arrow_32"
+            android:background="@color/toolbar_background"/>
+    </android.support.design.widget.AppBarLayout>
+
     <ScrollView
-        android:layout_below="@id/robot_setting_toolbar"
+        android:layout_below="@id/setting_toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -57,13 +64,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:text="@string/read_short_message"/>
+                android:text="@string/read_short_message"
+                android:buttonTint="@color/robot_yellow_light"/>
             <CheckBox
                 android:id="@+id/set_allow_to_say"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:text="@string/allow_to_say"/>
+                android:text="@string/allow_to_say"
+                android:buttonTint="@color/robot_yellow_light"/>
             <TextView
                 android:id="@+id/alarm_setting"
                 android:layout_width="wrap_content"

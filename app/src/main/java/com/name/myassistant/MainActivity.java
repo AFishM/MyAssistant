@@ -107,6 +107,8 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
     //手电筒小按钮的纵坐标和横坐标
     int lastX;
     int lastY;
+    int downX;
+    int downY;
     Camera camera;
 //    Animator mCurrentAnimator;
 
@@ -128,6 +130,10 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
     SpeechRecognizer speechRecognizer;
     //SpeechSynthesizer 语音合成对象
     SpeechSynthesizer speechSynthesizer;
+
+    Rect startBounds;
+    Rect finalBounds;
+    float startScale;
 
     //听写监听器
     RecognizerListener recognizerListener = new RecognizerListener() {
@@ -247,6 +253,7 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
         contactLayout.setOnClickListener(this);
 
         closeFlashlightTextView.setOnClickListener(this);
+        closeFlashlightView.setOnClickListener(this);
         closeFlashlightView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -254,12 +261,13 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
 
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
-                        closeFlashlightView.setOnClickListener(null);
                         lastX = (int) event.getRawX();
                         lastY = (int) event.getRawY();
+                        downX=lastX;
+                        downY=lastY;
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        closeFlashlightView.setOnClickListener(null);
+
                         int dx = (int) event.getRawX() - lastX;
                         int dy = (int) event.getRawY() - lastY;
 
@@ -289,14 +297,17 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
                         lastY = (int) event.getRawY();
                         break;
                     case MotionEvent.ACTION_UP:
-                        closeFlashlightView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                controlFlashlight(false);
-                            }
-                        });
+                        int upX = (int) event.getRawX();
+                        int upY = (int) event.getRawY();
+                        int minMove=LocalDisplay.dp2px(20);
+                        if(Math.abs(downX-upX)>minMove||Math.abs(downY-upY)>minMove){
+                            return true;
+                        }
+                        break;
+                    default:
                         break;
                 }
+
                 return false;
             }
         });
@@ -345,6 +356,8 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
         String robotOutputStr=getIntent().getStringExtra("robotOutputStr");
         if(!TextUtils.isEmpty(robotOutputStr)){
             robotOutputHandle(robotOutputStr);
+        }else{
+            robotOutputHandle("您好，主人～");
         }
 
         SmsReceiver.setmSmsListener(new SmsReceiver.SmsListener() {
@@ -353,9 +366,6 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
                 robotOutputHandle(msg);
             }
         });
-
-        robotOutputHandle("您好，主人～");
-        userInputEditText.setText("广外校长是谁");
 
         shakeToClean(this);
     }
@@ -400,10 +410,10 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
         if(isFlashLightOn){
             if(closeFlashlightTextView.getVisibility()==View.VISIBLE){
                 zoomOutFlashLightControl();
-                return;
             }else{
                 controlFlashlight(false);
             }
+            return;
         }
 
         LogUtil.d("xzx","getSupportFragmentManager().getBackStackEntryCount()=> "+getSupportFragmentManager().getBackStackEntryCount());
@@ -448,11 +458,9 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.close_flashlight:
                 controlFlashlight(false);
-//                closeFlashlightTextView.setVisibility(View.GONE);
                 break;
             case R.id.close_flashlight_view:
-
-//                closeFlashlightView.setVisibility(View.GONE);
+                controlFlashlight(false);
                 break;
             case R.id.input_switch:
                 if(pressToSayTextView.getVisibility()==View.VISIBLE){
@@ -570,6 +578,9 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
             }
             return;
         }
+        if(userInput.contains("?")){
+            userInput=userInput.replace("?","");
+        }
 
         //自动问答
         new AnswerTask().execute(userInput);
@@ -623,6 +634,13 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
         isFlashLightOn=open;
         if (open) {
             closeFlashlightTextView.setVisibility(View.VISIBLE);
+            closeFlashlightTextView.getLayoutParams().width=LocalDisplay.SCREEN_WIDTH_PIXELS;
+            closeFlashlightTextView.getLayoutParams().height=LocalDisplay.SCREEN_HEIGHT_PIXELS;
+            LogUtil.d("xzx", "SCALE_X=> " + closeFlashlightTextView.getScaleX());
+            LogUtil.d("xzx", "x=> " + closeFlashlightTextView.getX());
+
+            LogUtil.d("xzx", "SCALE_Y=> " + closeFlashlightTextView.getScaleY());
+            LogUtil.d("xzx", "y=> " + closeFlashlightTextView.getY());
             camera = Camera.open();
             Camera.Parameters parameters = camera.getParameters();
             parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
@@ -643,30 +661,33 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
      */
     void zoomOutFlashLightControl(){
         LogUtil.d("xzx");
-        final Rect startBounds = new Rect();
-        final Rect finalBounds = new Rect();
-        final Point globalOffset = new Point();
+        if(startBounds==null){
+            startBounds = new Rect();
+            finalBounds = new Rect();
+            final Point globalOffset = new Point();
 
-        closeFlashlightView.getGlobalVisibleRect(startBounds);
-        findViewById(R.id.container).getGlobalVisibleRect(finalBounds, globalOffset);
-        startBounds.offset(-globalOffset.x, -globalOffset.y);
-        finalBounds.offset(-globalOffset.x, -globalOffset.y);
+            closeFlashlightView.getGlobalVisibleRect(startBounds);
+            findViewById(R.id.container).getGlobalVisibleRect(finalBounds, globalOffset);
+            startBounds.offset(-globalOffset.x, -globalOffset.y);
+            finalBounds.offset(-globalOffset.x, -globalOffset.y);
 
-        float startScale;
-        if ((float) finalBounds.width() / finalBounds.height()
-                > (float) startBounds.width() / startBounds.height()) {
-            startScale = (float) startBounds.height() / finalBounds.height();
-            float startWidth = startScale * finalBounds.width();
-            float deltaWidth = (startWidth - startBounds.width()) / 2;
-            startBounds.left -= deltaWidth;
-            startBounds.right += deltaWidth;
-        } else {
-            startScale = (float) startBounds.width() / finalBounds.width();
-            float startHeight = startScale * finalBounds.height();
-            float deltaHeight = (startHeight - startBounds.height()) / 2;
-            startBounds.top -= deltaHeight;
-            startBounds.bottom += deltaHeight;
+            if ((float) finalBounds.width() / finalBounds.height()
+                    > (float) startBounds.width() / startBounds.height()) {
+                startScale = (float) startBounds.height() / finalBounds.height();
+                float startWidth = startScale * finalBounds.width();
+                float deltaWidth = (startWidth - startBounds.width()) / 2;
+                startBounds.left -= deltaWidth;
+                startBounds.right += deltaWidth;
+            } else {
+                startScale = (float) startBounds.width() / finalBounds.width();
+                float startHeight = startScale * finalBounds.height();
+                float deltaHeight = (startHeight - startBounds.height()) / 2;
+                startBounds.top -= deltaHeight;
+                startBounds.bottom += deltaHeight;
+            }
         }
+
+
 
         closeFlashlightView.setVisibility(View.VISIBLE);
         closeFlashlightView.setAlpha(0f);
@@ -694,7 +715,31 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
                         .alpha(1f)
                         .setDuration(700)
                         .setListener(null);
+
                 closeFlashlightTextView.setVisibility(View.GONE);
+                AnimatorSet set1 = new AnimatorSet();
+                set1.play(ObjectAnimator.ofFloat(closeFlashlightTextView, View.X,
+                        startBounds.left, finalBounds.left))
+                        .with(ObjectAnimator.ofFloat(closeFlashlightTextView, View.Y,
+                                startBounds.top, finalBounds.top))
+                        .with(ObjectAnimator.ofFloat(closeFlashlightTextView, View.SCALE_X,
+                                startScale, 1f)).with(ObjectAnimator.ofFloat(closeFlashlightTextView,
+                    View.SCALE_Y, startScale, 1f));
+                set1.setDuration(1);
+                set1.setInterpolator(new DecelerateInterpolator());
+                set1.start();
+
+                LogUtil.d("xzx", "SCALE_X=> " + closeFlashlightTextView.getScaleX());
+                LogUtil.d("xzx", "x=> " + closeFlashlightTextView.getX());
+
+                LogUtil.d("xzx", "SCALE_Y=> " + closeFlashlightTextView.getScaleY());
+                LogUtil.d("xzx", "y=> " + closeFlashlightTextView.getY());
+
+                LogUtil.d("xzx", "SCALE_X=> " + closeFlashlightTextView.getScaleX());
+                LogUtil.d("xzx", "x=> " + closeFlashlightTextView.getX());
+
+                LogUtil.d("xzx", "SCALE_Y=> " + closeFlashlightTextView.getScaleY());
+                LogUtil.d("xzx", "y=> " + closeFlashlightTextView.getY());
             }
 
             @Override
@@ -843,28 +888,17 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
                 float[] values=event.values;
                 float x=values[0];
                 float y=values[1];
-                float z=values[2];
 
                 int value=15;
                 if(Math.abs(x)>=value||Math.abs(y)>=value){
                     int size=chatContentListViewAdapter.chatList.size();
                     for(int i=size-1;i>=0;i--){
-                        try {
-                            Thread.sleep(3000);
-                            LogUtil.d("xzx");
-                        } catch (InterruptedException e) {
-                            LogUtil.v("xzx","e=> "+e.toString());
-                            e.printStackTrace();
-                        }
                         LogUtil.d("xzx","location=> "+i);
-
                         chatContentListViewAdapter.chatList.remove(i);
                         chatContentListViewAdapter.notifyDataSetChanged();
                         LogUtil.d("xzx");
-
                     }
-
-                    LogUtil.d("xzx","Math.abs(x)=> "+Math.abs(x)+" Math.abs(y)=> "+Math.abs(y)+" Math.abs(z)=> "+Math.abs(z));
+                    LogUtil.d("xzx","Math.abs(x)=> "+Math.abs(x)+" Math.abs(y)=> "+Math.abs(y));
                 }
             }
 
@@ -961,13 +995,7 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
         BitmapFactory.Options option = new BitmapFactory.Options();
         option.inSampleSize = 5;
         Bitmap bitmap = BitmapFactory.decodeFile(uri.getPath(), option);
-//        if(isRobotImgChange){
-//            GlobalVariable.getInstance().setRobotImgStatus(GlobalVariable.NEW_IMG);
-////            GlobalVariable.getInstance().setROBOT_HAS_IMG(true);
-//            chatContentListViewAdapter.setRobotImgBitmap(bitmap);
-//        }else{
-//
-//        }
+
         GlobalVariable.getInstance().setUSER_HAS_IMG(true);
         chatContentListViewAdapter.setUserImgBitmap(bitmap);
         GlobalVariable.save(this);

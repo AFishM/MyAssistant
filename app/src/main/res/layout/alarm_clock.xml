@@ -8,14 +8,22 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/alarm_setting_toolbar"
+
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        app:navigationIcon="@drawable/arrow_32"
-        app:title="@string/alarm"
-        app:titleTextColor="@color/black"/>
+        android:theme="@style/ToolbarTheme">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/alarm_setting_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/toolbar_background"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:navigationIcon="@drawable/arrow_32"
+            app:title="@string/alarm"
+            app:titleTextColor="@color/black"/>
+    </android.support.design.widget.AppBarLayout>
+
 
     <ImageView
         android:layout_width="match_parent"

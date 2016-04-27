@@ -5,7 +5,6 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
@@ -109,7 +108,7 @@ public class RoundImageView extends ImageView {
             paint.setStrokeWidth(dp2px(roundBorderWidth));
 
 
-            paint.setColor(Color.WHITE);
+            paint.setColor(getResources().getColor(R.color.robot_yellow_light));
             canvas.drawCircle(mRadius, mRadius, mRadius - dp2px(3), paint);
             canvas.drawCircle(mRadius, mRadius, mRadius - dp2px(3), mBitmapPaint);
             // drawSomeThing(canvas);

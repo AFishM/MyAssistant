@@ -83,6 +83,7 @@ public class SettingActivity extends TakePhotoActivity implements View.OnClickLi
     public void onBackPressed() {
         if(setImgLayout.getVisibility()==View.VISIBLE){
             setImgLayout.setVisibility(View.INVISIBLE);
+            return;
         }
         super.onBackPressed();
     }
@@ -102,7 +103,6 @@ public class SettingActivity extends TakePhotoActivity implements View.OnClickLi
                 this.getTakePhoto().picTakeCrop(imageUri);
                 break;
             case R.id.select_picture:
-                LogUtil.d("xzx","imageUri=> "+imageUri.toString());
                 getTakePhoto().picSelectCrop(imageUri);
                 break;
             case R.id.no_img:

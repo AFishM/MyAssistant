@@ -11,22 +11,26 @@
         android:layout_height="match_parent"
         android:background="@android:color/white"
         android:orientation="vertical">
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/main_toolbar"
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:title="@string/app_name"
-            app:titleTextColor="@color/white"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/toolbar_background"/>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/gray"/>
+            android:layout_height="wrap_content"
+            android:theme="@style/ToolbarTheme">
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/main_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:title="@string/app_name"
+                app:titleTextColor="@color/black"
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                android:background="@color/toolbar_background" />
+        </android.support.design.widget.AppBarLayout>
+
+
         <ListView
             android:id="@+id/chat_content"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/background_green"
+            android:background="@color/white"
             android:layout_weight="1"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
@@ -45,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="12dp"
                 android:layout_marginRight="8dp"
-                android:src="@drawable/keyboard_32"/>
+                android:src="@drawable/microphone_32"/>
             <TextView
                 android:id="@+id/press_to_say"
                 android:layout_width="0dp"
@@ -56,7 +60,8 @@
                 android:background="@drawable/oval_gray"
                 android:gravity="center"
                 android:textSize="@dimen/font_size_16_sp"
-                android:text="@string/press_and_say" />
+                android:text="@string/press_and_say"
+                android:visibility="gone"/>
             <EditText
                 android:id="@+id/question_input"
                 android:layout_width="0dp"
@@ -64,7 +69,8 @@
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/font_size_16_sp"
-                android:visibility="gone"/>
+                android:textCursorDrawable="@drawable/edit_text_cursor"
+                android:visibility="visible"/>
             <TextView
                 android:id="@+id/send"
                 android:layout_marginLeft="8dp"
@@ -76,7 +82,7 @@
                 android:textSize="@dimen/font_size_16_sp"
                 android:textColor="@color/black"
                 android:text="@string/send"
-                android:visibility="gone"/>
+                android:visibility="visible"/>
         </LinearLayout>
     </LinearLayout>
     <FrameLayout

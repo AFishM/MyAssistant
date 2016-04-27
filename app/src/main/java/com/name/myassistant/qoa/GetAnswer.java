@@ -108,7 +108,7 @@ public class GetAnswer {
                     }
 
                     //如果遍历到的词的对应问题所需答案的命名实体，该词为候选答案
-                    if(posList.get(j).equals(answerEntityAttribute)){
+                    if(posList.get(j).equals(answerEntityAttribute)&&!keyWordSynonymMap.containsKey(wordList.get(j))){
                         tempAnswer=word;
                         LogUtil.d("xzx","tempAnswer=> "+tempAnswer);
                     }
