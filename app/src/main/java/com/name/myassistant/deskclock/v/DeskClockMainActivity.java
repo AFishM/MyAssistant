@@ -67,7 +67,6 @@ public class DeskClockMainActivity extends AppCompatActivity implements OnItemCl
 
     /**
      * listview的适配器继承CursorAdapter
-     * @author wangxianming
      * 也可以使用BaseAdapter
      */
     private class AlarmTimeAdapter extends CursorAdapter {

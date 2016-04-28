@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Parcel;
-import android.util.Log;
 
 import com.name.myassistant.R;
 import com.name.myassistant.deskclock.v.AlarmAlertActivity;
@@ -28,6 +27,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        LogUtil.d("xzx","action=> "+intent.getAction());
+
         if (Alarms.ALARM_KILLED.equals(intent.getAction())) {
             // The alarm has been killed, update the notification
             updateNotification(context, (Alarm)
@@ -55,11 +56,13 @@ public class AlarmReceiver extends BroadcastReceiver {
             in.setDataPosition(0);
             alarm = Alarm.CREATOR.createFromParcel(in);
         }
+        LogUtil.d("xzx","alarm=> "+alarm.toString());
 
         if (alarm == null) {
             Alarms.setNextAlert(context);
             return;
         }
+        LogUtil.d("xzx");
 
         // Disable the snooze alert if this alarm is the snooze.
         Alarms.disableSnoozeAlert(context, alarm.id);
@@ -72,6 +75,8 @@ public class AlarmReceiver extends BroadcastReceiver {
             Alarms.setNextAlert(context);
         }
 
+        LogUtil.d("xzx");
+
         // Intentionally verbose: always log the alarm time to provide useful
         // information in bug reports.
         long now = System.currentTimeMillis();
@@ -82,20 +87,28 @@ public class AlarmReceiver extends BroadcastReceiver {
             return;
         }
 
-        // Maintain a cpu wake lock until the AlarmAlertActivity and AlarmKlaxonService can
-        // pick it up.
+//         Maintain a cpu wake lock until the AlarmAlertActivity and AlarmKlaxonService can
+//         pick it up.
+
+        LogUtil.d("xzx");
         AlarmAlertWakeLock.acquireCpuWakeLock(context);
+
+        LogUtil.d("xzx");
 
         /* Close dialogs and window shade */
         // FIXME: 16/4/24 这个不知道干嘛的
         Intent closeDialogs = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         context.sendBroadcast(closeDialogs);
 
+        LogUtil.d("xzx");
 
         // Play the alarm alert and vibrate the device.
         Intent playAlarmIntent = new Intent(Alarms.ALARM_ALERT_ACTION);
+        playAlarmIntent.setPackage(context.getPackageName());
         playAlarmIntent.putExtra(Alarms.ALARM_INTENT_EXTRA, alarm);
         context.startService(playAlarmIntent);
+
+
 
         // Trigger a notification that, when clicked, will show the alarm alert
         // dialog. No need to check for fullscreen since this will always be
@@ -155,9 +168,6 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         // If the alarm is null, just cancel the notification.
         if (alarm == null) {
-            if (true) {
-                Log.v("wangxianming", "Cannot update notification for killer callback");
-            }
             return;
         }
 

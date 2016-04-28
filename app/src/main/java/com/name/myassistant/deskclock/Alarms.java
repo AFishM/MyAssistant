@@ -14,7 +14,8 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.provider.Settings;
 import android.text.format.DateFormat;
-import android.util.Log;
+
+import com.name.myassistant.util.LogUtil;
 
 import java.util.Calendar;
 
@@ -273,7 +274,7 @@ public class Alarms {
                     if (a.time == 0) {
                         a.time = calculateAlarm(a);
                     } else if (a.time < now) {
-                        Log.v("wangxianming", "Disabling expired alarm set for ");
+                        LogUtil.v("xzx", "Disabling expired alarm set for ");
                         // Expired alarm, disable it and move along.
                         enableAlarmInternal(context, a, false);
                         continue;
@@ -415,7 +416,7 @@ public class Alarms {
         ed.remove(PREF_SNOOZE_ID);
         ed.remove(PREF_SNOOZE_TIME);
         ed.apply();
-    };
+    }
 
     /**
      * If there is a snooze set, enable it in AlarmManager

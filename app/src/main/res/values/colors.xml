@@ -4,12 +4,14 @@
     <color name="black">@android:color/black</color>
     <color name="green">@android:color/holo_green_light</color>
     <color name="light_gray">#a6a6a6</color>
-    <color name="gray">@android:color/darker_gray</color>
+    <color name="gray">#444</color>
     <color name="transparent_black">#77000000</color>
     <color name="background_blue">#97cae9</color>
     <color name="transparent_background_blue">#7797cae9</color>
     <color name="robot_yellow">#f7e426</color>
     <color name="robot_yellow_light">#f8f067</color>
     <color name="background_green">#e0f7f8</color>
-    <color name="toolbar_background">#f8f067</color>
+    <color name="toolbar_background">#fcf18c</color>
+    <color name="transparent_yellow_background">#77fcf18c</color>
+    <color name="yellow_background">#fcf18c</color>
 </resources>

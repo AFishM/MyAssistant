@@ -19,6 +19,8 @@ package com.name.myassistant.deskclock;
 import android.content.Context;
 import android.os.PowerManager;
 
+import com.name.myassistant.util.LogUtil;
+
 /**
  * Hold a wakelock that can be acquired in the AlarmReceiver and
  * released in the AlarmAlertActivity activity
@@ -28,6 +30,7 @@ class AlarmAlertWakeLock {
     private static PowerManager.WakeLock sCpuWakeLock;
 
     static void acquireCpuWakeLock(Context context) {
+        LogUtil.d("xzx");
         if (sCpuWakeLock != null) {
             return;
         }
@@ -39,6 +42,7 @@ class AlarmAlertWakeLock {
                 PowerManager.ACQUIRE_CAUSES_WAKEUP |
                 PowerManager.ON_AFTER_RELEASE, "AlarmClock");
         sCpuWakeLock.acquire();
+        LogUtil.d("xzx");
     }
     static void releaseCpuLock() {
         if (sCpuWakeLock != null) {

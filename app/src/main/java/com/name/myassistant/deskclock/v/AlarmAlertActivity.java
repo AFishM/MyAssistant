@@ -8,9 +8,9 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import com.name.myassistant.deskclock.Alarms;
+import com.name.myassistant.util.LogUtil;
 
 /**
  * Full screen alarm alert: pops visible indicator and plays alarm tone. This
@@ -66,7 +66,7 @@ public class AlarmAlertActivity extends AlarmAlertFullScreenActivity {
     private boolean checkRetryCount() {
         int MAX_KEYGUARD_CHECKS = 5;
         if (mKeyguardRetryCount++ >= MAX_KEYGUARD_CHECKS) {
-            Log.v("wangxianming", "Tried to read keyguard status too many times, bailing...");
+            LogUtil.v("xzx", "Tried to read keyguard status too many times, bailing...");
             return false;
         }
         return true;

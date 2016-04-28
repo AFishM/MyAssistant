@@ -20,7 +20,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:title="@string/app_name"
-                app:titleTextColor="@color/black"
+                app:titleTextColor="@color/gray"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
                 android:background="@color/toolbar_background" />
         </android.support.design.widget.AppBarLayout>
@@ -80,7 +80,7 @@
                 android:background="@drawable/oval_green_solid"
                 android:gravity="center"
                 android:textSize="@dimen/font_size_16_sp"
-                android:textColor="@color/black"
+                android:textColor="@color/gray"
                 android:text="@string/send"
                 android:visibility="visible"/>
         </LinearLayout>
@@ -190,24 +190,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/take_photo"
-            android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textColor="@color/gray"
+            android:textSize="18sp"
             android:layout_marginBottom="8dp"/>
         <TextView
             android:id="@+id/select_picture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/pick_picture_in_phone"
-            android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textColor="@color/gray"
+            android:textSize="18sp"
             android:layout_marginBottom="8dp"/>
         <TextView
             android:id="@+id/no_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no_img"
-            android:textSize="20sp"
-            android:textColor="@color/black"/>
+            android:textSize="18sp"
+            android:textColor="@color/gray"/>
         <TextView
             android:id="@+id/original_img"
             android:layout_width="wrap_content"

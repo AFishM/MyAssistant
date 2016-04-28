@@ -6,6 +6,7 @@
 
     <!--waitTing page-->
     <string name="wait_please">请稍等，我准备下…</string>
+    <string name="log_out">再按一次，退出Banana</string>
 
     <!--main page-->
     <!--<string name="show_look_more">显示查看更多</string>-->

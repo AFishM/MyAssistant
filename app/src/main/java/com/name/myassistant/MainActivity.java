@@ -24,11 +24,15 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.provider.ContactsContract;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -135,6 +139,8 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
     Rect finalBounds;
     float startScale;
 
+    boolean logOut;
+
     //听写监听器
     RecognizerListener recognizerListener = new RecognizerListener() {
         //听写结果回调接口(返回Json格式结果,用户可参见附录12.1);
@@ -216,6 +222,7 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.d("xzx","llllll");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
@@ -424,8 +431,31 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
         }
         if(setImgLayout.getVisibility()==View.VISIBLE){
             setImgLayout.setVisibility(View.GONE);
+            return;
         }
-        super.onBackPressed();
+
+        Handler mHandler = new Handler(Looper.getMainLooper());
+
+        if (!logOut) {
+            LayoutInflater inflater = getLayoutInflater();
+            View layout = inflater.inflate(R.layout.toast_view, (ViewGroup) MainActivity.this.findViewById(R.id.toast_layout));
+            TextView textTV = (TextView) layout.findViewById(R.id.content);
+            textTV.setText(getString(R.string.log_out));
+
+            Toast toast = new Toast(MainActivity.this);
+            toast.setDuration(Toast.LENGTH_LONG);
+            toast.setView(layout);
+            toast.show();
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    logOut=false;
+                }
+            }, 2000);
+            logOut = true;
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -519,6 +549,9 @@ public class MainActivity extends TakePhotoActivity implements View.OnClickListe
      * @param userInput:用户输入文本
      */
     void userInputHandle(String userInput){
+        if(TextUtils.isEmpty(userInput)){
+            return;
+        }
         //将用户的输入输出到屏幕上
         Chat chat = new Chat(true, userInput);
         chatContentListViewAdapter.chatList.add(chat);

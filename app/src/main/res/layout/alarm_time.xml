@@ -50,7 +50,6 @@
             android:src="@drawable/ic_indicator_off" />
     </com.name.myassistant.deskclock.DontPressWithParentLayout>
 
-        <!-- note by wangxianming  android:background="?android:attr/windowBackground" -->
     <ImageView
         android:src="@drawable/divider_vertical_dark"
         android:layout_width="wrap_content"

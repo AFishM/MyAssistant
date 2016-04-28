@@ -108,7 +108,7 @@ public class RoundImageView extends ImageView {
             paint.setStrokeWidth(dp2px(roundBorderWidth));
 
 
-            paint.setColor(getResources().getColor(R.color.robot_yellow_light));
+            paint.setColor(getResources().getColor(R.color.toolbar_background));
             canvas.drawCircle(mRadius, mRadius, mRadius - dp2px(3), paint);
             canvas.drawCircle(mRadius, mRadius, mRadius - dp2px(3), mBitmapPaint);
             // drawSomeThing(canvas);

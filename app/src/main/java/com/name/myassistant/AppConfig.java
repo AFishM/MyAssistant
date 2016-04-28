@@ -3,7 +3,7 @@ package com.name.myassistant;
 import com.name.myassistant.util.LogUtil;
 
 /**
- * Created by xu on 16-2-19.
+ * App调试工具配置类
  */
 public class AppConfig {
     public static boolean DEBUG=true;

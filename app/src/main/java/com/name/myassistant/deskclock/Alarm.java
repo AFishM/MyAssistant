@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.BaseColumns;
-import android.util.Log;
 
 import com.name.myassistant.R;
 
@@ -168,9 +167,6 @@ public final class Alarm implements Parcelable {
         label = c.getString(Columns.ALARM_MESSAGE_INDEX);
         String alertString = c.getString(Columns.ALARM_ALERT_INDEX);
         if (Alarms.ALARM_ALERT_SILENT.equals(alertString)) {
-            if (true) {
-                Log.v("wangxianming", "Alarm is marked as silent");
-            }
             silent = true;
         } else {
             if (alertString != null && alertString.length() != 0) {
@@ -342,5 +338,21 @@ public final class Alarm implements Parcelable {
             }
             return dayCount;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Alarm{" +
+                "id=" + id +
+                ", enabled=" + enabled +
+                ", hour=" + hour +
+                ", minutes=" + minutes +
+                ", daysOfWeek=" + daysOfWeek +
+                ", time=" + time +
+                ", vibrate=" + vibrate +
+                ", label='" + label + '\'' +
+                ", alert=" + alert +
+                ", silent=" + silent +
+                '}';
     }
 }

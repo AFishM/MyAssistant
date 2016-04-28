@@ -36,6 +36,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.name.myassistant.R;
+import com.name.myassistant.util.LogUtil;
 
 /**
  * Manages alarms and vibe. Runs as a service so that it can continue to play
@@ -196,7 +197,7 @@ public class AlarmKlaxonService extends Service {
                 AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
         stop();
 
-        Log.v("wangxianming", "AlarmKlaxonService.play() " + alarm.id + " alert " + alarm.alert);
+        LogUtil.v("xzx", "AlarmKlaxonService.play() " + alarm.id + " alert " + alarm.alert);
 
         if (!alarm.silent) {
             Uri alert = alarm.alert;
@@ -205,7 +206,7 @@ public class AlarmKlaxonService extends Service {
             if (alert == null) {
                 alert = RingtoneManager.getDefaultUri(
                         RingtoneManager.TYPE_ALARM);
-                Log.v("wangxianming", "Using default alarm: " + alert.toString());
+                LogUtil.v("xzx", "Using default alarm: " + alert.toString());
             }
 
             // TODO: Reuse mMediaPlayer instead of creating a new one and/or use
@@ -213,7 +214,7 @@ public class AlarmKlaxonService extends Service {
             mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setOnErrorListener(new OnErrorListener() {
                 public boolean onError(MediaPlayer mp, int what, int extra) {
-                    Log.v("wangxianming", "Error occurred while playing audio.");
+                    LogUtil.v("xzx", "Error occurred while playing audio.");
                     mp.stop();
                     mp.release();
                     mMediaPlayer = null;
@@ -226,7 +227,7 @@ public class AlarmKlaxonService extends Service {
                 // resource at a low volume to not disrupt the call.
                 if (mTelephonyManager.getCallState()
                         != TelephonyManager.CALL_STATE_IDLE) {
-                    Log.v("wangxianming", "Using the in-call alarm");
+                    LogUtil.v("xzx", "Using the in-call alarm");
                     mMediaPlayer.setVolume(IN_CALL_VOLUME, IN_CALL_VOLUME);
                     setDataSourceFromResource(getResources(), mMediaPlayer,
                             R.raw.in_call_alarm);
@@ -235,7 +236,7 @@ public class AlarmKlaxonService extends Service {
                 }
                 startAlarm(mMediaPlayer);
             } catch (Exception ex) {
-                Log.v("wangxianming", "Using the fallback ringtone");
+                LogUtil.v("xzx", "Using the fallback ringtone");
                 // The alert may be on the sd card which could be busy right
                 // now. Use the fallback ringtone.
                 try {
@@ -246,7 +247,7 @@ public class AlarmKlaxonService extends Service {
                     startAlarm(mMediaPlayer);
                 } catch (Exception ex2) {
                     // At this point we just don't play anything.
-                    Log.v("wangxianming", "Failed to play fallback ringtone"+ex2);
+                    LogUtil.v("xzx", "Failed to play fallback ringtone"+ex2);
                 }
             }
         }
@@ -293,7 +294,7 @@ public class AlarmKlaxonService extends Service {
      * repeating
      */
     public void stop() {
-        Log.v("wangxianming", "AlarmKlaxonService.stop()");
+        LogUtil.v("xzx", "AlarmKlaxonService.stop()");
         if (mPlaying) {
             mPlaying = false;
 

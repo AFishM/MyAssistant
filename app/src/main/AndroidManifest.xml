@@ -78,7 +78,7 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".alarm.AlarmReceiver" />
+
         <receiver
             android:name=".BootReceiver"
             android:enabled="false">
@@ -90,7 +90,7 @@
         <!-- 高德定位服务 -->
         <service android:name="com.amap.api.location.APSService" />
 
-        <activity android:name=".alarm.AlarmSettingActivity" />
+
         <activity
             android:name=".LookOtherInfoWebActivity"
             android:label="@string/title_activity_look_other_info_web"
@@ -99,10 +99,7 @@
             android:name=".HelpActivity"
             android:label="@string/title_activity_help"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".TimeUpActivity"
-            android:label="@string/title_activity_time_up"
-            android:theme="@style/AppTheme"/>
+
 
         <provider android:name=".deskclock.AlarmProvider"
             android:authorities="com.name.myassistant.deskclock"

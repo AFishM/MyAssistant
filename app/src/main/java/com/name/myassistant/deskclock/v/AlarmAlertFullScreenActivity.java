@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -21,8 +20,10 @@ import android.widget.Toast;
 
 import com.name.myassistant.R;
 import com.name.myassistant.deskclock.Alarm;
+import com.name.myassistant.deskclock.AlarmKlaxonService;
 import com.name.myassistant.deskclock.AlarmReceiver;
 import com.name.myassistant.deskclock.Alarms;
+import com.name.myassistant.util.LogUtil;
 
 import java.util.Calendar;
 
@@ -165,7 +166,9 @@ public class AlarmAlertFullScreenActivity extends Activity {
         String displayTime = getString(R.string.alarm_alert_snooze_set,
                 snoozeMinutes);
         Toast.makeText(AlarmAlertFullScreenActivity.this, displayTime,Toast.LENGTH_LONG).show();
-        stopService(new Intent(Alarms.ALARM_ALERT_ACTION));
+        Intent intent=new Intent(AlarmAlertFullScreenActivity.this, AlarmKlaxonService.class);
+//        intent.setPackage(getPackageName());
+        stopService(intent);
         finish();
     }
 
@@ -178,7 +181,9 @@ public class AlarmAlertFullScreenActivity extends Activity {
         if (!killed) {
             NotificationManager nm = getNotificationManager();
             nm.cancel(mAlarm.id);
-            stopService(new Intent(Alarms.ALARM_ALERT_ACTION));
+            Intent intent=new Intent(AlarmAlertFullScreenActivity.this, AlarmKlaxonService.class);
+//            intent.setPackage(getPackageName());
+            stopService(intent);
         }
         finish();
     }
@@ -191,7 +196,7 @@ public class AlarmAlertFullScreenActivity extends Activity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        Log.v("wangxianming", "AlarmAlertActivity.OnNewIntent()");
+        LogUtil.v("xzx", "AlarmAlertActivity.OnNewIntent()");
 
         mAlarm = intent.getParcelableExtra(Alarms.ALARM_INTENT_EXTRA);
 
@@ -211,7 +216,7 @@ public class AlarmAlertFullScreenActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.v("wangxianming", "AlarmAlertActivity.onDestroy()");
+        LogUtil.v("xzx", "AlarmAlertActivity.onDestroy()");
         // No longer care about the alarm being killed.
         unregisterReceiver(mReceiver);
     }

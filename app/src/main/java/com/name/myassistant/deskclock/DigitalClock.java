@@ -26,7 +26,6 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -115,19 +114,11 @@ public class DigitalClock extends LinearLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        /**
-         * note by wangxianming
-         * in 2012-4-14
-         */
 //        if (sTypeface == null) {
 //            sTypeface = Typeface.createFromAsset(getContext().getAssets(),
 //                "fonts/Clockopia.ttf");
 //        }
         mTimeDisplay = (TextView) findViewById(R.id.timeDisplay);
-        /**
-         * note by wangxianming
-         * in 2012-4-14
-         */
 //        mTimeDisplay.setTypeface(sTypeface);
         mAmPm = new AmPm(this);
         mCalendar = Calendar.getInstance();
@@ -139,7 +130,6 @@ public class DigitalClock extends LinearLayout {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        if (true) Log.v("wangxianming", "onAttachedToWindow " + this);
 
         if (mAttached) return;
         mAttached = true;
